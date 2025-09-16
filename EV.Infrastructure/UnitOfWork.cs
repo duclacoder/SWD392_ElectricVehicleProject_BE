@@ -1,0 +1,60 @@
+﻿using EV.Application.Interfaces.RepositoryInterfaces;
+using EV.Infrastructure.DBContext;
+using EV.Infrastructure.Repositories;
+
+namespace EV.Infrastructure
+{
+    public class UnitOfWork : IUnitOfWork
+    {
+        private readonly Swd392Se1834G2T1Context _context;
+
+        
+
+
+        // CONSTRUCTOR INJECTION for DbContext
+        public UnitOfWork(Swd392Se1834G2T1Context context)
+        {
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+        }
+
+        //Repository interfaces
+        private IUserRepository _userRepository;
+        public IUserRepository userRepository => _userRepository ??= new UserRepository(_context);
+
+
+
+
+        public IGenericRepository<T> GetGenericRepository<T>() where T : class
+        {
+            return new GenericRepository<T>(_context);
+        }
+
+
+
+        public async Task<int> SaveChangesAsync()
+        {
+            return await _context.SaveChangesAsync();
+        }
+
+        // IDisposable Implementation
+        private bool disposed = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!this.disposed)
+            {
+                if (disposing)
+                {
+                    _context.Dispose();
+                }
+            }
+            this.disposed = true;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+    }
+}
