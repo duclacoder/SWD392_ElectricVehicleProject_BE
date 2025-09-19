@@ -22,7 +22,7 @@ namespace EV.Infrastructure.Repositories
                 .Where(x => x.Email == loginRequest.Username && x.Password == loginRequest.Password)
                 .Select(u => new LoginResponseDTO
                 {
-                    Userid = u.UserId,
+                    Userid = u.UsersId,
                     Username = u.FullName
                 })
                 .FirstOrDefaultAsync();
