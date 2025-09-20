@@ -1,0 +1,23 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace EV.Domain.Entities;
+
+public partial class AuctionBid
+{
+    public int AuctionBidsId { get; set; }
+
+    public int? AuctionId { get; set; }
+
+    public int? BidderId { get; set; }
+
+    public decimal? BidAmount { get; set; }
+
+    public DateTime? BidTime { get; set; }
+
+    public string? Status { get; set; }
+
+    public virtual Auction? Auction { get; set; }
+
+    public virtual User? Bidder { get; set; }
+}

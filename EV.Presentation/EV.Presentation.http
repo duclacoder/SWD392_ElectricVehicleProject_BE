@@ -1,0 +1,6 @@
+@EV.Presentation_HostAddress = http://localhost:5033
+
+GET {{EV.Presentation_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
