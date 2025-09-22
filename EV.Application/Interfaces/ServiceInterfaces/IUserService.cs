@@ -1,4 +1,5 @@
-﻿using EV.Application.RequestDTO.UserRequestDTO;
+﻿using EV.Application.RequestDTOs.UserRequestDTO;
+using EV.Application.ResponseDTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace EV.Application.Interfaces.ServiceInterfaces
 {
     public interface IUserService
     {
-        Task<string> LoginUser(LoginRequestDTO loginRequest);
+        Task<ResponseDTO> LoginUser(LoginRequestDTO loginRequest);
     }
 }

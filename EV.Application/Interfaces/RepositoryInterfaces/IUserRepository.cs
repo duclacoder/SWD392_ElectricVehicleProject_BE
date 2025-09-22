@@ -1,5 +1,5 @@
-﻿using EV.Application.RequestDTO.UserRequestDTO;
-using EV.Application.ResponseDTO.UserResponseDTO;
+﻿using EV.Application.RequestDTOs.UserRequestDTO;
+using EV.Application.ResponseDTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +10,6 @@ namespace EV.Application.Interfaces.RepositoryInterfaces
 {
     public interface IUserRepository
     {
-        Task<LoginResponseDTO> LoginUser(LoginRequestDTO loginRequest);
+        Task<object> LoginUser(LoginRequestDTO loginRequest);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using EV.Application.Interfaces.RepositoryInterfaces;
 using EV.Application.Interfaces.ServiceInterfaces;
-using EV.Application.RequestDTO.UserRequestDTO;
+using EV.Application.RequestDTOs.UserRequestDTO;
+using EV.Application.ResponseDTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,18 +19,16 @@ namespace EV.Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<string> LoginUser(LoginRequestDTO loginRequest)
+        public async Task<ResponseDTO> LoginUser(LoginRequestDTO loginRequest)
         {
 
             var loginResult = await _unitOfWork.userRepository.LoginUser(loginRequest);
 
             if (loginResult == null)
             {
-                return string.Empty;
-            }
-
-            return "Login successful";
-
+                return new ResponseDTO("Account does not exist or login information is incorrect", 401, false);
+            } 
+                return new ResponseDTO("Login successful", 200, true, loginResult);       
         }
     }
 }

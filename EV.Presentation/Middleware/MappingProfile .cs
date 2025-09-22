@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using EV.Application.RequestDTO.UserRequestDTO;
+using EV.Application.RequestDTOs.UserRequestDTO;
 using EV.Presentation.RequestModels.UserRequests;
 
 namespace EV.Application.Helpers
