@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using EV.Application.Interfaces.ServiceInterfaces;
-using EV.Application.RequestDTO.UserRequestDTO;
+using EV.Application.RequestDTOs.UserRequestDTO;
+using EV.Application.ResponseDTOs;
 using EV.Presentation.RequestModels.UserRequests;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EV.Presentation.Controllers
@@ -13,26 +15,14 @@ namespace EV.Presentation.Controllers
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
 
-        public UserController(IUserService userService, IMapper mapper)
-        {
-            _userService = userService;
-            _mapper = mapper;
-        }
-
         [HttpPost("Login")]
-        public async Task<ActionResult<string>> LoginUser([FromBody] LoginRequestModel loginRequestModel)
+        public async Task<ActionResult<ResponseDTO>> LoginUser([FromBody] LoginRequestDTO loginRequestModel)
         {
-
-            var loginRequestDTO = _mapper.Map<LoginRequestDTO>(loginRequestModel);
-
-            var resultLogin = await _userService.LoginUser(loginRequestDTO);
-
-            if (string.IsNullOrEmpty(resultLogin))
+            if (string.IsNullOrEmpty(loginRequestModel.Email) || string.IsNullOrEmpty(loginRequestModel.Password))
             {
-                return BadRequest("Invalid username or password");
+                return new ResponseDTO("Email and password are required", 400, false);
             }
-
-            return Ok("Login successful");
+            return await _userService.LoginUser(loginRequestModel);
         }
     }
 }

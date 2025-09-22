@@ -1,6 +1,5 @@
 ﻿using EV.Application.Interfaces.RepositoryInterfaces;
-using EV.Application.RequestDTO.UserRequestDTO;
-using EV.Application.ResponseDTO.UserResponseDTO;
+using EV.Application.RequestDTOs.UserRequestDTO;
 using EV.Domain.Entities;
 using EV.Infrastructure.DBContext;
 using Microsoft.EntityFrameworkCore;
@@ -16,19 +15,18 @@ namespace EV.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<LoginResponseDTO> LoginUser(LoginRequestDTO loginRequest)
+        public async Task<object> LoginUser(LoginRequestDTO loginRequest)
         {
-            var checkExist = await _context.Set<User>()
-                .Where(x => x.Email == loginRequest.Username && x.Password == loginRequest.Password)
-                .Select(u => new LoginResponseDTO
+            var user = await _context.Users.Where(c => c.Email == loginRequest.Email && c.Password == loginRequest.Password)
+                .Select(u => new
                 {
-                    Userid = u.UsersId,
-                    Username = u.FullName
-                })
-                .FirstOrDefaultAsync();
-
-
-            return checkExist;
+                    UserId = u.UsersId,
+                    FullName = u.FullName
+                }).FirstOrDefaultAsync();
+            if (user == null)
+                return null;
+            else
+                return user;
         }
     }
 }
