@@ -30,5 +30,17 @@ namespace EV.Application.Services
             } 
                 return new ResponseDTO("Login successful", 200, true, loginResult);       
         }
+
+        public async Task<ResponseDTO> GetAllUsers()
+        {
+            var users = await _unitOfWork.userRepository.GetAllUsers();
+
+            if (users == null)
+            {
+                return new ResponseDTO("Can not find any user", 404, false);
+            }
+
+            return new ResponseDTO("Get all users successfully", 200, true, users);
+        }
     }
 }
