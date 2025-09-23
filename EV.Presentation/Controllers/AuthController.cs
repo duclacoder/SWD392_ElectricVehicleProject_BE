@@ -3,6 +3,7 @@ using EV.Application.Interfaces.ServiceInterfaces;
 using EV.Application.RequestDTOs.UserRequestDTO;
 using EV.Application.ResponseDTOs;
 using EV.Presentation.RequestModels.UserRequests;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,15 +13,16 @@ namespace EV.Presentation.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IUserService _userService;
+        private readonly IAuthService _authService;
         private readonly IMapper _mapper;
 
-        public AuthController(IUserService userService, IMapper mapper)
+        public AuthController(IAuthService authService, IMapper mapper)
         {
-            _userService = userService;
+            _authService = authService;
             _mapper = mapper;
         }
 
+        [AllowAnonymous]
         [HttpPost("Login")]
         public async Task<ActionResult<ResponseDTO>> LoginUser([FromBody] LoginRequestDTO loginRequestModel)
         {
@@ -28,10 +30,11 @@ namespace EV.Presentation.Controllers
             {
                 return new ResponseDTO("Email and password are required", 400, false);
             }
-            return await _userService.LoginUser(loginRequestModel);
+            return await _authService.LoginUser(loginRequestModel);
         }
 
-        [HttpPost]
+        [AllowAnonymous]
+        [HttpPost("Register")]
         public async Task<ActionResult<ResponseDTO>> Register([FromBody] RegisterRequestDTO registerDTO)
         {
             return Ok(registerDTO);
