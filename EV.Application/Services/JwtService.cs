@@ -31,8 +31,9 @@ namespace EV.Application.Services
                 new Claim(JwtRegisteredClaimNames.Sub, user.UsersId.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim("fullName", user.FullName),
+                new Claim("userName", user.UserName),
                 new Claim("imageUrl", user.ImageUrl ?? string.Empty),
-                new Claim(ClaimTypes.Role, user.Role.Name),
+                new Claim("role", user.Role.Name),
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_key));
