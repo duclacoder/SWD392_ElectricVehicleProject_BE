@@ -1,5 +1,6 @@
 ﻿using EV.Application.RequestDTOs.UserRequestDTO;
 using EV.Application.ResponseDTOs;
+using EV.Application.ResponseDTOs.UserResponseDTO;
 using EV.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,6 @@ namespace EV.Application.Interfaces.RepositoryInterfaces
     public interface IUserRepository
     {
         Task<object> LoginUser(LoginRequestDTO loginRequest);
-        Task<IEnumerable<User>> GetAllUsers();
+        Task<IEnumerable<UserResponseDTO>> GetAllUsers();
     }
 }

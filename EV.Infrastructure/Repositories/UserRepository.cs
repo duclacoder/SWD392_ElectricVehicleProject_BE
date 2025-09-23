@@ -1,5 +1,6 @@
 ﻿using EV.Application.Interfaces.RepositoryInterfaces;
 using EV.Application.RequestDTOs.UserRequestDTO;
+using EV.Application.ResponseDTOs.UserResponseDTO;
 using EV.Domain.Entities;
 using EV.Infrastructure.DBContext;
 using Microsoft.EntityFrameworkCore;
@@ -15,9 +16,22 @@ namespace EV.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<User>> GetAllUsers()
+        public async Task<IEnumerable<UserResponseDTO>> GetAllUsers()
         {
-            var users = await _context.Users.ToListAsync();
+            var users = await _context.Users
+                .Select(u => new UserResponseDTO
+                {
+                    UserId = u.UsersId,
+                    UserName = u.UserName,
+                    FullName = u.FullName,
+                    Email = u.Email,
+                    Phone = u.Phone,
+                    CreatedAt = u.CreatedAt,
+                    UpdatedAt = u.UpdatedAt,
+                    Status = u.Status
+                })
+                .ToListAsync();
+
             return users;
         }
 
