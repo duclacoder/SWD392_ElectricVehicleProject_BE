@@ -1,18 +1,13 @@
 ﻿using EV.Application.RequestDTOs.UserRequestDTO;
-using EV.Application.ResponseDTOs;
-using EV.Application.ResponseDTOs.UserResponseDTO;
+using EV.Domain.CustomEntities;
 using EV.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EV.Application.Interfaces.RepositoryInterfaces
 {
     public interface IUserRepository
     {
         Task<User> LoginUser(LoginRequestDTO loginRequest);
-        Task<object> GetAllUsers();
+        Task<IEnumerable<AdminGetAllUsers>> GetAllUsers(int skip, int take);
+        Task<int> GetTotalCountUsers();
     }
 }
