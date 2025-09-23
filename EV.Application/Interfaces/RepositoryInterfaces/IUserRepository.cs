@@ -12,7 +12,7 @@ namespace EV.Application.Interfaces.RepositoryInterfaces
 {
     public interface IUserRepository
     {
-        Task<object> LoginUser(LoginRequestDTO loginRequest);
+        Task<User> LoginUser(LoginRequestDTO loginRequest);
         Task<object> GetAllUsers();
     }
 }

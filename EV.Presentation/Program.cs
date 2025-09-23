@@ -1,5 +1,6 @@
 using EV.Application.Helpers;
 using EV.Infrastructure.Configuration;
+using EV.Presentation.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,11 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
 
 //Configuration file
 builder.Services.AddInfranstructureToApplication(builder.Configuration);
+builder.Services.AuthenticationServices(builder);
+builder.Services.SwaggerServices(builder);
 
 //Mapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));

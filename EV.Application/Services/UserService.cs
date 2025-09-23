@@ -19,18 +19,6 @@ namespace EV.Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<ResponseDTO> LoginUser(LoginRequestDTO loginRequest)
-        {
-
-            var loginResult = await _unitOfWork.userRepository.LoginUser(loginRequest);
-
-            if (loginResult == null)
-            {
-                return new ResponseDTO("Account does not exist or login information is incorrect", 401, false);
-            } 
-                return new ResponseDTO("Login successful", 200, true, loginResult);       
-        }
-
         public async Task<ResponseDTO> GetAllUsers()
         {
             var users = await _unitOfWork.userRepository.GetAllUsers();
