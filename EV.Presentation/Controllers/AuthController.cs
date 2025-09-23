@@ -10,12 +10,12 @@ namespace EV.Presentation.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class AuthController : ControllerBase
     {
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
 
-        public UserController(IUserService userService, IMapper mapper)
+        public AuthController(IUserService userService, IMapper mapper)
         {
             _userService = userService;
             _mapper = mapper;
@@ -29,6 +29,12 @@ namespace EV.Presentation.Controllers
                 return new ResponseDTO("Email and password are required", 400, false);
             }
             return await _userService.LoginUser(loginRequestModel);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ResponseDTO>> Register([FromBody] RegisterRequestDTO registerDTO)
+        {
+            return Ok(registerDTO);
         }
     }
 }
