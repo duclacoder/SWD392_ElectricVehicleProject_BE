@@ -18,7 +18,7 @@ namespace EV.Infrastructure.Repositories
 
         public async Task<object> GetAllUsers()
         {
-            var users = await _context.Users.Where(u => u.RoleId != 1)
+            var users = await _context.Users.Where(u => u.RoleId != 3)
                 .Select(u => new
                 {
                     UserId = u.UsersId,
@@ -26,6 +26,7 @@ namespace EV.Infrastructure.Repositories
                     FullName = u.FullName,
                     Email = u.Email,
                     Phone = u.Phone,
+                    Role = u.Role,
                     CreatedAt = u.CreatedAt,
                     UpdatedAt = u.UpdatedAt,
                     Status = u.Status
