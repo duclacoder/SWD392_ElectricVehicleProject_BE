@@ -16,10 +16,10 @@ namespace EV.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<UserResponseDTO>> GetAllUsers()
+        public async Task<object> GetAllUsers()
         {
-            var users = await _context.Users
-                .Select(u => new UserResponseDTO
+            var users = await _context.Users.Where(u => u.RoleId != 1)
+                .Select(u => new
                 {
                     UserId = u.UsersId,
                     UserName = u.UserName,
