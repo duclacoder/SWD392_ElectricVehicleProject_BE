@@ -11,5 +11,7 @@ namespace EV.Application.Interfaces.ServiceInterfaces
     public interface IUserService
     {
         Task<ResponseDTO> LoginUser(LoginRequestDTO loginRequest);
+
+        Task<ResponseDTO> GetAllUsers();
     }
 }

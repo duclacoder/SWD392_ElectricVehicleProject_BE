@@ -15,6 +15,12 @@ namespace EV.Infrastructure.Repositories
             _context = context;
         }
 
+        public async Task<IEnumerable<User>> GetAllUsers()
+        {
+            var users = await _context.Users.ToListAsync();
+            return users;
+        }
+
         public async Task<object> LoginUser(LoginRequestDTO loginRequest)
         {
             var user = await _context.Users.Where(c => c.Email == loginRequest.Email && c.Password == loginRequest.Password)
