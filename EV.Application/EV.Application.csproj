@@ -12,6 +12,8 @@
 
 	<ItemGroup>
 	  <Folder Include="Helpers\" />
+	  <Folder Include="RequestDTOs\GuestRequestDTO\" />
+	  <Folder Include="RequestDTOs\StaffRequestDTO\" />
 	</ItemGroup>
 
 	<ItemGroup>

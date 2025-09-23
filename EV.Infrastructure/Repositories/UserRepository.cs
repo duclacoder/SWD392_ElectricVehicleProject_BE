@@ -1,6 +1,6 @@
 ﻿using EV.Application.Interfaces.RepositoryInterfaces;
 using EV.Application.RequestDTOs.UserRequestDTO;
-using EV.Application.ResponseDTOs.UserResponseDTO;
+using EV.Domain.CustomEntities;
 using EV.Domain.Entities;
 using EV.Infrastructure.DBContext;
 using Microsoft.EntityFrameworkCore;
@@ -16,21 +16,30 @@ namespace EV.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<object> GetAllUsers()
+        public async Task<int> GetTotalCountUsers()
+        {
+            return await _context.Users.Where(u => u.RoleId != 3).CountAsync();
+        }
+
+        public async Task<IEnumerable<AdminGetAllUsers>> GetAllUsers(int skip, int take)
         {
             var users = await _context.Users.Where(u => u.RoleId != 3)
-                .Select(u => new
+                .AsNoTracking()
+                .Select(u => new AdminGetAllUsers
                 {
-                    UserId = u.UsersId,
-                    u.UserName,
-                    u.FullName,
-                    u.Email,
-                    u.Phone,
-                    u.Role,
-                    u.CreatedAt,
-                    u.UpdatedAt,
-                    u.Status
+                    UsersId = u.UsersId,
+                    UserName = u.UserName,
+                    FullName = u.FullName,
+                    Email = u.Email,
+                    Phone = u.Phone,
+                    RoleId = u.RoleId,
+                    CreatedAt = u.CreatedAt,
+                    UpdatedAt = u.UpdatedAt,
+                    RoleName = u.Role.Name,
+                    Status = u.Status
                 })
+                .Skip(skip)
+                .Take(take)
                 .ToListAsync();
 
             return users;

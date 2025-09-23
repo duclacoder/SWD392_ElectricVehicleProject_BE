@@ -2,9 +2,8 @@
 using EV.Application.Interfaces.ServiceInterfaces;
 using EV.Application.RequestDTOs.UserRequestDTO;
 using EV.Application.ResponseDTOs;
-using EV.Presentation.RequestModels.UserRequests;
+using EV.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EV.Presentation.Controllers
@@ -15,27 +14,41 @@ namespace EV.Presentation.Controllers
     {
         private readonly IAuthService _authService;
         private readonly IMapper _mapper;
+        private readonly IJwtService _jwtService;
 
-        public AuthController(IAuthService authService, IMapper mapper)
+
+        public AuthController(IAuthService authService, IMapper mapper, IJwtService jwtService)
         {
             _authService = authService;
             _mapper = mapper;
+            _jwtService = jwtService;
         }
 
         [AllowAnonymous]
         [HttpPost("Login")]
-        public async Task<ActionResult<ResponseDTO>> LoginUser([FromBody] LoginRequestDTO loginRequestModel)
+        public async Task<ActionResult<ResponseDTO<string>>> LoginUser([FromBody] LoginRequestDTO loginRequestModel)
         {
             if (string.IsNullOrEmpty(loginRequestModel.Email) || string.IsNullOrEmpty(loginRequestModel.Password))
             {
-                return new ResponseDTO("Email and password are required", 400, false);
+                return BadRequest(new ResponseDTO<string>("Email and password are required", false, null));
             }
-            return await _authService.LoginUser(loginRequestModel);
+
+            var result = await _authService.LoginUser(loginRequestModel);
+
+            if (result.Result != null)
+            {
+                string token = _jwtService.GenerateToken(result.Result);
+                return Ok(new ResponseDTO<string>("Login successful", true, token));
+            }
+
+            return NotFound(new ResponseDTO<string>("Invalid Email or Password", false, null));
         }
+
+
 
         [AllowAnonymous]
         [HttpPost("Register")]
-        public async Task<ActionResult<ResponseDTO>> Register([FromBody] RegisterRequestDTO registerDTO)
+        public async Task<ActionResult> Register([FromBody] RegisterRequestDTO registerDTO)
         {
             return Ok(registerDTO);
         }

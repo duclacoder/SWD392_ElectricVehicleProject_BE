@@ -1,7 +1,9 @@
 ﻿using EV.Application.Interfaces.RepositoryInterfaces;
 using EV.Application.Interfaces.ServiceInterfaces;
+using EV.Application.RequestDTOs.AdminRequestDTO;
 using EV.Application.RequestDTOs.UserRequestDTO;
 using EV.Application.ResponseDTOs;
+using EV.Domain.CustomEntities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,16 +21,28 @@ namespace EV.Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<ResponseDTO> GetAllUsers()
+        public async Task<ResponseDTO<PagedResult<AdminGetAllUsers>>> GetAllUsers(GetAllUsersRequestDTO getAllUsersRequestDTO)
         {
-            var users = await _unitOfWork.userRepository.GetAllUsers();
+            var users = await _unitOfWork.userRepository.GetAllUsers((getAllUsersRequestDTO.Page - 1) * getAllUsersRequestDTO.PageSize
+                , getAllUsersRequestDTO.PageSize);
 
-            if (users == null)
+            var totalItems = await _unitOfWork.userRepository.GetTotalCountUsers();
+
+            var pagedResult = new PagedResult<AdminGetAllUsers>
             {
-                return new ResponseDTO("Can not find any user", 404, false);
+                Items = users.ToList(),
+                TotalItems = totalItems,
+                Page = getAllUsersRequestDTO.Page,
+                PageSize = getAllUsersRequestDTO.PageSize,
+                TotalPages = (int)Math.Ceiling((double)totalItems / getAllUsersRequestDTO.PageSize)
+            };
+
+            if (users.Count() == 0)
+            {
+                return new ResponseDTO<PagedResult<AdminGetAllUsers>>("Can not find any user", false, null);
             }
 
-            return new ResponseDTO("Get all users successfully", 200, true, users);
+            return new ResponseDTO<PagedResult<AdminGetAllUsers>>("Get all users successfully", true, pagedResult);
         }
     }
 }

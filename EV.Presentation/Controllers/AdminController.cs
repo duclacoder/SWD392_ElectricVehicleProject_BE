@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using EV.Application.Interfaces.ServiceInterfaces;
+using EV.Application.RequestDTOs.AdminRequestDTO;
 using EV.Application.ResponseDTOs;
+using EV.Domain.CustomEntities;
+using EV.Presentation.RequestModels.AdminRequests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -20,11 +23,16 @@ namespace EV.Presentation.Controllers
             _mapper = mapper;
         }
         
-        [HttpGet("GetAll")]
+        [HttpGet("GetAllUsers")]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<ResponseDTO>> GetAllUsers()
+        public async Task<ActionResult<ResponseDTO<PagedResult<AdminGetAllUsers>>>> GetAllUsers([FromQuery] GetAllUsersModel getAllUsersModel)
         {
-            var response = await _userService.GetAllUsers();
+            var getAllUserRequestDTO = _mapper.Map<GetAllUsersRequestDTO>(getAllUsersModel);
+
+            var response = await _userService.GetAllUsers(getAllUserRequestDTO);
+
+
+
             return Ok(response);
         }
     }

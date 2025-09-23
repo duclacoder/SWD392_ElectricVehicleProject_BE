@@ -6,18 +6,16 @@ using System.Threading.Tasks;
 
 namespace EV.Application.ResponseDTOs
 {
-    public class ResponseDTO
+    public class ResponseDTO<T>
     {
         public string Message { get; set; }
-        public int StatusCode { get; set; }
 
         public bool IsSuccess { get; set; }
-        public object Result { get; set; }
+        public T? Result { get; set; }
 
-        public ResponseDTO(string message, int statusCode, bool isSuccess, object result = null)
+        public ResponseDTO(string message, bool isSuccess, T? result)
         {
             Message = message;
-            StatusCode = statusCode;
             IsSuccess = isSuccess;
             Result = result;
         }
