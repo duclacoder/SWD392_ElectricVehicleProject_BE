@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace EV.Application.Interfaces.ServiceInterfaces
 {
-    public interface IUserService
+    public interface IAuthService
     {
-        Task<ResponseDTO> GetAllUsers();
+        Task<ResponseDTO> LoginUser(LoginRequestDTO loginRequest);
     }
 }

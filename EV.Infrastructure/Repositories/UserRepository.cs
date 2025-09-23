@@ -22,27 +22,30 @@ namespace EV.Infrastructure.Repositories
                 .Select(u => new
                 {
                     UserId = u.UsersId,
-                    UserName = u.UserName,
-                    FullName = u.FullName,
-                    Email = u.Email,
-                    Phone = u.Phone,
-                    Role = u.Role,
-                    CreatedAt = u.CreatedAt,
-                    UpdatedAt = u.UpdatedAt,
-                    Status = u.Status
+                    u.UserName,
+                    u.FullName,
+                    u.Email,
+                    u.Phone,
+                    u.Role,
+                    u.CreatedAt,
+                    u.UpdatedAt,
+                    u.Status
                 })
                 .ToListAsync();
 
             return users;
         }
 
-        public async Task<object> LoginUser(LoginRequestDTO loginRequest)
+        public async Task<User> LoginUser(LoginRequestDTO loginRequest)
         {
             var user = await _context.Users.Where(c => c.Email == loginRequest.Email && c.Password == loginRequest.Password)
-                .Select(u => new
+                .Select(u => new User
                 {
-                    UserId = u.UsersId,
-                    FullName = u.FullName
+                    UserName = u.UserName,
+                    FullName = u.FullName,
+                    Email = u.Email,
+                    ImageUrl = u.ImageUrl,
+                    Role = u.Role,
                 }).FirstOrDefaultAsync();
             if (user == null)
                 return null;
