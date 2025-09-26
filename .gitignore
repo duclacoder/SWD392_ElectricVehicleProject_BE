@@ -499,3 +499,4 @@ appsettings.*.json
 # Ignore Firebase credentials by specific names or patterns
 
 *-firebase-adminsdk-*.json
+/EV.Presentation/appsettings.json
