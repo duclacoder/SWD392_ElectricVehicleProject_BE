@@ -23,23 +23,23 @@ namespace EV.Infrastructure.Repositories
 
         public async Task<ResponseDTO<object>> IsExistAccount(RegisterRequestDTO accountValidationRequest)
         {
-            var user = await _context.Users.Where(u => u.UserName == accountValidationRequest.Username).Select(u => u.UserName).FirstOrDefaultAsync();
-            if (user != null)
-            {
-                return new ResponseDTO<object>("Tên tài khoản (Username) của bạn đã được sử dụng", false);
-            }
+            //var user = await _context.Users.Where(u => u.UserName == accountValidationRequest.Username).Select(u => u.UserName).FirstOrDefaultAsync();
+            //if (user != null)
+            //{
+            //    return new ResponseDTO<object>("Tên tài khoản (Username) của bạn đã được sử dụng", false);
+            //}
 
-            user = await _context.Users.Where(u => u.Email == accountValidationRequest.Email).Select(u => u.Email).FirstOrDefaultAsync();
+            var user = await _context.Users.Where(u => u.Email == accountValidationRequest.Email).Select(u => u.Email).FirstOrDefaultAsync();
             if (user != null)
             {
                 return new ResponseDTO<object>("Email của bạn đã được sử dụng", false);
             }
 
-            user = await _context.Users.Where(u => u.Phone == accountValidationRequest.Phone).Select(u => u.Phone).FirstOrDefaultAsync();
-            if (user != null)
-            {
-                return new ResponseDTO<object>("Số điện thoại của bạn đã được sử dụng", false);
-            }
+            //user = await _context.Users.Where(u => u.Phone == accountValidationRequest.Phone).Select(u => u.Phone).FirstOrDefaultAsync();
+            //if (user != null)
+            //{
+            //    return new ResponseDTO<object>("Số điện thoại của bạn đã được sử dụng", false);
+            //}
 
             return new ResponseDTO<object>("Tài khoản hợp lệ để đăng ký", true);
         }
@@ -65,10 +65,10 @@ namespace EV.Infrastructure.Repositories
         {
             User registerUser = new User()
             {
-                UserName = registerRequest.Username,
+                //UserName = registerRequest.Username,
                 Email = registerRequest.Email,
                 Password = registerRequest.Password,
-                Phone = registerRequest.Phone,
+                //Phone = registerRequest.Phone,
                 RoleId = 1,
             };
             if (registerUser == null) return false;

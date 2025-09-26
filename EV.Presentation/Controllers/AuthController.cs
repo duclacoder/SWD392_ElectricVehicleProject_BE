@@ -2,6 +2,7 @@
 using EV.Application.Interfaces.ServiceInterfaces;
 using EV.Application.RequestDTOs.UserRequestDTO;
 using EV.Application.ResponseDTOs;
+using EV.Application.Services;
 using EV.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,13 +16,16 @@ namespace EV.Presentation.Controllers
         private readonly IAuthService _authService;
         private readonly IMapper _mapper;
         private readonly IJwtService _jwtService;
+        private readonly IRedisService _redisService;
+        private readonly IEmailService _emailService;
 
-
-        public AuthController(IAuthService authService, IMapper mapper, IJwtService jwtService)
+        public AuthController(IAuthService authService, IMapper mapper, IJwtService jwtService, IRedisService redisService, IEmailService emailService)
         {
             _authService = authService;
             _mapper = mapper;
             _jwtService = jwtService;
+            _redisService = redisService;
+            _emailService = emailService;
         }
 
         [AllowAnonymous]
@@ -46,10 +50,10 @@ namespace EV.Presentation.Controllers
         [HttpPost("Register")]
         public async Task<ActionResult<ResponseDTO<object>>> Register([FromBody] RegisterRequestDTO registerDTO)
         {
-            if (string.IsNullOrWhiteSpace(registerDTO.Username) ||
+            if (//string.IsNullOrWhiteSpace(registerDTO.Username) ||
                 string.IsNullOrWhiteSpace(registerDTO.Email) ||
                 string.IsNullOrWhiteSpace(registerDTO.Password) ||
-                string.IsNullOrWhiteSpace(registerDTO.Phone) ||
+                //string.IsNullOrWhiteSpace(registerDTO.Phone) ||
                 string.IsNullOrWhiteSpace(registerDTO.confirmPassword))
             {
                 return BadRequest(new ResponseDTO<object>("Thông tin nhập vào không được để trống", false));
@@ -71,36 +75,85 @@ namespace EV.Presentation.Controllers
                 return BadRequest(new ResponseDTO<object>(check.Message, false));
             }
 
-            var result = await _authService.Register(registerDTO);
-            if (!result.IsSuccess)
+            var otp = new Random().Next(100000, 999999).ToString();
+            await _redisService.StoreDataAsync(registerDTO.Email, otp, TimeSpan.FromMinutes(5));
+
+            var body = await _emailService.LoadTemplateAsync("OtpTemplate.html", new Dictionary<string, string>
             {
-                return BadRequest(new ResponseDTO<object>(result.Message, false));
-            }
+                { "OTP_CODE", otp }
+            });
 
-            return Ok(new ResponseDTO<object>(result.Message, true, result.Result));
+            await _emailService.SendMailAsync(registerDTO.Email, "Your OTP Code", body);
+
+            //await _emailService.SendMailAsync(registerDTO.Email, "Your OTP Code", $"Your OTP is: {otp}");
+
+            //var result = await _authService.Register(registerDTO);
+            //if (!result.IsSuccess)
+            //{
+            //    return BadRequest(new ResponseDTO<object>(result.Message, false));
+            //}
+
+            //return Ok(new ResponseDTO<object>(result.Message, true, result.Result));
+            return Ok(new ResponseDTO<string>("OTP sent, please check your email", true));
         }
 
 
 
+        //[AllowAnonymous]
+        //[HttpPost("SendOTP")]
+        //public async Task<ActionResult<ResponseDTO<string>>> SendOTP([FromQuery] string email)
+        //{
+        //    var otp = new Random().Next(100000, 999999).ToString();
+
+        //    await _redisService.StoreDataAsync(email, otp, TimeSpan.FromMinutes(5));
+
+        //    var body = await _emailService.LoadTemplateAsync("OtpTemplate.html", new Dictionary<string, string>
+        //    {
+        //        { "OTP_CODE", otp }
+        //    });
+
+        //    await _emailService.SendMailAsync(email, "Your OTP Code", body);
+
+        //    await _emailService.SendMailAsync(email, "Your OTP Code", $"Your OTP is: {otp}");
+
+        //    return Ok(new ResponseDTO<string>("OTP sent, please check your email", true));
+        //}
+
         [AllowAnonymous]
-        [HttpPost("SendOTP")]
-        public async Task<ActionResult<ResponseDTO<string>>> SendOTP([FromQuery] string email)
+        [HttpPost("Confirm_OTP")]
+        public async Task<ActionResult<ResponseDTO<string>>> ConfirmOTP([FromBody] RegisterRequestDTO registerDTO, [FromQuery] string otpCode)
         {
-            return Ok(new ResponseDTO<string>("", true, ""));
+            var valid = await _redisService.VerifyDataAsync(registerDTO.Email, otpCode);
+            if (!valid)
+                return BadRequest(new ResponseDTO<string>("Invalid or expired OTP", false));
+            else
+            {
+                await _redisService.DeleteDataAsync(registerDTO.Email);
+
+                var result = await _authService.Register(registerDTO);
+                if (!result.IsSuccess)
+                {
+                    return BadRequest(new ResponseDTO<object>(result.Message, false));
+                }                
+                return Ok(new ResponseDTO<object>(result.Message, true, result.Result));
+            }            
+
+            //return Ok(new ResponseDTO<string>("OTP confirmed", true, ""));
         }
 
         [AllowAnonymous]
-        [HttpGet("ConfirmOTP")]
-        public async Task<ActionResult<ResponseDTO<string>>> ConfirmOTP([FromQuery] string otpCode)
+        [HttpPost("Resend_OTP")]
+        public async Task<ActionResult<ResponseDTO<string>>> ResendOTP([FromQuery] string email)
         {
-            return Ok();
-        }
+            var otp = new Random().Next(100000, 999999).ToString();
+            await _redisService.StoreDataAsync(email, otp, TimeSpan.FromMinutes(5));
+            var body = await _emailService.LoadTemplateAsync("OtpTemplate.html", new Dictionary<string, string>
+            {
+                { "OTP_CODE", otp }
+            });
+            await _emailService.SendMailAsync(email, "Your OTP Code", body);
 
-        [AllowAnonymous]
-        [HttpGet("ResendOTP")]
-        public async Task<ActionResult<ResponseDTO<string>>> ResendOTP()
-        {
-            return Ok();
+            return Ok(new ResponseDTO<string>("OTP resent", true, ""));
         }
     }
 }

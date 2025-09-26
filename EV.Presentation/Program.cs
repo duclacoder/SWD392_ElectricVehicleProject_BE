@@ -15,6 +15,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddInfranstructureToApplication(builder.Configuration);
 builder.Services.AuthenticationServices(builder);
 builder.Services.SwaggerServices(builder);
+builder.Services.RedisService(builder.Configuration);
 
 //Mapper
 builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);

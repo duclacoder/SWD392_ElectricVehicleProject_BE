@@ -30,6 +30,7 @@ namespace EV.Infrastructure.Configuration
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IRedisService, RedisService>();
 
 
             //Service injection
