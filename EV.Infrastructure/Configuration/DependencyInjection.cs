@@ -28,6 +28,8 @@ namespace EV.Infrastructure.Configuration
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IAuthRepository, AuthRepository>();
+            services.AddScoped<IEmailService, EmailService>();
 
 
             //Service injection

@@ -21,6 +21,8 @@ namespace EV.Infrastructure
         private IUserRepository _userRepository;
         public IUserRepository userRepository => _userRepository ??= new UserRepository(_context);
 
+        private IAuthRepository _authRepository;
+        public IAuthRepository authRepository => _authRepository ??= new AuthRepository(_context);
 
 
 

@@ -6,29 +6,40 @@ using EV.Domain.Entities;
 
 namespace EV.Application.Services
 {
-    public class AuthService : IAuthService
+    public class AuthService : IAuthService 
     {
         private readonly IUnitOfWork _unitOfWork;
-        //private readonly IJwtService _jwtService;
+        private readonly IJwtService _jwtService;
 
-        public AuthService(IUnitOfWork unitOfWork)
+        public AuthService(IUnitOfWork unitOfWork, IJwtService jwtService)
         {
             _unitOfWork = unitOfWork;
-
+            _jwtService = jwtService;
         }
 
-        public async Task<ResponseDTO<User>> LoginUser(LoginRequestDTO loginRequest)
+        public async Task<ResponseDTO<object>> IsValidationAccount(RegisterRequestDTO registerDTO)
         {
-            User loginResult = (User)await _unitOfWork.userRepository.LoginUser(loginRequest);
-
-
-            //string token = _jwtService.GenerateToken(loginResult);
+            ResponseDTO<object> result = await _unitOfWork.authRepository.IsExistAccount(registerDTO);
+            return result;
+        }
+        public async Task<ResponseDTO<string>> LoginUser(LoginRequestDTO loginRequest)
+        {
+            var loginResult = await _unitOfWork.authRepository.LoginUser(loginRequest);
 
             if (loginResult == null)
             {
-                return new ResponseDTO<User>("Account does not exist or login information is incorrect", false, null);
+                return new ResponseDTO<string>("Account does not exist or login information is incorrect",false, null);
             }
-            return new ResponseDTO<User>("Login successful", true, loginResult);
+
+            string token = _jwtService.GenerateToken(loginResult);
+            return new ResponseDTO<string>("Login successful", true, token);
+        }
+
+        public async Task<ResponseDTO<bool>> Register(RegisterRequestDTO registerRequest)
+        {
+            if (await _unitOfWork.authRepository.Register(registerRequest))
+                return new ResponseDTO<bool>("Register Successful", true);
+            else return new ResponseDTO<bool>("Register fail", false);
         }
     }
 }

@@ -45,23 +45,6 @@ namespace EV.Infrastructure.Repositories
             return users;
         }
 
-        public async Task<User> LoginUser(LoginRequestDTO loginRequest)
-        {
-            var user = await _context.Users.Where(c => c.Email == loginRequest.Email && c.Password == loginRequest.Password)
-                .Select(u => new User
-                {
-                    UserName = u.UserName,
-                    FullName = u.FullName,
-                    Email = u.Email,
-                    ImageUrl = u.ImageUrl,
-                    Role = u.Role,
-                }).FirstOrDefaultAsync();
-            if (user == null)
-                return null;
-            else
-                return user;
-        }
-
         public async Task<User> GetUserById(int id)
         {
             return await _context.Users.FindAsync(id);

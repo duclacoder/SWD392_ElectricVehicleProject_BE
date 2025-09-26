@@ -37,20 +37,70 @@ namespace EV.Presentation.Controllers
 
             if (result.Result != null)
             {
-                string token = _jwtService.GenerateToken(result.Result);
-                return Ok(new ResponseDTO<string>("Login successful", true, token));
+                return Ok(new ResponseDTO<string>("Login successful", true, result.Result));
+            }
+            return NotFound(new ResponseDTO<string>("Invalid Email or Password", false, null));
+        }
+
+        [AllowAnonymous]
+        [HttpPost("Register")]
+        public async Task<ActionResult<ResponseDTO<object>>> Register([FromBody] RegisterRequestDTO registerDTO)
+        {
+            if (string.IsNullOrWhiteSpace(registerDTO.Username) ||
+                string.IsNullOrWhiteSpace(registerDTO.Email) ||
+                string.IsNullOrWhiteSpace(registerDTO.Password) ||
+                string.IsNullOrWhiteSpace(registerDTO.Phone) ||
+                string.IsNullOrWhiteSpace(registerDTO.confirmPassword))
+            {
+                return BadRequest(new ResponseDTO<object>("Thông tin nhập vào không được để trống", false));
             }
 
-            return NotFound(new ResponseDTO<string>("Invalid Email or Password", false, null));
+            if (registerDTO.Password != registerDTO.confirmPassword)
+            {
+                return BadRequest(new ResponseDTO<object>("Mật khẩu xác nhận không đúng", false));
+            }
+
+            if (!registerDTO.Email.Contains("@"))
+            {
+                return BadRequest(new ResponseDTO<object>("Invalid email format", false));
+            }
+
+            var check = await _authService.IsValidationAccount(registerDTO);
+            if (!check.IsSuccess)
+            {
+                return BadRequest(new ResponseDTO<object>(check.Message, false));
+            }
+
+            var result = await _authService.Register(registerDTO);
+            if (!result.IsSuccess)
+            {
+                return BadRequest(new ResponseDTO<object>(result.Message, false));
+            }
+
+            return Ok(new ResponseDTO<object>(result.Message, true, result.Result));
         }
 
 
 
         [AllowAnonymous]
-        [HttpPost("Register")]
-        public async Task<ActionResult> Register([FromBody] RegisterRequestDTO registerDTO)
+        [HttpPost("SendOTP")]
+        public async Task<ActionResult<ResponseDTO<string>>> SendOTP([FromQuery] string email)
         {
-            return Ok(registerDTO);
+            return Ok(new ResponseDTO<string>("", true, ""));
+        }
+
+        [AllowAnonymous]
+        [HttpGet("ConfirmOTP")]
+        public async Task<ActionResult<ResponseDTO<string>>> ConfirmOTP([FromQuery] string otpCode)
+        {
+            return Ok();
+        }
+
+        [AllowAnonymous]
+        [HttpGet("ResendOTP")]
+        public async Task<ActionResult<ResponseDTO<string>>> ResendOTP()
+        {
+            return Ok();
         }
     }
 }
