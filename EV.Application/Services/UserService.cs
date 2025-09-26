@@ -104,5 +104,61 @@ namespace EV.Application.Services
 
             return new ResponseDTO<bool>("User deleted successfully", true, true);
         }
+
+        public async Task<ResponseDTO<GetUserProfileById>> GetUserProfileById(int id)
+        {
+            var userProfile = await _unitOfWork.userRepository.GetUserProfileById(id);
+
+            if (userProfile == null)
+            {
+                return new ResponseDTO<GetUserProfileById>("User profile not found", false, null);
+            }
+            return new ResponseDTO<GetUserProfileById>("User profile found", true, userProfile);
+        }
+
+        public async Task<ResponseDTO<UserProfileUpdate>> UserUpdateProfile(ProfileUpdateRequestDTO profileUpdateRequestDTO)
+        {
+            var findUser = await _unitOfWork.userRepository.GetUserById(profileUpdateRequestDTO.Id);
+
+            if (findUser == null)
+            {
+                return new ResponseDTO<UserProfileUpdate>("User not found", false, null);
+            }
+
+            if(profileUpdateRequestDTO.FullName != null)
+            {
+                findUser.FullName = profileUpdateRequestDTO.FullName;
+            }
+
+            if (profileUpdateRequestDTO.Email != null)
+            {
+                findUser.Email = profileUpdateRequestDTO.Email;
+            }
+
+            if (profileUpdateRequestDTO.Phone != null)
+            {
+                findUser.Phone = profileUpdateRequestDTO.Phone;
+            }
+
+            if (profileUpdateRequestDTO.UserName != null)
+            {
+                findUser.UserName = profileUpdateRequestDTO.UserName;
+            }
+
+            findUser.UpdatedAt = DateTime.Now;
+
+            string roleName = findUser.Role.Name;
+
+            _unitOfWork.GetGenericRepository<User>().PrepareUpdate(findUser);
+
+            await _unitOfWork.SaveChangesAsync();
+
+            var updatedUser = _mapper.Map<UserProfileUpdate>(findUser);
+
+            updatedUser.RoleName = roleName;
+
+            return new ResponseDTO<UserProfileUpdate>("Update Successful", true, updatedUser);
+        }
+
     }
 }

@@ -35,13 +35,13 @@ namespace EV.Presentation.Controllers
             return Ok(response);
         }
 
-        [HttpGet("GetUserById/{id}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<ResponseDTO<User>>> GetUserById(int id)
-        {
-            var response = await _userService.GetUserById(id);
-            return Ok(response);
-        }
+        //[HttpGet("GetUserById/{id}")]
+        //[Authorize(Roles = "Admin,Staff,Member")]
+        //public async Task<ActionResult<ResponseDTO<User>>> GetUserById(int id)
+        //{
+        //    var response = await _userService.GetUserById(id);
+        //    return Ok(response);
+        //}
 
         [HttpPost("CreateUser")]
         [Authorize(Roles = "Admin")]

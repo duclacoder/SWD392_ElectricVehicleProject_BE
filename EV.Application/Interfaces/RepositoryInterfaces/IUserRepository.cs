@@ -12,5 +12,6 @@ namespace EV.Application.Interfaces.RepositoryInterfaces
         Task<User> CreateUser(User user);
         Task<User> UpdateUser(User user);
         Task<bool> DeleteUser(int id);
+        Task<GetUserProfileById?> GetUserProfileById(int id);
     }
 }
