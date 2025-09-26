@@ -33,6 +33,7 @@ namespace EV.Application.Services
                 new Claim("fullName", user.FullName),
                 new Claim("userName", user.UserName),
                 new Claim("imageUrl", user.ImageUrl ?? string.Empty),
+                new Claim("phone", user.Phone ?? string.Empty),
                 new Claim("role", user.Role.Name),
             };
 
