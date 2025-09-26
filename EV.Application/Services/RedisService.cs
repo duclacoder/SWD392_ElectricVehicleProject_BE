@@ -47,7 +47,8 @@ namespace EV.Application.Services
         public async Task<bool> VerifyDataAsync(string key, string dataString)
         {
             var otp = await _redis.StringGetAsync(key);
-            return otp.HasValue && otp.Equals(dataString);
+            return otp.HasValue && otp.ToString() == dataString;
+
         }
     }
 }

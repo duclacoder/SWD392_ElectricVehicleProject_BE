@@ -28,12 +28,12 @@ namespace EV.Application.Services
             if (user == null) return null;
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.UsersId.ToString()),
+                //new Claim(JwtRegisteredClaimNames.Sub, user.UsersId.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim("fullName", user.FullName),
-                new Claim("userName", user.UserName),
+                //new Claim("fullName", user.FullName),
+                //new Claim("userName", user.UserName),
                 new Claim("imageUrl", user.ImageUrl ?? string.Empty),
-                new Claim("phone", user.Phone ?? string.Empty),
+                //new Claim("phone", user.Phone ?? string.Empty),
                 new Claim("role", user.Role.Name),
             };
 

@@ -10,7 +10,6 @@ namespace EV.Application.Interfaces.ServiceInterfaces
     {
         Task StoreDataAsync(string key, string keyString, TimeSpan expiration);
         Task<long> StoreCountAsync(string key,long count, TimeSpan expiration);
-
         Task<bool> VerifyDataAsync(string key, string dataString);
         Task<bool> IsExistKeyAsync(string key);
         Task DeleteDataAsync(string key);
