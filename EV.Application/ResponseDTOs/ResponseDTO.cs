@@ -19,5 +19,11 @@ namespace EV.Application.ResponseDTOs
             IsSuccess = isSuccess;
             Result = result;
         }
+
+        public ResponseDTO(string message, bool isSuccess)
+        {
+            Message = message;
+            IsSuccess = isSuccess;
+        }
     }
 }
