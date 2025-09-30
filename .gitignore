@@ -493,8 +493,9 @@ $RECYCLE.BIN/
 MV.Tests/coveragereport/
 
 # and 'appsettings.Production.json' but keeps 'appsettings.json'.
-appsettings.*.json
 **/appsettings.json
+appsettings.*.json
+
 
 # Ignore Firebase credentials by specific names or patterns
 

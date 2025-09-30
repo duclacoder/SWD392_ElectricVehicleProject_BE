@@ -18,5 +18,7 @@ namespace EV.Application.Interfaces.ServiceInterfaces
         Task<ResponseDTO<User>> CreateUser(CreateUserRequestDTO createUserRequestDTO);
         Task<ResponseDTO<User>> UpdateUser(int id, UpdateUserRequestDTO updateUserRequestDTO);
         Task<ResponseDTO<bool>> DeleteUser(int id);
+        Task<ResponseDTO<UserProfileUpdate>> UserUpdateProfile(ProfileUpdateRequestDTO profileUpdateRequestDTO);
+        Task<ResponseDTO<GetUserProfileById>> GetUserProfileById(int id);
     }
 }

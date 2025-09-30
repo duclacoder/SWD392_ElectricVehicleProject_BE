@@ -45,26 +45,34 @@ namespace EV.Infrastructure.Repositories
             return users;
         }
 
-        public async Task<User> LoginUser(LoginRequestDTO loginRequest)
+        public async Task<User> GetUserById(int id)
         {
-            var user = await _context.Users.Where(c => c.Email == loginRequest.Email && c.Password == loginRequest.Password)
-                .Select(u => new User
+            return await _context.Users
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u => u.UsersId == id);
+        }
+
+
+        public async Task<GetUserProfileById?> GetUserProfileById(int id)
+        {
+            var result = await _context.Users
+                .Select(u => new GetUserProfileById
                 {
+                    UsersId = u.UsersId,
                     UserName = u.UserName,
                     FullName = u.FullName,
                     Email = u.Email,
                     ImageUrl = u.ImageUrl,
-                    Role = u.Role,
-                }).FirstOrDefaultAsync();
-            if (user == null)
-                return null;
-            else
-                return user;
-        }
+                    Phone = u.Phone,
+                    RoleId = u.RoleId,
+                    RoleName = u.Role.Name,
+                    CreatedAt = u.CreatedAt,
+                    UpdatedAt = u.UpdatedAt,
+                    Status = u.Status
+                })
+                .FirstOrDefaultAsync(u => u.UsersId == id);
 
-        public async Task<User> GetUserById(int id)
-        {
-            return await _context.Users.FindAsync(id);
+            return result;
         }
 
         public async Task<User> CreateUser(User user)
@@ -92,6 +100,11 @@ namespace EV.Infrastructure.Repositories
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task UpdateUserProfile(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
         }
     }
 }

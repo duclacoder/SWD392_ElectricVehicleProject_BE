@@ -6,6 +6,8 @@ namespace EV.Application.Interfaces.ServiceInterfaces
 {
     public interface IAuthService
     {
-        Task<ResponseDTO<User>> LoginUser(LoginRequestDTO loginRequest);
+        Task<ResponseDTO<string>> LoginUser(LoginRequestDTO loginRequest);
+        Task<ResponseDTO<object>> IsValidationAccount(RegisterRequestDTO accountValidationRequest); 
+        Task<ResponseDTO<bool>> Register(RegisterRequestDTO registerRequest);
     }
 }
