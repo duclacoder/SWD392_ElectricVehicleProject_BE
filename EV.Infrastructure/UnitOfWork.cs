@@ -24,6 +24,9 @@ namespace EV.Infrastructure
         private IAuthRepository _authRepository;
         public IAuthRepository authRepository => _authRepository ??= new AuthRepository(_context);
 
+        private ICarRepository _carRepository;
+        public ICarRepository carRepository => _carRepository ??= new CarRepository(_context);
+
         private IUserPackagesRepository _userPackagesRepository;
         public IUserPackagesRepository userPackagesRepository =>_userPackagesRepository ??= new UserPackagesRepository(_context);
 

@@ -13,6 +13,8 @@ namespace EV.Application.Interfaces.RepositoryInterfaces
 
         IUserRepository userRepository { get; }
 
+        ICarRepository carRepository { get; }
+
         IAuthRepository authRepository { get; }
 
         IUserPackagesRepository userPackagesRepository { get; }

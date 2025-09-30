@@ -27,6 +27,11 @@ namespace EV.Presentation.Controllers
 
             var result = await _userService.UserUpdateProfile(updateProfileRequestDTO);
 
+            if(result.Result == null)
+            {
+                return BadRequest(result);
+            }
+
             return Ok(result);
         }
 
