@@ -14,6 +14,10 @@ namespace EV.Application.Interfaces.RepositoryInterfaces
         IUserRepository userRepository { get; }
 
         IAuthRepository authRepository { get; }
+
+        IUserPackagesRepository userPackagesRepository { get; }
+
+        IUserPostsRepository userPostsRepository { get; }
         //Single commit point
         Task<int> SaveChangesAsync();
     }
