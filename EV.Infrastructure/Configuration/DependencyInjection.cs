@@ -31,7 +31,8 @@ namespace EV.Infrastructure.Configuration
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IRedisService, RedisService>();
-
+            services.AddScoped<IUserPackagesServices, UserPackagesService>();
+            services.AddScoped<IUserPostsService, UserPostService>();
 
             //Service injection
             services.AddScoped<IUserService, UserService>();
