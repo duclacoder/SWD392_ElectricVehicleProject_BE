@@ -27,7 +27,11 @@ namespace EV.Infrastructure
         private ICarRepository _carRepository;
         public ICarRepository carRepository => _carRepository ??= new CarRepository(_context);
 
+        private IUserPackagesRepository _userPackagesRepository;
+        public IUserPackagesRepository userPackagesRepository =>_userPackagesRepository ??= new UserPackagesRepository(_context);
 
+        private IUserPostsRepository _userPostsRepository;
+        public IUserPostsRepository userPostsRepository => _userPostsRepository ??= new UserPostRepository(_context);
 
         public IGenericRepository<T> GetGenericRepository<T>() where T : class
         {
