@@ -32,6 +32,11 @@ namespace EV.Presentation.Controllers
 
             var response = await _userService.GetAllUsers(getAllUserRequestDTO);
 
+            if(response.Result == null)
+            {
+                return NotFound(response);
+            }
+
             return Ok(response);
         }
 

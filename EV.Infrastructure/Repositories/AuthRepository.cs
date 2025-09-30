@@ -49,6 +49,7 @@ namespace EV.Infrastructure.Repositories
             var user = await _context.Users.Where(c => c.Email == loginRequest.Email && c.Password == loginRequest.Password)
                 .Select(u => new User
                 {
+                    UsersId = u.UsersId,
                     UserName = u.UserName,
                     FullName = u.FullName,
                     Email = u.Email,
