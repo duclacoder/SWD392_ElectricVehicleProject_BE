@@ -1,4 +1,5 @@
-﻿using EV.Application.Interfaces.RepositoryInterfaces;
+﻿using EV.Application.Helpers;
+using EV.Application.Interfaces.RepositoryInterfaces;
 using EV.Application.Interfaces.ServiceInterfaces;
 using EV.Application.Services;
 using EV.Infrastructure.DBContext;
@@ -31,10 +32,13 @@ namespace EV.Infrastructure.Configuration
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IRedisService, RedisService>();
+            services.AddScoped<ICarRepository, CarRepository>();
 
 
             //Service injection
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ICarService, CarService>();  
+            services.AddScoped<IModelStateCheck, ModelStateCheck>();
 
             return services;
         }
