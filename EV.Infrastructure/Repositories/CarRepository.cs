@@ -98,5 +98,33 @@ namespace EV.Infrastructure.Repositories
                 .FirstOrDefaultAsync(v => v.UserId == userId && v.VehiclesId == carId);
             return carDetails;
         }
+
+        public async Task<AuctionVehicleDetails?> GetAuctionVehicleDetailsById(int carId)
+        {
+            var vehicles = await _context.Vehicles
+                                         .AsNoTracking()
+                                         .Include(a => a.VehicleImages)
+                                         .Where(a => a.VehiclesId == carId)
+                                         .Select(a => new AuctionVehicleDetails
+                                         {
+                                             VehiclesId = a.VehiclesId,
+                                             VehicleName = a.VehicleName,
+                                             Brand = a.Brand,
+                                             Model = a.Model,
+                                             Year = a.Year,
+                                             Km = a.Year,
+                                             Color = a.Color,
+                                             Seats = a.Seats,
+                                             BodyType = a.BodyType,
+                                             FastChargingSupport = a.FastChargingSupport,
+                                             Price = a.Price,
+                                             Currency = a.Currency,
+                                             Status = a.Status,
+                                             WarrantyMonths = a.WarrantyMonths,
+                                             VehicleImages = a.VehicleImages.Select(i => i.ImageUrl).ToList()
+                                         })
+                                         .FirstOrDefaultAsync();
+            return vehicles;
+        }
     }
 }

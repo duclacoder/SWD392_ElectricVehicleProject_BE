@@ -239,5 +239,24 @@ namespace EV.Application.Services
 
 
         }
+
+        public async Task<ResponseDTO<AuctionVehicleDetails?>> GetCarById(int carId)
+        {
+            try 
+            {
+                var car = await _unitOfWork.carRepository.GetAuctionVehicleDetailsById(carId);
+
+                if (car == null)
+                {
+                    return new ResponseDTO<AuctionVehicleDetails?>("Car not found", false, null);
+                }
+
+                return new ResponseDTO<AuctionVehicleDetails?>("Get car successfully", true, car);
+            }
+            catch(Exception ex)
+            {
+                return new ResponseDTO<AuctionVehicleDetails?>($"Error retrieving car: {ex.Message}", false, null);
+            }
+        }
     }
 }

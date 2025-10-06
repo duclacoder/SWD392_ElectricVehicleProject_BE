@@ -35,7 +35,7 @@ namespace EV.Infrastructure.Configuration
             services.AddScoped<IUserPackagesServices, UserPackagesService>();
             services.AddScoped<IUserPostsService, UserPostService>();
             services.AddScoped<ICarRepository, CarRepository>();
-
+            services.AddScoped<IAuctionService, AuctionService>();
 
             //Service injection
             services.AddScoped<IUserService, UserService>();
