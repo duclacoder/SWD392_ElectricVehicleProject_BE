@@ -17,5 +17,8 @@ namespace EV.Application.Interfaces.RepositoryInterfaces
         Task<UserCarDetails> UserCarViewDetailsById(int userId, int carId);
 
         Task<Vehicle?> GetCarForUpdate(int userId, int carId);
+
+
+        Task<AuctionVehicleDetails?> GetAuctionVehicleDetailsById(int carId);
     }
 }
