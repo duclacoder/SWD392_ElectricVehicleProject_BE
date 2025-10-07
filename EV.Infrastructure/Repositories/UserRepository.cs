@@ -106,5 +106,10 @@ namespace EV.Infrastructure.Repositories
         {
             var user = await _context.Users.FindAsync(id);
         }
+
+        public async Task<User> GetUserByEmail(string email)
+        {
+            return await _context.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.Email == email);
+        }
     }
 }
