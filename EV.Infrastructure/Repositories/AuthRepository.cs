@@ -4,11 +4,6 @@ using EV.Application.ResponseDTOs;
 using EV.Domain.Entities;
 using EV.Infrastructure.DBContext;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EV.Infrastructure.Repositories
 {
@@ -21,27 +16,50 @@ namespace EV.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<ResponseDTO<object>> IsExistAccount(RegisterRequestDTO accountValidationRequest)
+        public async Task<bool> GoogleRegister(string email, string password)
         {
-            //var user = await _context.Users.Where(u => u.UserName == accountValidationRequest.Username).Select(u => u.UserName).FirstOrDefaultAsync();
-            //if (user != null)
-            //{
-            //    return new ResponseDTO<object>("Tên tài khoản (Username) của bạn đã được sử dụng", false);
-            //}
+            User registerUser = new User()
+            {
+                Email = email,
+                Password = password,
+                RoleId = 1,
+            };
+            if (registerUser == null) return false;
+            else
+            {
+                await _context.Users.AddAsync(registerUser);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+        }
 
-            var user = await _context.Users.Where(u => u.Email == accountValidationRequest.Email).Select(u => u.Email).FirstOrDefaultAsync();
+        public async Task<ResponseDTO<object>> IsExistAccount(string email)
+        {
+            var user = await _context.Users.Where(u => u.Email == email).Select(u => u.Email).FirstOrDefaultAsync();
             if (user != null)
             {
                 return new ResponseDTO<object>("Email của bạn đã được sử dụng", false);
             }
 
-            //user = await _context.Users.Where(u => u.Phone == accountValidationRequest.Phone).Select(u => u.Phone).FirstOrDefaultAsync();
-            //if (user != null)
-            //{
-            //    return new ResponseDTO<object>("Số điện thoại của bạn đã được sử dụng", false);
-            //}
-
             return new ResponseDTO<object>("Tài khoản hợp lệ để đăng ký", true);
+        }
+
+        public async Task<User> LoginGoogle(string Email)
+        {
+            var user = await _context.Users.Where(c => c.Email == Email)
+            .Select(u => new User
+            {
+                UsersId = u.UsersId,
+                UserName = u.UserName,
+                FullName = u.FullName,
+                Email = u.Email,
+                ImageUrl = u.ImageUrl,
+                Role = u.Role,
+            }).FirstOrDefaultAsync();
+            if (user == null)
+                return null;
+            else
+                return user;
         }
 
         public async Task<User> LoginUser(LoginRequestDTO loginRequest)
@@ -66,10 +84,8 @@ namespace EV.Infrastructure.Repositories
         {
             User registerUser = new User()
             {
-                //UserName = registerRequest.Username,
                 Email = registerRequest.Email,
                 Password = registerRequest.Password,
-                //Phone = registerRequest.Phone,
                 RoleId = 1,
             };
             if (registerUser == null) return false;
