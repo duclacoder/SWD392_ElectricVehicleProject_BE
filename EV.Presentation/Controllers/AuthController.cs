@@ -121,8 +121,8 @@ namespace EV.Presentation.Controllers
         //}
 
         [AllowAnonymous]
-        [HttpPost("Confirm_OTP")]
-        public async Task<ActionResult<ResponseDTO<string>>> ConfirmOTP([FromBody] RegisterRequestDTO registerDTO, [FromQuery] string otpCode)
+        [HttpPost("Confirm_OTP_Register")]
+        public async Task<ActionResult<ResponseDTO<string>>> ConfirmOTPRegister([FromBody] RegisterRequestDTO registerDTO, [FromQuery] string otpCode)
         {
             var valid = await _redisService.VerifyDataAsync(registerDTO.Email, otpCode);
             if (!valid)
@@ -141,6 +141,23 @@ namespace EV.Presentation.Controllers
 
             //return Ok(new ResponseDTO<string>("OTP confirmed", true, ""));
         }
+
+        //[AllowAnonymous]
+        //[HttpPost("Confirm_OTP_Google_Register")]
+        //public async Task<ActionResult<ResponseDTO<string>>> ConfirmOTPGoogleRegister([FromBody] GoogleRegisterRequest registerDTO, [FromQuery] string otpCode)
+        //{
+        //    var valid = await _redisService.VerifyDataAsync(registerDTO.Email, otpCode);
+        //    if (!valid)
+        //        return BadRequest(new ResponseDTO<string>("Invalid or expired OTP", false));
+
+        //    await _redisService.DeleteDataAsync(registerDTO.Email);
+
+        //    var result = await _authService.ConfirmGoogleRegisterAsync(registerDTO.Email, registerDTO.Password);
+        //    if (!result.IsSuccess)
+        //        return BadRequest(result);
+
+        //    return Ok(result);
+        //}
 
         [AllowAnonymous]
         [HttpPost("Resend_OTP")]

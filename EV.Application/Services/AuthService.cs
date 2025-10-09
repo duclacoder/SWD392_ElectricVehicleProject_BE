@@ -2,7 +2,9 @@
 using EV.Application.Interfaces.ServiceInterfaces;
 using EV.Application.RequestDTOs.UserRequestDTO;
 using EV.Application.ResponseDTOs;
+using EV.Domain.Entities;
 using Google.Apis.Auth;
+using Org.BouncyCastle.Crypto.Generators;
 
 namespace EV.Application.Services
 {
@@ -42,7 +44,10 @@ namespace EV.Application.Services
         public async Task<ResponseDTO<bool>> Register(RegisterRequestDTO registerRequest)
         {
             if (await _unitOfWork.authRepository.Register(registerRequest))
+            {
+                await _unitOfWork.SaveChangesAsync();
                 return new ResponseDTO<bool>("Register Successful", true);
+            }               
             else return new ResponseDTO<bool>("Register fail", false);
         }
 
@@ -51,24 +56,23 @@ namespace EV.Application.Services
             return new ResponseDTO<object>("ok", true);
         }
 
-        public async Task<ResponseDTO<object>> LoginGoogle(string tokenId, string Password)
+        public async Task<ResponseDTO<object>> LoginGoogle(string tokenId, string? Password)
         {
             var googleData = await GoogleJsonWebSignature.ValidateAsync(tokenId);
             if (googleData == null)
             {
-                return new ResponseDTO<object>("Invalid token ID", true);
+                return new ResponseDTO<object>("Invalid token ID", false);
             }
 
-            var user = await _unitOfWork.userRepository.GetUserByEmail(googleData.Email);
+            User user = await _unitOfWork.userRepository.GetUserByEmail(googleData.Email);
 
             if (user == null)
             {
-                await _unitOfWork.authRepository.GoogleRegister(googleData.Email, Password);
 
                 var otp = new Random().Next(100000, 999999).ToString();
                 await _redisService.StoreDataAsync(googleData.Email, otp, TimeSpan.FromMinutes(5));
 
-                var body = await _emailService.LoadTemplateAsync("EmailTemplates/OtpTemplate.html", new Dictionary<string, string>
+                var body = await _emailService.LoadTemplateAsync("OtpTemplate.html", new Dictionary<string, string>
                 {
                     { "OTP_CODE", otp }
                 });
@@ -76,9 +80,27 @@ namespace EV.Application.Services
                 await _emailService.SendMailAsync(googleData.Email, "Your OTP Code", body);
                 return new ResponseDTO<object>("OTP sent to your email", true);
             }
-            else await _unitOfWork.authRepository.LoginGoogle(googleData.Email);
+            else user = await _unitOfWork.authRepository.LoginGoogle(googleData.Email);
 
-            return new ResponseDTO<object>("Login google successful", true, user);
+            var result = new
+            {
+                token = _jwtService.GenerateToken(user),
+            };
+
+            return new ResponseDTO<object>("Login google successful", true, result);
         }
+
+        //public async Task<ResponseDTO<object>> ConfirmGoogleRegisterAsync(string email, string password)
+        //{
+        //    var existingUser = await _unitOfWork.userRepository.GetUserByEmail(email);
+        //    if (existingUser == null)
+        //    {
+        //        await _unitOfWork.authRepository.GoogleRegister(email, password);
+        //        await _unitOfWork.SaveChangesAsync();
+        //        return new ResponseDTO<object>("Register successful !", true);
+        //    }
+        //    return new ResponseDTO<object>("User already exists", false);
+        //}
+
     }
 }
