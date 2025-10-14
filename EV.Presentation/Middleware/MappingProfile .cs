@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EV.Application.RequestDTOs.AdminRequestDTO;
+using EV.Application.RequestDTOs.InspectionFeeDTO;
 using EV.Application.RequestDTOs.UserRequestDTO;
 using EV.Application.ResponseDTOs;
 using EV.Domain.CustomEntities;
@@ -42,6 +43,8 @@ namespace EV.Application.Helpers
             CreateMap<UserCarUpdateRequest, Vehicle>();
 
             CreateMap<Vehicle, UserCarUpdateReponse>();
+
+            CreateMap<UserGetAllInspectionFeesModel, UserGetAllInspectionFeeRequestDTO>();
         }
     }
 }
