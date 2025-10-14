@@ -22,8 +22,15 @@ namespace EV.Presentation.Controllers
         }
 
         [HttpGet("GetAllCars")]
-        public async Task<ActionResult<PagedResult<UserCarGetAll>>> GetAllCars(UserGetAllCarModel userGetAllCarModel)
+        public async Task<ActionResult<ResponseDTO<PagedResult<UserCarGetAll>>>> GetAllCars(UserGetAllCarModel userGetAllCarModel)
         {
+            var validationResult = _modelStateCheck.CheckModelState<UserGetAllCarModel>(ModelState);
+
+            if (!validationResult.IsSuccess)
+            {
+                return BadRequest(validationResult);
+            }
+
             var userGetAllCarRequestDTO = _mapper.Map<UserGetAllCarRequestDTO>(userGetAllCarModel);
 
             var result = await _carService.UserCarGetAll(userGetAllCarRequestDTO);
@@ -97,7 +104,7 @@ namespace EV.Presentation.Controllers
         }
 
         [HttpPut("UserCarUpdate")]
-        public async Task<ActionResult<UserCarUpdateReponse>> UserCarUpdate([FromBody] UserCarUpdateModel userCarUpdateModel)
+        public async Task<ActionResult<ResponseDTO<UserCarUpdateReponse>>> UserCarUpdate([FromBody] UserCarUpdateModel userCarUpdateModel)
         {
             var validationResult = _modelStateCheck.CheckModelState<UserCarUpdateModel>(ModelState);
 
