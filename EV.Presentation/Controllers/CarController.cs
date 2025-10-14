@@ -170,6 +170,16 @@ namespace EV.Presentation.Controllers
             return Ok(result);
         }
 
-        
+        [HttpGet("vehicle/{vehicleId}")]
+        public async Task<IActionResult> GetAuctionVehicleDetails(int vehicleId)
+        {
+            var vehicle = await _carService.GetCarById(vehicleId);
+            if (vehicle == null)
+                return NotFound(new { message = "Vehicle not found." });
+
+            return Ok(vehicle);
+        }
+
+
     }
 }

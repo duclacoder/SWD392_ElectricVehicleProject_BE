@@ -12,7 +12,9 @@ namespace EV.Application.Interfaces.RepositoryInterfaces
     public interface IAuthRepository
     {
         Task<User> LoginUser(LoginRequestDTO loginRequest);
-        Task<ResponseDTO<object>> IsExistAccount(RegisterRequestDTO accountValidationRequest);
+        Task<ResponseDTO<object>> IsExistAccount(string email);
         Task<bool> Register(RegisterRequestDTO registerRequest);
+        Task<bool> GoogleRegister(string email, string password);
+        Task<User> LoginGoogle(string Email);
     }
 }

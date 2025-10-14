@@ -14,37 +14,52 @@ namespace EV.Presentation.Hubs
 
         public async Task SendBid(int auctionId, int bidderId, decimal bidderAmount)
         {
-            //await Clients.Group($"auction_{auctionId}")
-            //             .SendAsync("ReceiveBid", auctionId, bidderId, bidderAmount);
-            var auction = await _context.Auctions.FirstOrDefaultAsync(b => b.AuctionsId == auctionId);
-
-            if(auction == null)
+            try
             {
-                await Clients.Caller.SendAsync("BidRejected", "Auction not found !");
-                return;
+                var auction = await _context.Auctions.FirstOrDefaultAsync(b => b.AuctionsId == auctionId);
+
+                if (auction == null)
+                {
+                    await Clients.Caller.SendAsync("BidRejected", "Auction not found !");
+                    return;
+                }
+
+                //var currentPrice = await _context.AuctionBids.Where(b => b.AuctionId == auctionId).Select(b => b.BidAmount).DefaultIfEmpty((decimal?)auction.StartPrice).MaxAsync();
+                var bids = await _context.AuctionBids
+                                         .Where(b => b.AuctionId == auctionId)
+                                         .Select(b => b.BidAmount)
+                                         .ToListAsync();
+
+                decimal currentPrice = bids.Any()
+                    ? bids.Max() ?? 0
+                    : auction.StartPrice ?? 0;
+
+
+                if (bidderAmount <= currentPrice)
+                {
+                    await Clients.Caller.SendAsync("BidRejected", $"Bid must be higher than {bidderAmount}");
+                    return;
+                }
+                var newBid = new AuctionBid
+                {
+                    AuctionId = auctionId,
+                    BidderId = bidderId,
+                    BidAmount = bidderAmount,
+                    BidTime = DateTime.Now,
+                    Status = "Active"
+                };
+
+                _context.AuctionBids.Add(newBid);
+                await _context.SaveChangesAsync();
+
+                await Clients.Group($"auction_{auctionId}")
+                    .SendAsync("ReceiveBid", auctionId, bidderId, bidderAmount);
             }
-
-            var currentPrice = await _context.AuctionBids.Where(b => b.AuctionId == auctionId).Select(b => b.BidAmount).DefaultIfEmpty(auction.StartPrice).MaxAsync();
-            
-            if(bidderAmount <= currentPrice)
+           catch(Exception ex)
             {
-                await Clients.Caller.SendAsync("BidRejected", $"Bid must be higher than {bidderAmount}");
-                return;
+                Console.WriteLine($"[SendBid ERROR] {ex}");
+                await Clients.Caller.SendAsync("BidRejected", $"Server error: {ex.Message}");
             }
-            var newBid = new AuctionBid
-            {
-                AuctionId = auctionId,
-                BidderId = bidderId,
-                BidAmount = bidderAmount,
-                BidTime = DateTime.Now,
-                Status = "Active"
-            };
-
-            _context.AuctionBids.Add(newBid);
-            await _context.SaveChangesAsync();
-
-            await Clients.Groups($"auction_{auctionId}")
-                .SendAsync("ReciveBid", auctionId, bidderId, bidderAmount);
         }
 
         public async Task JoinAuction(int auctionId)
