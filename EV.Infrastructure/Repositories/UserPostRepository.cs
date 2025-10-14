@@ -122,8 +122,8 @@ namespace EV.Infrastructure.Repositories
             return new UserPostCustom
             {
                 UserName = post.User.UserName,
-                Title = "DB thiếu trường này! Để t hỏi Bình rồi tính sau !",
-                Description = "DB thiếu trường này! Để t hỏi Bình rồi tính sau !",
+                Title = "DB trường này ko có!",
+                Description = "DB trường này ko có!",
                 Vehicle = new VehicleUserPost
                 {
                     Brand = post.Vehicle?.Brand,
@@ -165,8 +165,8 @@ namespace EV.Infrastructure.Repositories
             return post.Select(post => new UserPostCustom
             {
                 UserName = userName,
-                Title = "DB thiếu trường này! Để t hỏi Bình rồi tính sau !",
-                Description = "DB thiếu trường này! Để t hỏi Bình rồi tính sau !",
+                Title = "DB trường này ko có!",
+                Description = "DB trường này ko có!",
                 Vehicle = new VehicleUserPost
                 {
                     Brand = post.Vehicle?.Brand,
@@ -203,8 +203,8 @@ namespace EV.Infrastructure.Repositories
             return new UserPostCustom
             {
                 UserName = post.User.UserName,
-                Title = "DB thiếu trường này! Để t hỏi Bình rồi tính sau !",
-                Description = "DB thiếu trường này! Để t hỏi Bình rồi tính sau !",
+                Title = "DB trường này ko có!",
+                Description = "DB trường này ko có!",
                 Vehicle = new VehicleUserPost
                 {
                     Brand = post.Vehicle?.Brand,
