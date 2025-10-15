@@ -50,7 +50,10 @@ namespace EV.Presentation.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new ResponseDTO<UserPostCustom>(ex.Message, false));
+                var innerMessage = ex.InnerException != null
+                                                     ? ex.InnerException.Message
+                                                     : ex.Message;
+                return BadRequest(new ResponseDTO<UserPostCustom>(innerMessage, false));
             }
         }
 
