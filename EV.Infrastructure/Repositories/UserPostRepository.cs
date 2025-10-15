@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace EV.Infrastructure.Repositories
 {
@@ -121,9 +122,10 @@ namespace EV.Infrastructure.Repositories
 
             return new UserPostCustom
             {
+                UserPostId = post.UserPostsId,
                 UserName = post.User.UserName,
-                Title = "DB trường này ko có!",
-                Description = "DB trường này ko có!",
+                Title = post.Vehicle?.Brand + " " + post.Vehicle?.Model + " " + post.Vehicle?.Color + " " + post.Vehicle?.Year,
+                //Description = "DB trường này ko có!",
                 Vehicle = new VehicleUserPost
                 {
                     Brand = post.Vehicle?.Brand,
@@ -144,7 +146,7 @@ namespace EV.Infrastructure.Repositories
             };
         }
 
-        public async Task<IEnumerable<UserPostCustom>> GetAllUserPosts(int skip, int take, string userName)
+        public async Task<(IEnumerable<UserPostCustom> Items, int TotalCount)> GetAllUserPosts(int skip, int take, string userName)
         {
             var items = _context.UserPosts
                                  .Include(a => a.User)
@@ -158,15 +160,19 @@ namespace EV.Infrastructure.Repositories
             }
 
 
-            var post = await items.Skip(skip)
-                                   .Take(take)
-                                   .ToListAsync();
+            var totalCount = await items.CountAsync();
 
-            return post.Select(post => new UserPostCustom
+            var post = await items
+                                    .OrderByDescending(a => a.PostedAt)
+                                    .Skip(skip)
+                                    .Take(take)
+                                    .ToListAsync();
+
+            var result = post.Select(post => new UserPostCustom
             {
-                UserName = userName,
-                Title = "DB trường này ko có!",
-                Description = "DB trường này ko có!",
+                UserPostId = post.UserPostsId,
+                UserName = post.User.UserName,
+                Title = post.Vehicle?.Brand + " " + post.Vehicle?.Model + " " + post.Vehicle?.Color + " " + post.Vehicle?.Year,
                 Vehicle = new VehicleUserPost
                 {
                     Brand = post.Vehicle?.Brand,
@@ -186,6 +192,8 @@ namespace EV.Infrastructure.Repositories
                 Status = post.Status
             });
 
+            return (result, totalCount);
+
         }
 
         public async Task<UserPostCustom> GetUserPostById(int id)
@@ -202,9 +210,10 @@ namespace EV.Infrastructure.Repositories
 
             return new UserPostCustom
             {
+                UserPostId = post.UserPostsId,
                 UserName = post.User.UserName,
-                Title = "DB trường này ko có!",
-                Description = "DB trường này ko có!",
+                Title = post.Vehicle?.Brand + " " + post.Vehicle?.Model + " " + post.Vehicle?.Color + " " + post.Vehicle?.Year,
+                //Description = "DB trường này ko có!",
                 Vehicle = new VehicleUserPost
                 {
                     Brand = post.Vehicle?.Brand,
