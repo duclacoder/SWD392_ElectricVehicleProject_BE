@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EV.Application.RequestDTOs.UserPostDTO
+namespace EV.Application.RequestDTOs.InspectionFeeDTO
 {
-    public class GetAllUserPostRequestDTO
+    public class UserGetAllInspectionFeeRequestDTO
     {
-        public string? UserName { get; set; }
         public int Page { get; set; } = 1;
+
         public int PageSize { get; set; } = 10;
     }
 }

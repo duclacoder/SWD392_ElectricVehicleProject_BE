@@ -33,6 +33,8 @@ namespace EV.Infrastructure
         private IUserPostsRepository _userPostsRepository;
         public IUserPostsRepository userPostsRepository => _userPostsRepository ??= new UserPostRepository(_context);
 
+        public IInspectionFeesRepository _inspectionFeesRepository;
+        public IInspectionFeesRepository inspectionFeesRepository => _inspectionFeesRepository ??= new InspectionFeesRepository(_context);
         private IAuctionRepository _auctionRepository;
         public IAuctionRepository auctionRepository => _auctionRepository ??= new AuctionRepository(_context);
 
