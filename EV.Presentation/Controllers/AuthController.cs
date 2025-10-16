@@ -99,27 +99,6 @@ namespace EV.Presentation.Controllers
         }
 
 
-
-        //[AllowAnonymous]
-        //[HttpPost("SendOTP")]
-        //public async Task<ActionResult<ResponseDTO<string>>> SendOTP([FromQuery] string email)
-        //{
-        //    var otp = new Random().Next(100000, 999999).ToString();
-
-        //    await _redisService.StoreDataAsync(email, otp, TimeSpan.FromMinutes(5));
-
-        //    var body = await _emailService.LoadTemplateAsync("OtpTemplate.html", new Dictionary<string, string>
-        //    {
-        //        { "OTP_CODE", otp }
-        //    });
-
-        //    await _emailService.SendMailAsync(email, "Your OTP Code", body);
-
-        //    await _emailService.SendMailAsync(email, "Your OTP Code", $"Your OTP is: {otp}");
-
-        //    return Ok(new ResponseDTO<string>("OTP sent, please check your email", true));
-        //}
-
         [AllowAnonymous]
         [HttpPost("Confirm_OTP_Register")]
         public async Task<ActionResult<ResponseDTO<string>>> ConfirmOTPRegister([FromBody] RegisterRequestDTO registerDTO, [FromQuery] string otpCode)
@@ -141,23 +120,6 @@ namespace EV.Presentation.Controllers
 
             //return Ok(new ResponseDTO<string>("OTP confirmed", true, ""));
         }
-
-        //[AllowAnonymous]
-        //[HttpPost("Confirm_OTP_Google_Register")]
-        //public async Task<ActionResult<ResponseDTO<string>>> ConfirmOTPGoogleRegister([FromBody] GoogleRegisterRequest registerDTO, [FromQuery] string otpCode)
-        //{
-        //    var valid = await _redisService.VerifyDataAsync(registerDTO.Email, otpCode);
-        //    if (!valid)
-        //        return BadRequest(new ResponseDTO<string>("Invalid or expired OTP", false));
-
-        //    await _redisService.DeleteDataAsync(registerDTO.Email);
-
-        //    var result = await _authService.ConfirmGoogleRegisterAsync(registerDTO.Email, registerDTO.Password);
-        //    if (!result.IsSuccess)
-        //        return BadRequest(result);
-
-        //    return Ok(result);
-        //}
 
         [AllowAnonymous]
         [HttpPost("Resend_OTP")]

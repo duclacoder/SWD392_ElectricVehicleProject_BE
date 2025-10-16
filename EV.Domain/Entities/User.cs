@@ -1,7 +1,12 @@
-﻿namespace EV.Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace EV.Domain.Entities;
 
 public partial class User
 {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int UsersId { get; set; }
 
     public string? UserName { get; set; }
