@@ -119,7 +119,7 @@ namespace EV.Infrastructure.Repositories
                 Bids = a.AuctionBids?.Select(b => new AuctionBidCustom
                 {
                     AuctionBidId = b.AuctionBidsId,
-                    BidderUserName = b.Bidder.UserName,
+                    BidderUserName = b.Bidder?.UserName,
                     BidAmount = b.BidAmount,
                     BidTime = b.BidTime,
                 }).ToList() ?? new List<AuctionBidCustom>()
