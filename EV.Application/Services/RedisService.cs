@@ -48,7 +48,6 @@ namespace EV.Application.Services
         {
             var otp = await _redis.StringGetAsync(key);
             return otp.HasValue && otp.ToString() == dataString;
-
         }
     }
 }
