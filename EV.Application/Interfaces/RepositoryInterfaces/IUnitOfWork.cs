@@ -24,6 +24,8 @@ namespace EV.Application.Interfaces.RepositoryInterfaces
         IUserPostsRepository userPostsRepository { get; }
 
         IInspectionFeesRepository inspectionFeesRepository { get; }
+
+        IAuctionsFeeRepository auctionsFeeRepository { get; }
         //Single commit point
         Task<int> SaveChangesAsync();
     }
