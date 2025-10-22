@@ -1,4 +1,5 @@
-﻿using EV.Application.Interfaces.ServiceInterfaces;
+﻿using EV.Application.Interfaces.RepositoryInterfaces;
+using EV.Application.Interfaces.ServiceInterfaces;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Configuration;
@@ -9,6 +10,7 @@ namespace EV.Application.Services
     public class EmailService : IEmailService
     {
         private readonly IConfiguration _configuration;
+
 
         public EmailService(IConfiguration configuration)
         {

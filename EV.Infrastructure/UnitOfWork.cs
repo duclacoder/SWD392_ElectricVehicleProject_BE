@@ -6,10 +6,7 @@ namespace EV.Infrastructure
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly Swd392Se1834G2T1Context _context;
-
-        
-
+        private readonly Swd392Se1834G2T1Context _context;       
 
         // CONSTRUCTOR INJECTION for DbContext
         public UnitOfWork(Swd392Se1834G2T1Context context)
@@ -44,6 +41,10 @@ namespace EV.Infrastructure
 
         private IPostPackageRepository _postPackageRepository;
         public IPostPackageRepository postPackageRepository => _postPackageRepository ??= new PostPackageRepository(_context);
+
+        private IPaymentRepository _paymentRepository;
+        public IPaymentRepository paymentRepository => _paymentRepository ??= new PaymentRepository(_context);
+
 
         public IGenericRepository<T> GetGenericRepository<T>() where T : class
         {

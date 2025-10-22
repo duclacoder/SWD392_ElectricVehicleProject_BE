@@ -9,6 +9,8 @@ public partial class Payment
 
     public int? UserId { get; set; }
 
+    public int? PaymentMethodId { get; set; }
+
     public string? Gateway { get; set; }
 
     public DateTime? TransactionDate { get; set; }
@@ -32,6 +34,8 @@ public partial class Payment
     public string? Status { get; set; }
 
     public virtual ICollection<Activity> Activities { get; set; } = new List<Activity>();
+
+    public virtual PaymentsMethod? PaymentMethod { get; set; }
 
     public virtual User? User { get; set; }
 }
