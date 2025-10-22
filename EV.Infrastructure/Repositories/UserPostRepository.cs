@@ -234,9 +234,49 @@ namespace EV.Infrastructure.Repositories
             };
         }
 
-        public Task<UserPostCustom> UpdateUserPost(int id, UpdateUserPostDTO userPost)
+        public async Task<UserPostCustom> UpdateUserPost(int id, UpdateUserPostDTO userPost)
         {
-            throw new NotImplementedException();
+           var existing = await _context.UserPosts
+                                        .Include(a => a.Vehicle)
+                                        .ThenInclude(a => a.User)
+                                        .FirstOrDefaultAsync(a => a.UserPostsId == id);
+           if(existing == null)
+           {
+              return null;
+           }
+           if(userPost.Vehicle != null)
+           {
+                existing.Vehicle.Brand = userPost.Vehicle.Brand;
+                existing.Vehicle.Model = userPost.Vehicle.Model;
+                existing.Vehicle.Year = userPost.Vehicle.Year;
+                existing.Vehicle.Color = userPost.Vehicle.Color;
+                existing.Vehicle.Price = userPost.Vehicle.Price;
+                existing.Vehicle.Description = userPost.Vehicle.Description;
+                existing.Vehicle.BodyType = userPost.Vehicle.BodyType;
+                existing.Vehicle.RangeKm = userPost.Vehicle.RangeKm;
+                existing.Vehicle.MotorPowerKw = userPost.Vehicle.MotorPowerKw;
+           }
+           if (userPost.ImageUrls != null && userPost.ImageUrls.Any())
+           {
+                _context.VehicleImages.RemoveRange(existing.Vehicle?.VehicleImages);
+
+                foreach (var url in userPost.ImageUrls)
+                {
+                    _context.VehicleImages.Add(new VehicleImage
+                    {
+                        VehicleId = existing.Vehicle.VehiclesId,
+                        ImageUrl = url
+                    });
+                }
+                _context.UserPosts.Update(existing);
+                await _context.SaveChangesAsync();
+           }
+            return new UserPostCustom
+            {
+                UserPostId = existing.UserPostsId,
+                UserName = existing.User.UserName,
+                Title = existing.Vehicle?.Brand + " " + existing.Vehicle?.Model + " " + existing.Vehicle?.Color + " " + existing.Vehicle?.Year
+            };
         }
     }
 }
