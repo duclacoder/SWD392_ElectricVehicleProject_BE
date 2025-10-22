@@ -35,11 +35,15 @@ namespace EV.Infrastructure
 
         public IInspectionFeesRepository _inspectionFeesRepository;
         public IInspectionFeesRepository inspectionFeesRepository => _inspectionFeesRepository ??= new InspectionFeesRepository(_context);
+
         private IAuctionRepository _auctionRepository;
         public IAuctionRepository auctionRepository => _auctionRepository ??= new AuctionRepository(_context);
 
         private IAuctionsFeeRepository _auctionsFeeRepository;
         public IAuctionsFeeRepository auctionsFeeRepository => _auctionsFeeRepository ??= new AuctionsFeeRepository(_context);
+
+        private IPostPackageRepository _postPackageRepository;
+        public IPostPackageRepository postPackageRepository => _postPackageRepository ??= new PostPackageRepository(_context);
 
         public IGenericRepository<T> GetGenericRepository<T>() where T : class
         {

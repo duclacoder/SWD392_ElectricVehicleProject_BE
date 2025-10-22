@@ -64,7 +64,7 @@ namespace EV.Presentation.Controllers
         }
 
         [HttpGet("filter")]
-        public async Task<IActionResult> GetUserPackagesByFilter([FromQuery] GetAllUserPackageRequestDTO request)
+        public async Task<IActionResult> GetUserPackagesByFilter([FromQuery] GetUserPackageByUserNameAndPackageNameRequestDTO request)
         {
             var result = await _userPackagesServices.GetUserPackageByUserNameAndPackageName(request);
             return Ok(result);
