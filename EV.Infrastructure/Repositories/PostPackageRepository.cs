@@ -38,6 +38,7 @@ namespace EV.Infrastructure.Repositories
 
             return new PostPackageCustom
             {
+                PostPackageId = newPostPackage.PostPackagesId,
                 PackageName = newPostPackage.PackageName,
                 Description = newPostPackage.Description,
                 PostPrice = (decimal)newPostPackage.PostPrice,
@@ -61,6 +62,7 @@ namespace EV.Infrastructure.Repositories
             }
             return new PostPackageCustom
             {
+                PostPackageId = postPackage.PostPackagesId,
                 PackageName = postPackage.PackageName,
                 Description = postPackage.Description,
                 PostPrice = postPackage.PostPrice ?? 0,
@@ -80,6 +82,7 @@ namespace EV.Infrastructure.Repositories
 
             return packages.Select(p => new PostPackageCustom
             {
+                PostPackageId = p.PostPackagesId,
                 PackageName = p.PackageName,
                 Description = p.Description,
                 PostDuration = p.PostDuration,
@@ -100,6 +103,7 @@ namespace EV.Infrastructure.Repositories
 
             return new PostPackageCustom
             {
+                PostPackageId = existing.PostPackagesId,
                 PackageName = existing.PackageName,
                 Description = existing.Description,
                 PostDuration = existing.PostDuration,
@@ -127,6 +131,7 @@ namespace EV.Infrastructure.Repositories
             _context.PostPackages.Update(existing);
             return new PostPackageCustom
             {
+                PostPackageId = existing.PostPackagesId,
                 PackageName = existing.PackageName,
                 Description = existing.Description,
                 PostDuration = existing.PostDuration,

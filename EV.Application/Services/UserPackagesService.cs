@@ -78,7 +78,7 @@ namespace EV.Application.Services
             return new ResponseDTO<UserPackagesCustom>("Get successfully", true, result);
         }
 
-        public async Task<ResponseDTO<PagedResult<UserPackagesCustom>>> GetUserPackageByUserNameAndPackageName(GetAllUserPackageRequestDTO request)
+        public async Task<ResponseDTO<PagedResult<UserPackagesCustom>>> GetUserPackageByUserNameAndPackageName(GetUserPackageByUserNameAndPackageNameRequestDTO request)
         {
             var x = await _unitOfWork.userPackagesRepository.GetUserPackageByUserNameAndPackageName(request.UserName, request.PackageName, (request.Page - 1) * request.PageSize, request.PageSize);
 

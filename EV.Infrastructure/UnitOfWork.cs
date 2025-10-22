@@ -41,7 +41,8 @@ namespace EV.Infrastructure
 
         private IPostPackageRepository _postPackageRepository;
         public IPostPackageRepository postPackageRepository => _postPackageRepository ??= new PostPackageRepository(_context);
-
+        private IAuctionsFeeRepository _auctionsFeeRepository;
+        public IAuctionsFeeRepository auctionsFeeRepository => _auctionsFeeRepository ??= new AuctionsFeeRepository(_context);
         public IGenericRepository<T> GetGenericRepository<T>() where T : class
         {
             return new GenericRepository<T>(_context);

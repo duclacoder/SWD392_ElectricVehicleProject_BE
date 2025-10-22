@@ -8,6 +8,7 @@ namespace EV.Domain.CustomEntities
 {
     public class PostPackageCustom
     {
+        public int PostPackageId { get; set; }
         public string? PackageName { get; set; }
         public string? Description { get; set; }
         public decimal? PostPrice { get; set; }
