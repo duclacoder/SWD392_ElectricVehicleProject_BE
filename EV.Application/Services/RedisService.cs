@@ -1,4 +1,5 @@
-﻿using EV.Application.Interfaces.ServiceInterfaces;
+﻿using EV.Application.Interfaces.RepositoryInterfaces;
+using EV.Application.Interfaces.ServiceInterfaces;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;

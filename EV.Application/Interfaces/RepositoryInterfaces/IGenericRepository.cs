@@ -8,8 +8,10 @@ namespace EV.Application.Interfaces.RepositoryInterfaces
 {
     public interface IGenericRepository<T> where T : class
     {
-        void PrepareCreate(T entity);
-        void PrepareUpdate(T entity);
-        void PrepareRemove(T entity);
+        Task<List<T>> GetAllAsync();
+        Task<T> GetByIdAsync(int id);
+        Task CreateAsync(T entity);
+        void Update(T entity);
+        void Remove(T entity);
     }
 }
