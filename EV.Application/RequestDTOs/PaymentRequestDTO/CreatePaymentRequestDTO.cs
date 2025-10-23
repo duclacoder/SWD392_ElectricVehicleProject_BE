@@ -11,8 +11,6 @@ namespace EV.Application.RequestDTOs.PaymentRequestDTO
     {
         public int? UserId { get; set; }
 
-        public int? PaymentMethodId { get; set; }
-
         public decimal? TransferAmount { get; set; }
     }
 }

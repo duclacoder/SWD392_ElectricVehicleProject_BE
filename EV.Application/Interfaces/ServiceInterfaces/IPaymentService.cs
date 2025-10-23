@@ -12,7 +12,7 @@ namespace EV.Application.Interfaces.ServiceInterfaces
         Task<List<Payment>> GetAllPaymentsAsync();
         Task<Payment?> GetPaymentByIdAsync(int id);
         Task CreatePaymentAsync(Payment payment);
-        void UpdatePaymentAsync(Payment payment);
+        void UpdatePayment(Payment payment);
         void DeletePaymentAsync(Payment payment);
 
     }

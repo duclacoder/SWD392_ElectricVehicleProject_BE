@@ -39,7 +39,7 @@ namespace EV.Application.Services
             return await _unitOfWork.paymentRepository.GetByIdAsync(id);
         }
 
-        public void UpdatePaymentAsync(Payment payment)
+        public void UpdatePayment(Payment payment)
         {
             _unitOfWork.paymentRepository.Update(payment);
         }

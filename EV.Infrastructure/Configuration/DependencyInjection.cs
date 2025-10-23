@@ -22,7 +22,6 @@ namespace EV.Infrastructure.Configuration
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
             );
 
-
             //Repository injection
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
