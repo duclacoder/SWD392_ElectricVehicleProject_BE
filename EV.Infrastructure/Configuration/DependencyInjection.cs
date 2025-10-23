@@ -22,7 +22,6 @@ namespace EV.Infrastructure.Configuration
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
             );
 
-
             //Repository injection
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -38,8 +37,11 @@ namespace EV.Infrastructure.Configuration
             services.AddScoped<IInspectionFeesRepository, InspectionFeesRepository>();
             services.AddScoped<IAuctionsFeeRepository, AuctionsFeeRepository>();
             services.AddScoped<IAuctionService, AuctionService>();
-
             services.AddScoped<IPostPackageService, PostPackagesService>();
+            services.AddScoped<IPostPackageRepository, PostPackageRepository>();
+            services.AddScoped<IPaymentService, PaymentService>();
+            services.AddScoped<IPaymentRepository, PaymentRepository>();
+            services.AddScoped<IVnPayService, VnPayService>();
 
             //Service injection
             services.AddScoped<IUserService, UserService>();

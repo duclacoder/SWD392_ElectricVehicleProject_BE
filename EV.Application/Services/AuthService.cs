@@ -11,16 +11,14 @@ namespace EV.Application.Services
     public class AuthService : IAuthService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IServiceProvider _serviceProvider;
         private readonly IJwtService _jwtService;
-        private readonly IEmailService _emailService;
-        private readonly IRedisService _redisService;
 
-        public AuthService(IUnitOfWork unitOfWork, IJwtService jwtService, IEmailService emailService, IRedisService redisService)
+        public AuthService(IUnitOfWork unitOfWork, IServiceProvider serviceProvider, IJwtService jwtService)
         {
             _unitOfWork = unitOfWork;
+            _serviceProvider = serviceProvider;
             _jwtService = jwtService;
-            _emailService = emailService;
-            _redisService = redisService;
         }
 
         public async Task<ResponseDTO<object>> IsValidationAccount(RegisterRequestDTO registerDTO)

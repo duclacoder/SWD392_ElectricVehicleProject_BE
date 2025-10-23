@@ -49,7 +49,7 @@ namespace EV.Application.Services
 
             try
             {
-                _unitOfWork.GetGenericRepository<Vehicle>().PrepareCreate(addedVehicle);
+                _unitOfWork.GetGenericRepository<Vehicle>().CreateAsync(addedVehicle);
 
                 await _unitOfWork.SaveChangesAsync();
 

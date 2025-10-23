@@ -24,6 +24,8 @@ namespace EV.Application.Interfaces.RepositoryInterfaces
 
         IPostPackageRepository postPackageRepository { get; }
 
+        IPaymentRepository paymentRepository { get; }
+
         IInspectionFeesRepository inspectionFeesRepository { get; }
 
         IAuctionsFeeRepository auctionsFeeRepository { get; }
