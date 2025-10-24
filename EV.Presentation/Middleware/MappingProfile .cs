@@ -45,6 +45,8 @@ namespace EV.Application.Helpers
             CreateMap<Vehicle, UserCarUpdateReponse>();
 
             CreateMap<UserGetAllInspectionFeesModel, UserGetAllInspectionFeeRequestDTO>();
+
+            CreateMap<UserGetAllBatteryModel, UserGetAllBatteryRequestDTO>();
         }
     }
 }

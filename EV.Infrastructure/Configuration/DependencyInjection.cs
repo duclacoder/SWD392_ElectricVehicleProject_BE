@@ -36,6 +36,7 @@ namespace EV.Infrastructure.Configuration
             services.AddScoped<IUserPostsService, UserPostService>();
             services.AddScoped<ICarRepository, CarRepository>();
             services.AddScoped<IInspectionFeesRepository, InspectionFeesRepository>();
+            services.AddScoped<IBatteryRepository, BatteryRepository>();
 
             services.AddScoped<IAuctionService, AuctionService>();
 
@@ -44,6 +45,7 @@ namespace EV.Infrastructure.Configuration
             services.AddScoped<ICarService, CarService>();  
             services.AddScoped<IModelStateCheck, ModelStateCheck>();
             services.AddScoped<IInspectionFeesService, InspectionFeesService>();
+            services.AddScoped<IBatteryService, BatteryService>();
 
 
             return services;
