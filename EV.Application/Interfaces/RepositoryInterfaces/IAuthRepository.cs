@@ -14,7 +14,7 @@ namespace EV.Application.Interfaces.RepositoryInterfaces
         Task<User> LoginUser(LoginRequestDTO loginRequest);
         Task<ResponseDTO<object>> IsExistAccount(string email);
         Task<bool> Register(RegisterRequestDTO registerRequest);
-        Task<bool> GoogleRegister(string email, string password);
+        //Task<bool> GoogleRegister(string email, string password);
         Task<User> LoginGoogle(string Email);
     }
 }

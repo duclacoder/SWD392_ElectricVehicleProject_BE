@@ -1,5 +1,6 @@
 ﻿using EV.Application.Interfaces.RepositoryInterfaces;
 using EV.Domain.CustomEntities;
+using EV.Domain.Entities;
 using EV.Infrastructure.DBContext;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -42,6 +43,33 @@ namespace EV.Infrastructure.Repositories
                 .ToListAsync();
 
             return batteries;
+        }
+
+        public async Task<UserBatteryDetails> UserBatteryViewDetailsById(int userId, int batteryId)
+        {
+            var betteryDetails = await _context.Batteries
+                .AsNoTracking()
+                .Select(u => new UserBatteryDetails
+                {
+                    UserId = u.UserId,
+                    BatteriesId = u.BatteriesId,
+                    BatteryName = u.BatteryName,
+                    Description = u.Description,
+                    Brand = u.Brand,
+                    Capacity = u.Capacity,
+                    Voltage = u.Voltage,
+                    WarrantyMonths = u.WarrantyMonths,
+                    Price = u.Price,
+                    Currency = u.Currency,
+                    Status = u.Status
+                })
+                .FirstOrDefaultAsync(v => v.UserId == userId && v.BatteriesId == batteryId);
+            return betteryDetails;
+        }
+
+        public async Task<Battery?> GetBatteryForUpdate(int userId, int batteryId)
+        {
+            return await _context.Batteries.FirstOrDefaultAsync(b => b.UserId == userId && b.BatteriesId == batteryId);
         }
 
         public async Task<int> GetTotalCountBatteryByUserId(int id)

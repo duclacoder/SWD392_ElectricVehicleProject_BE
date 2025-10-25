@@ -8,9 +8,6 @@ namespace EV.Application.RequestDTOs.UserPackagesDTO
 {
     public class GetAllUserPackageRequestDTO
     {
-        public string UserName { get; set; }
-
-        public string PackageName { get; set; }
         public int Page { get; set; } = 1;
 
         public int PageSize { get; set; } = 10;

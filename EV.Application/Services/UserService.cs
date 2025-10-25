@@ -26,6 +26,11 @@ namespace EV.Application.Services
             _mapper = mapper;
         }
 
+        public UserService(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
+
         public async Task<ResponseDTO<PagedResult<AdminGetAllUsers>>> GetAllUsers(GetAllUsersRequestDTO getAllUsersRequestDTO)
         {
             var users = await _unitOfWork.userRepository.GetAllUsers((getAllUsersRequestDTO.Page - 1) * getAllUsersRequestDTO.PageSize
@@ -149,7 +154,7 @@ namespace EV.Application.Services
 
             string roleName = findUser.Role.Name;
 
-            _unitOfWork.GetGenericRepository<User>().PrepareUpdate(findUser);
+            _unitOfWork.GetGenericRepository<User>().Update(findUser);
 
             await _unitOfWork.SaveChangesAsync();
 

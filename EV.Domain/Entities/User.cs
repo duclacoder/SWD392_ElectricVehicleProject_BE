@@ -1,4 +1,7 @@
-﻿namespace EV.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
+
+namespace EV.Domain.Entities;
 
 public partial class User
 {

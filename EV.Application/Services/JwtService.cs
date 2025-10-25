@@ -1,4 +1,5 @@
-﻿using EV.Application.Interfaces.ServiceInterfaces;
+﻿using EV.Application.Interfaces.RepositoryInterfaces;
+using EV.Application.Interfaces.ServiceInterfaces;
 using EV.Domain.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -14,6 +15,7 @@ namespace EV.Application.Services
         private readonly string _issuer;
         private readonly string _audience;
         private readonly int _expireMinutes;
+        private IUnitOfWork unitOfWork;
 
         public JwtService(IConfiguration config)
         {
@@ -23,17 +25,17 @@ namespace EV.Application.Services
             _expireMinutes = int.Parse(config["Jwt:ExpireMinutes"]);
         }
 
+
+
         public string GenerateToken(User user)
         {
             if (user == null) return null;
+            if(string.IsNullOrEmpty(user.Role.Name)) user.Role.Name = null;
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.UsersId.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                //new Claim("fullName", user.FullName),
-                //new Claim("userName", user.UserName),
                 new Claim("imageUrl", user.ImageUrl ?? string.Empty),
-                //new Claim("phone", user.Phone ?? string.Empty),
                 new Claim("role", user.Role.Name),
             };
 

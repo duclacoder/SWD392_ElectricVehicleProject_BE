@@ -23,13 +23,18 @@ namespace EV.Infrastructure.Repositories
 
         public async Task<AuctionCustom> CreateAuction(CreateAuctionDTO createAuctionDTO)
         {
-            var seller = await _context.Users.FirstOrDefaultAsync(a => a.UserName == createAuctionDTO.UserName);
+            if (!int.TryParse(createAuctionDTO.UserName, out int userId))
+                throw new Exception("Invalid userId format");
 
-            if (seller == null) return null;
+            var seller = await _context.Users.FindAsync(userId);
+
+            if (seller == null) throw new Exception("User not found");
 
             var vehicle = await _context.Vehicles.FindAsync(createAuctionDTO.VehicleId);
 
             if (vehicle == null) throw new Exception("Vehicle not found");
+
+            createAuctionDTO.UserName = seller.UserName;
 
             var auction = new Auction
             {
@@ -119,7 +124,7 @@ namespace EV.Infrastructure.Repositories
                 Bids = a.AuctionBids?.Select(b => new AuctionBidCustom
                 {
                     AuctionBidId = b.AuctionBidsId,
-                    BidderUserName = b.Bidder.UserName,
+                    BidderUserName = b.Bidder?.UserName,
                     BidAmount = b.BidAmount,
                     BidTime = b.BidTime,
                 }).ToList() ?? new List<AuctionBidCustom>()

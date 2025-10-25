@@ -1,6 +1,7 @@
 ﻿using EV.Application.Interfaces.RepositoryInterfaces;
 using EV.Infrastructure.DBContext;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace EV.Infrastructure.Repositories
 {
@@ -13,20 +14,31 @@ namespace EV.Infrastructure.Repositories
             _context = context;
         }
 
-        public void PrepareCreate(T entity)
+        public async Task CreateAsync(T entity)
         {
-            _context.Add(entity);
+            await _context.Set<T>().AddAsync(entity);
         }
 
-        public void PrepareUpdate(T entity)
+        public async Task<List<T>> GetAllAsync()
         {
+            return await _context.Set<T>().ToListAsync();
+        }
+
+        public async Task<T> GetByIdAsync(int id)
+        {
+            return await _context.Set<T>().FindAsync(id);
+        }
+
+        public void Remove(T entity)
+        {
+            _context.Set<T>().Remove(entity);
+        }
+
+        public void Update(T entity)
+        {
+            _context.ChangeTracker.Clear();
             var tracker = _context.Attach(entity);
             tracker.State = EntityState.Modified;
-        }
-
-        public void PrepareRemove(T entity)
-        {
-            _context.Remove(entity);
         }
     }
 }

@@ -9,8 +9,6 @@ namespace EV.Application.RequestDTOs.UserPostDTO
 {
     public class UpdateUserPostDTO
     {
-        public string Title { get; set; }
-
         public string Description { get; set; }
 
         public VehicleUserPostDTO Vehicle { get; set; }

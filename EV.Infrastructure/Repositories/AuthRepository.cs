@@ -16,22 +16,21 @@ namespace EV.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<bool> GoogleRegister(string email, string password)
-        {
-            User registerUser = new User()
-            {
-                Email = email,
-                Password = password,
-                RoleId = 1,
-            };
-            if (registerUser == null) return false;
-            else
-            {
-                await _context.Users.AddAsync(registerUser);
-                await _context.SaveChangesAsync();
-                return true;
-            }
-        }
+        //public async Task<bool> GoogleRegister(string email, string password)
+        //{
+        //    User registerUser = new User()
+        //    {
+        //        Email = email,
+        //        Password = password,
+        //        RoleId = 1,
+        //    };
+        //    if (registerUser == null) return false;
+        //    else
+        //    {
+        //        await _context.Users.AddAsync(registerUser);
+        //        return true;
+        //    }
+        //}
 
         public async Task<ResponseDTO<object>> IsExistAccount(string email)
         {
@@ -92,7 +91,6 @@ namespace EV.Infrastructure.Repositories
             else
             {
                 await _context.Users.AddAsync(registerUser);
-                await _context.SaveChangesAsync();
                 return true;
             }
         }

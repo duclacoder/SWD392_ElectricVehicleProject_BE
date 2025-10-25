@@ -4,6 +4,7 @@ using EV.Application.Interfaces.ServiceInterfaces;
 using EV.Application.RequestDTOs.UserRequestDTO;
 using EV.Application.ResponseDTOs;
 using EV.Domain.CustomEntities;
+using EV.Domain.Entities;
 
 namespace EV.Application.Services
 {
@@ -16,6 +17,26 @@ namespace EV.Application.Services
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+        }
+
+        public async Task<ResponseDTO<BatteryAddResponseDTO>> AddBattery(BatteryAddRequestDTO batteryAddRequestDTO)
+        {
+            var addedBattery = _mapper.Map<Battery>(batteryAddRequestDTO);
+
+            try
+            {
+                _unitOfWork.GetGenericRepository<Battery>().CreateAsync(addedBattery);
+
+                await _unitOfWork.SaveChangesAsync();
+
+                var addResult = _mapper.Map<BatteryAddResponseDTO>(addedBattery);
+
+                return new ResponseDTO<BatteryAddResponseDTO>("Battery added successfully", true, addResult);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO<BatteryAddResponseDTO>($"Error adding battery: {ex.Message}", false, null);
+            }
         }
 
         public async Task<ResponseDTO<PagedResult<UserBatteryGetAll>>> UserBatteryGetAll(UserGetAllBatteryRequestDTO userGetAllBatteryRequestDTO)
@@ -40,6 +61,79 @@ namespace EV.Application.Services
 
 
             return new ResponseDTO<PagedResult<UserBatteryGetAll>>("Get all batteries successfully", true, pagedResult);
+        }
+
+        public async Task<ResponseDTO<UserBatteryDetails>> UserBatteryViewDetailsById(UserViewBatteryDetailsRequestDTO userViewBatteryDetailsRequestDTO)
+        {
+            var battery = await _unitOfWork.batteryRepository.UserBatteryViewDetailsById(userViewBatteryDetailsRequestDTO.UserId, userViewBatteryDetailsRequestDTO.BatteryId);
+            if (battery == null)
+            {
+                return new ResponseDTO<UserBatteryDetails>("Battery not found or does not belong to the user", false, null);
+            }
+            return new ResponseDTO<UserBatteryDetails>("Get battery details successfully", true, battery);
+        }
+
+        public async Task<ResponseDTO<string>> UserDeleteBattery(int userId, int batteryId)
+        {
+            var battery = await _unitOfWork.batteryRepository.GetBatteryForUpdate(userId, batteryId);
+            if (battery == null)
+            {
+                return new ResponseDTO<string>("Battery not found or does not belong to the user", false, "Not Found");
+            }
+
+            if (battery.Status == "Sold")
+            {
+                return new ResponseDTO<string>("Cannot delete a sold Battery", false, "Sold");
+            }
+
+            //if (car.Status == "Auctioned")
+            //{
+            //    return new ResponseDTO<string>("Cannot delete an auctioned Battery", false, "Auctioned");
+            //}
+
+            if (battery.Status == "Posted")
+            {
+                return new ResponseDTO<string>("Cannot delete a posted Battery", false, "Posted");
+            }
+
+            try
+            {
+                battery.Status = "Deleted";
+
+                await _unitOfWork.SaveChangesAsync();
+                return new ResponseDTO<string>("Battery deleted successfully", true, null);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO<string>($"Error deleting Battery: {ex.Message}", false, null);
+            }
+        }
+
+        public async Task<ResponseDTO<string>> UserUnDeleteBattery(int userId, int carId)
+        {
+            var battery = await _unitOfWork.batteryRepository.GetBatteryForUpdate(userId, carId);
+            if (battery == null)
+            {
+                return new ResponseDTO<string>("Battery not found or does not belong to the user", false, "Not Found");
+            }
+
+            if (battery.Status != "Deleted")
+            {
+                return new ResponseDTO<string>("Only deleted Batteries can be undeleted", false, $"Battery current status: {battery.Status}");
+            }
+
+
+            try
+            {
+                battery.Status = "Active";
+
+                await _unitOfWork.SaveChangesAsync();
+                return new ResponseDTO<string>("Battery undeleted successfully", true, null);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO<string>($"Error undeleting Battery: {ex.Message}", false, null);
+            }
         }
     }
 }

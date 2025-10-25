@@ -1,4 +1,5 @@
-﻿using EV.Application.Interfaces.ServiceInterfaces;
+﻿using EV.Application.Interfaces.RepositoryInterfaces;
+using EV.Application.Interfaces.ServiceInterfaces;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
@@ -48,7 +49,6 @@ namespace EV.Application.Services
         {
             var otp = await _redis.StringGetAsync(key);
             return otp.HasValue && otp.ToString() == dataString;
-
         }
     }
 }

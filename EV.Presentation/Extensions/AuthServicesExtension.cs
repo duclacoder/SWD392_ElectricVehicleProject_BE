@@ -33,7 +33,7 @@ namespace EV.Presentation.Extensions
         {
             builder.Services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "DailyBlogProject API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "EV Management API", Version = "v1" });
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {

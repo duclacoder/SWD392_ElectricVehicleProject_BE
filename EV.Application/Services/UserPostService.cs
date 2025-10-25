@@ -46,12 +46,10 @@ namespace EV.Application.Services
 
         public async Task<ResponseDTO<PagedResult<UserPostCustom>>> GetAllUserPosts(GetAllUserPostRequestDTO getAllUserPostRequestDTO)
         {
-            var data = await _unitOfWork.userPostsRepository.GetAllUserPosts(
-                          (getAllUserPostRequestDTO.Page - 1) * getAllUserPostRequestDTO.PageSize,
-                          getAllUserPostRequestDTO.PageSize,
-                          getAllUserPostRequestDTO.UserName);
-
-            var totalItem = data.Count();
+            var (data, totalItem) = await _unitOfWork.userPostsRepository.GetAllUserPosts(
+                                 (getAllUserPostRequestDTO.Page - 1) * getAllUserPostRequestDTO.PageSize,
+                                 getAllUserPostRequestDTO.PageSize,
+                                 getAllUserPostRequestDTO.UserName);
 
             var pageResult = new PagedResult<UserPostCustom>
             {
@@ -64,6 +62,7 @@ namespace EV.Application.Services
 
             return new ResponseDTO<PagedResult<UserPostCustom>>("Get successfully", true, pageResult);
         }
+
 
         public async Task<ResponseDTO<UserPostCustom>> GetUserPostById(int id)
         {

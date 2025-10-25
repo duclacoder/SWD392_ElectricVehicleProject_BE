@@ -8,7 +8,6 @@ namespace EV.Application.Interfaces.RepositoryInterfaces
 {
     public interface IUnitOfWork : IDisposable
     {
-        //Repository interfaces
         IGenericRepository<T> GetGenericRepository<T>() where T : class;
 
         IUserRepository userRepository { get; }
@@ -23,9 +22,15 @@ namespace EV.Application.Interfaces.RepositoryInterfaces
 
         IUserPostsRepository userPostsRepository { get; }
 
+        IPostPackageRepository postPackageRepository { get; }
+
+        IPaymentRepository paymentRepository { get; }
+
         IInspectionFeesRepository inspectionFeesRepository { get; }
 
         IBatteryRepository batteryRepository { get; }
+
+        IAuctionsFeeRepository auctionsFeeRepository { get; }
         //Single commit point
         Task<int> SaveChangesAsync();
     }
