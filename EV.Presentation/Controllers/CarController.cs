@@ -82,7 +82,7 @@ namespace EV.Presentation.Controllers
         }
 
         [HttpPost("AddCar")]
-        public async Task<ActionResult<ResponseDTO<CarAddResponseDTO>>> AddCar([FromBody] CarAddRequestModel carAddRequestModel)
+        public async Task<ActionResult<ResponseDTO<CarAddResponseDTO>>> AddCar([FromForm] CarAddRequestModel carAddRequestModel)
         {
             var validationResult = _modelStateCheck.CheckModelState<CarAddRequestModel>(ModelState);
 
@@ -93,7 +93,8 @@ namespace EV.Presentation.Controllers
 
             var carAddRequestDTO = _mapper.Map<CarAddRequestDTO>(carAddRequestModel);
 
-            var result = await _carService.AddCar(carAddRequestDTO);
+
+            var result = await _carService.AddCar(carAddRequestDTO, carAddRequestModel.Image);
 
             if (result.Result == null)
             {
