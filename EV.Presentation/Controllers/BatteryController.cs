@@ -23,7 +23,7 @@ namespace EV.Presentation.Controllers
         }
 
         [HttpGet("GetAllBattery")]
-        public async Task<ActionResult<ResponseDTO<PagedResult<UserBatteryGetAll>>>> GetAllCars(UserGetAllBatteryModel userGetAllBatteryModel)
+        public async Task<ActionResult<ResponseDTO<PagedResult<UserBatteryGetAll>>>> GetAllBattery(UserGetAllBatteryModel userGetAllBatteryModel)
         {
             var validationResult = _modelStateCheck.CheckModelState<UserGetAllBatteryModel>(ModelState);
 
@@ -104,7 +104,7 @@ namespace EV.Presentation.Controllers
         }
 
         [HttpPost("AddBattery")]
-        public async Task<ActionResult<ResponseDTO<BatteryAddResponseDTO>>> AddBattery([FromBody] BatteryAddRequestModel batteryAddRequestModel)
+        public async Task<ActionResult<ResponseDTO<BatteryAddResponseDTO>>> AddBattery([FromForm] BatteryAddRequestModel batteryAddRequestModel)
         {
             var validationResult = _modelStateCheck.CheckModelState<BatteryAddRequestModel>(ModelState);
 
@@ -115,7 +115,7 @@ namespace EV.Presentation.Controllers
 
             var batteryAddRequestDTO = _mapper.Map<BatteryAddRequestDTO>(batteryAddRequestModel);
 
-            var result = await _batteryService.AddBattery(batteryAddRequestDTO);
+            var result = await _batteryService.AddBattery(batteryAddRequestDTO, batteryAddRequestModel.ImageUpload);
 
             if (result.Result == null)
             {

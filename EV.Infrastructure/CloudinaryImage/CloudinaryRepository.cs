@@ -21,7 +21,8 @@ namespace EV.Infrastructure.CloudinaryImage
             var uploadParams = new ImageUploadParams()
             {
                 File = new FileDescription(image.FileName, stream),
-                Folder = "UploadImages"
+                Folder = "UploadImages",
+                Transformation = new Transformation().Width(500).Height(500).Crop("fill")
             };
 
             var uploadResult = await _cloudinary.UploadAsync(uploadParams);
