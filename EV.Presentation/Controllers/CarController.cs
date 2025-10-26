@@ -105,7 +105,7 @@ namespace EV.Presentation.Controllers
         }
 
         [HttpPut("UserCarUpdate")]
-        public async Task<ActionResult<ResponseDTO<UserCarUpdateReponse>>> UserCarUpdate([FromBody] UserCarUpdateModel userCarUpdateModel)
+        public async Task<ActionResult<ResponseDTO<UserCarUpdateReponse>>> UserCarUpdate([FromForm] UserCarUpdateModel userCarUpdateModel)
         {
             var validationResult = _modelStateCheck.CheckModelState<UserCarUpdateModel>(ModelState);
 
@@ -118,7 +118,7 @@ namespace EV.Presentation.Controllers
 
             var userCarUpdateDTO = _mapper.Map<UserCarUpdateRequest>(userCarUpdateModel);
 
-            var result = await _carService.UserCarUpdate(userCarUpdateDTO);
+            var result = await _carService.UserCarUpdate(userCarUpdateDTO, userCarUpdateModel.Image);
 
             if (result.Result == null)
             {

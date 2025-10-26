@@ -22,7 +22,7 @@ namespace EV.Application.Interfaces.ServiceInterfaces
 
         Task<ResponseDTO<string>> UserUnDeleteCar(int userId, int carId);
 
-        Task<ResponseDTO<UserCarUpdateReponse>> UserCarUpdate(UserCarUpdateRequest userCarUpdateRequest);
+        Task<ResponseDTO<UserCarUpdateReponse>> UserCarUpdate(UserCarUpdateRequest userCarUpdateRequest, IFormFile imageUpdate);
 
         Task<ResponseDTO<AuctionVehicleDetails?>> GetCarById(int carId);
     }

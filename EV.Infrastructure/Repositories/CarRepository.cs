@@ -59,6 +59,7 @@ namespace EV.Infrastructure.Repositories
         public async Task<Vehicle?> GetCarForUpdate(int userId, int carId)
         {
             return await _context.Vehicles
+                .Include(v => v.VehicleImages)
                 .FirstOrDefaultAsync(v => v.UserId == userId && v.VehiclesId == carId);
         }
 

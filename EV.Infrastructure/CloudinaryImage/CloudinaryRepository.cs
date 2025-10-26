@@ -29,19 +29,31 @@ namespace EV.Infrastructure.CloudinaryImage
             return uploadResult.SecureUrl.ToString();
         }
 
-        public async Task<string> DeleteImage(string publicId)
+        public async Task<string> DeleteImage(string imageUrl)
         {
-            var deletionParams = new DeletionParams(publicId)
-            {
-                ResourceType = ResourceType.Image // optional, default image
-            };
+            if (string.IsNullOrWhiteSpace(imageUrl))
+                return "Image URL or publicId is required.";
 
-            var result = await _cloudinary.DestroyAsync(deletionParams);
+            // If user passes full URL, extract public ID
+            var publicId = imageUrl;
+            if (imageUrl.StartsWith("http"))
+            {
+                var parts = imageUrl.Split("/upload/");
+                if (parts.Length == 2)
+                {
+                    // Remove version and extension
+                    publicId = parts[1]
+                        .Substring(parts[1].IndexOf('/') + 1); // remove folder
+                    publicId = Path.ChangeExtension(publicId, null); // remove .jpg
+                }
+            }
+
+            var result = await _cloudinary.DestroyAsync(new DeletionParams(publicId));
 
             if (result.Result == "ok")
-                return "Deleted successfully";
+                return $"Deleted: {publicId}";
 
-            return $"Failed to delete. Status: {result.Result}";
+            return $"Failed to delete. Cloudinary says: {result.Result}";
         }
     }
 }
