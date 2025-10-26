@@ -5,6 +5,7 @@ using EV.Application.RequestDTOs.UserRequestDTO;
 using EV.Application.ResponseDTOs;
 using EV.Domain.CustomEntities;
 using EV.Domain.Entities;
+using Microsoft.AspNetCore.Http;
 
 namespace EV.Application.Services
 {
@@ -12,24 +13,44 @@ namespace EV.Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-
-        public BatteryService(IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly ICloudinaryRepository _cloudinaryRepository;
+        public BatteryService(IUnitOfWork unitOfWork, IMapper mapper, ICloudinaryRepository cloudinaryRepository)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _cloudinaryRepository = cloudinaryRepository;
         }
 
-        public async Task<ResponseDTO<BatteryAddResponseDTO>> AddBattery(BatteryAddRequestDTO batteryAddRequestDTO)
+        public async Task<ResponseDTO<BatteryAddResponseDTO>> AddBattery(BatteryAddRequestDTO batteryAddRequestDTO, IFormFile imageUpload)
         {
             var addedBattery = _mapper.Map<Battery>(batteryAddRequestDTO);
 
             try
             {
-                _unitOfWork.GetGenericRepository<Battery>().CreateAsync(addedBattery);
+                await _unitOfWork.GetGenericRepository<Battery>().CreateAsync(addedBattery);
+
+                var addResult = _mapper.Map<BatteryAddResponseDTO>(addedBattery);
+
+                var listImages = new List<BatteryImage>();
+
+                if (addResult != null)
+                {
+                    var imageUrl = await _cloudinaryRepository.UploadImageToCloudinaryAsync(imageUpload);
+                    if (!string.IsNullOrEmpty(imageUrl))
+                    {
+                        var batteryImage = new BatteryImage
+                        {
+                            BatteryId = addedBattery.BatteriesId,
+                            ImageUrl = imageUrl,
+                        };
+                        listImages.Add(batteryImage);
+                    }
+                }
+
+                addedBattery.BatteryImages = listImages;
 
                 await _unitOfWork.SaveChangesAsync();
 
-                var addResult = _mapper.Map<BatteryAddResponseDTO>(addedBattery);
 
                 return new ResponseDTO<BatteryAddResponseDTO>("Battery added successfully", true, addResult);
             }

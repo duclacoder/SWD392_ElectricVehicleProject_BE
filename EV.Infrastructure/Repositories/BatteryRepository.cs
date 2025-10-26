@@ -36,7 +36,8 @@ namespace EV.Infrastructure.Repositories
                     WarrantyMonths = u.WarrantyMonths,
                     Price = u.Price,
                     Currency = u.Currency,
-                    Status = u.Status
+                    Status = u.Status,
+                    ImageUrl = u.BatteryImages.Select(i => i.ImageUrl).FirstOrDefault()
                 })
                 .Skip(skip)
                 .Take(take)
@@ -61,7 +62,10 @@ namespace EV.Infrastructure.Repositories
                     WarrantyMonths = u.WarrantyMonths,
                     Price = u.Price,
                     Currency = u.Currency,
-                    Status = u.Status
+                    Status = u.Status,
+                    CreatedAt = u.CreatedAt,
+                    UpdatedAt = u.UpdatedAt,
+                    ImageUrl = u.BatteryImages.Select(i => i.ImageUrl).FirstOrDefault()
                 })
                 .FirstOrDefaultAsync(v => v.UserId == userId && v.BatteriesId == batteryId);
             return betteryDetails;

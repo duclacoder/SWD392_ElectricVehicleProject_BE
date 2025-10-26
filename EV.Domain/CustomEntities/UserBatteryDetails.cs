@@ -33,5 +33,7 @@ namespace EV.Domain.CustomEntities
         public DateTime? UpdatedAt { get; set; }
 
         public string? Status { get; set; }
+
+        public string? ImageUrl { get; set; }
     }
 }
