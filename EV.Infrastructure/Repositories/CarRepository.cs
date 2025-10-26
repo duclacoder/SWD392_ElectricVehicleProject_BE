@@ -41,7 +41,8 @@ namespace EV.Infrastructure.Repositories
                     Verified = u.Verified,
                     Price = u.Price,
                     Currency = u.Currency,
-                    Status = u.Status
+                    Status = u.Status,
+                    ImageUrl = u.VehicleImages.Select(i => i.ImageUrl).FirstOrDefault()
                 })
                 .Skip(skip)
                 .Take(take)
@@ -58,6 +59,7 @@ namespace EV.Infrastructure.Repositories
         public async Task<Vehicle?> GetCarForUpdate(int userId, int carId)
         {
             return await _context.Vehicles
+                .Include(v => v.VehicleImages)
                 .FirstOrDefaultAsync(v => v.UserId == userId && v.VehiclesId == carId);
         }
 
@@ -93,7 +95,8 @@ namespace EV.Infrastructure.Repositories
                     CreatedAt = u.CreatedAt,
                     UpdatedAt = u.UpdatedAt,
                     Verified = u.Verified,
-                    Status = u.Status
+                    Status = u.Status,
+                    ImageUrl = u.VehicleImages.Select(i => i.ImageUrl).FirstOrDefault()
                 })
                 .FirstOrDefaultAsync(v => v.UserId == userId && v.VehiclesId == carId);
             return carDetails;

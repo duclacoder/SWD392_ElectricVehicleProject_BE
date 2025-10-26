@@ -46,6 +46,9 @@ namespace EV.Infrastructure
         public IPaymentRepository paymentRepository => _paymentRepository ??= new PaymentRepository(_context);
 
 
+        private IBatteryRepository _batteryRepository;
+        public IBatteryRepository batteryRepository => _batteryRepository ??= new BatteryRepository(_context);
+
         public IGenericRepository<T> GetGenericRepository<T>() where T : class
         {
             return new GenericRepository<T>(_context);

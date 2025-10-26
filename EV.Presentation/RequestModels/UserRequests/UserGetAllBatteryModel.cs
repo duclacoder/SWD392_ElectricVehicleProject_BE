@@ -2,7 +2,7 @@
 
 namespace EV.Presentation.RequestModels.UserRequests
 {
-    public class UserGetAllCarModel
+    public class UserGetAllBatteryModel
     {
         public int UserId { get; set; }
 
