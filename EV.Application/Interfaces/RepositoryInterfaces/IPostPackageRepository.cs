@@ -19,5 +19,9 @@ namespace EV.Application.Interfaces.RepositoryInterfaces
         Task<PostPackageCustom> DeletePostPackage(int id);
 
         Task<PostPackageCustom> GetPostPackageById(int id);
+
+        Task<IEnumerable<PostPackageCustom>> GetActivePostPackage(int skip, int take);
+
+        Task<IEnumerable<PostPackageCustom>> SearchPostPackageByPackageName(string packageName, int skip, int take);
     }
 }

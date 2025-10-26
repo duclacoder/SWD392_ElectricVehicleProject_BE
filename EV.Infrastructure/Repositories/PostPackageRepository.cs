@@ -72,6 +72,26 @@ namespace EV.Infrastructure.Repositories
             };
         }
 
+        public async Task<IEnumerable<PostPackageCustom>> GetActivePostPackage(int skip, int take)
+        {
+            var packages = await _context.PostPackages
+                                         .Where(a => a.Status == "Active")
+                                         .OrderBy(a => a.PostPackagesId)
+                                         .Skip(skip)
+                                         .Take(take)
+                                         .ToListAsync();
+            return packages.Select(p => new PostPackageCustom
+            {
+                PostPackageId = p.PostPackagesId,
+                PackageName = p.PackageName,
+                Description = p.Description,
+                PostDuration = p.PostDuration,
+                Currency = p.Currency,
+                PostPrice = p.PostPrice,
+                Status = p.Status
+            });
+        }
+
         public async Task<IEnumerable<PostPackageCustom>> GetAllPostPackage(int skip, int take)
         {
             var packages = await _context.PostPackages
@@ -113,6 +133,32 @@ namespace EV.Infrastructure.Repositories
             };
         }
 
+        public async Task<IEnumerable<PostPackageCustom>> SearchPostPackageByPackageName(string packageName, int skip, int take)
+        {
+            if (string.IsNullOrEmpty(packageName))
+            {
+                return await GetAllPostPackage(skip, take);
+            }
+
+            var packages = await _context.PostPackages
+                                         .Where(a => a.PackageName.ToLower().Contains(packageName.ToLower()))
+                                         .OrderBy(a => a.PostPackagesId)
+                                         .Skip(skip)
+                                         .Take(take)
+                                         .ToListAsync();
+
+            return packages.Select(p => new PostPackageCustom
+            {
+                PostPackageId = p.PostPackagesId,
+                PackageName = p.PackageName,
+                Description = p.Description,
+                PostDuration = p.PostDuration,
+                Currency = p.Currency,
+                PostPrice = p.PostPrice,
+                Status = p.Status
+            });
+        }
+
         public async Task<PostPackageCustom> UpdatePostPackage(int id, CreatePostPackageRequestDTO updatePostPackageRequestDTO)
         {
             var existing = await _context.PostPackages.FirstOrDefaultAsync(p => p.PostPackagesId == id);
@@ -140,5 +186,7 @@ namespace EV.Infrastructure.Repositories
                 Status = existing.Status
             };
         }
+
+
     }
 }

@@ -20,14 +20,14 @@ namespace EV.Infrastructure.Repositories
 
         public async Task<UserPackagesCustom> CreateUserPackage(UserPackagesDTO userPackages)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(a => a.UserName == userPackages.UserName);
+            var user = await _context.Users.FirstOrDefaultAsync(a => a.UsersId == userPackages.UserId);
             var package = await _context.PostPackages.FirstOrDefaultAsync(b => b.PackageName == userPackages.PackagesName);
 
             if (user == null || package == null) return null;
 
             var entity = new UserPackage
             {
-                UserId = user.UsersId,
+                UserId = userPackages.UserId,
                 PackageId = package.PostPackagesId,
                 PurchasedPostDuration = userPackages.PurchasedDuration,
                 PurchasedAtPrice = userPackages.PurchasedAtPrice,
@@ -36,13 +36,13 @@ namespace EV.Infrastructure.Repositories
             };
 
             _context.UserPackages.Add(entity);
-            //await _context.SaveChangesAsync();
 
             return new UserPackagesCustom
             {
-                UserName = userPackages.UserName,
+                UserName = user.UserName,
                 PackagesName = userPackages.PackagesName,
                 PurchasedDuration = userPackages.PurchasedDuration,
+                PurchasedAtPrice = userPackages.PurchasedAtPrice,
                 Currency = userPackages.Currency,
                 PurchasedAt = entity.PurchasedAt,
                 Status = entity.Status
@@ -74,7 +74,6 @@ namespace EV.Infrastructure.Repositories
                 Status = userPackages.Status
             };
         }
-
         public async Task<IEnumerable<UserPackagesCustom>> GetAllUserPackages(int skip, int take)
         {
             return await _context.UserPackages
@@ -158,16 +157,21 @@ namespace EV.Infrastructure.Repositories
 
         public async Task<UserPackagesCustom> UpdateUserPackage(int id, UserPackagesDTO userPackages)
         {
-            var x = await _context.UserPackages.FindAsync(id);
+            //var x = await _context.UserPackages.FindAsync(id);
+            var x = await _context.UserPackages
+                .Include(a => a.User)
+                .FirstOrDefaultAsync(a => a.UserPackagesId == id);
+
             if (x == null) return null;
 
-            if (!string.IsNullOrEmpty(userPackages.UserName))
+            if (userPackages.UserId.HasValue)
             {
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == userPackages.UserName);
-                if (user != null)
+                var user = await _context.Users.FindAsync(userPackages.UserId.Value);
+                if(user != null)
+                {
                     x.UserId = user.UsersId;
+                }
             }
-
             if (!string.IsNullOrEmpty(userPackages.PackagesName))
             {
                 var package = await _context.PostPackages.FirstOrDefaultAsync(p => p.PackageName == userPackages.PackagesName);
@@ -179,17 +183,15 @@ namespace EV.Infrastructure.Repositories
             x.Currency = userPackages.Currency;
 
             _context.UserPackages.Update(x);
-
             //await _context.SaveChangesAsync();
 
             return new UserPackagesCustom
             {
                 UserName = x.User?.UserName,
-                PackagesName = x.Package?.PackageName,
-                PurchasedDuration = x.PurchasedPostDuration,
-                PurchasedAtPrice = x.PurchasedAtPrice,
-                Currency = x.Currency,
-                PurchasedAt = x.PurchasedAt,
+                PackagesName = userPackages.PackagesName,
+                PurchasedDuration = userPackages.PurchasedDuration,
+                PurchasedAtPrice = userPackages.PurchasedAtPrice,
+                Currency = userPackages.Currency,
                 Status = x.Status
             };
         }

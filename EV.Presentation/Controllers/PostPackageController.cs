@@ -79,5 +79,26 @@ namespace EV.Presentation.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> Search([FromQuery] string packageName, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        {
+            if (string.IsNullOrWhiteSpace(packageName))
+                return BadRequest(new ResponseDTO<string>("PackageName is required", false));
+
+            var result = await _postPackageService.SearchPostPackageByPackageName(packageName, page, pageSize);
+            return Ok(result);
+        }
+
+        [HttpGet("active")]
+        public async Task<IActionResult> GetActive([FromQuery] GetAllPostPackageRequestDTO request)
+        {
+            if (request.Page <= 0) request.Page = 1;
+            if (request.PageSize <= 0) request.PageSize = 10;
+
+            var result = await _postPackageService.GetActivePostPackage(request);
+            return Ok(result);
+        }
+
     }
 }

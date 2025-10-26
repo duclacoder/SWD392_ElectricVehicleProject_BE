@@ -106,18 +106,17 @@ namespace EV.Application.Services
 
             await _unitOfWork.SaveChangesAsync();
 
-            var updated = new UserPackagesCustom
-            {
-                UserName = userPackagesDTO.UserName,
-                PackagesName = userPackagesDTO.PackagesName,
-                PurchasedDuration = userPackagesDTO.PurchasedDuration,
-                PurchasedAtPrice = userPackagesDTO.PurchasedAtPrice,
-                Currency = userPackagesDTO.Currency,
-                Status = "Active", 
-                PurchasedAt = DateTime.Now
-            };
+            //var updated = new UserPackagesCustom
+            //{
+            //    PackagesName = userPackagesDTO.PackagesName,
+            //    PurchasedDuration = userPackagesDTO.PurchasedDuration,
+            //    PurchasedAtPrice = userPackagesDTO.PurchasedAtPrice,
+            //    Currency = userPackagesDTO.Currency,
+            //    Status = "Active", 
+            //    PurchasedAt = DateTime.Now
+            //};
 
-            return new ResponseDTO<UserPackagesCustom>("Updated successfully", true, updated);
+            return new ResponseDTO<UserPackagesCustom>("Updated successfully", true, result);
         }
     }
 }
