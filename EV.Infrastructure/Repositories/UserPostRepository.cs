@@ -152,6 +152,7 @@ namespace EV.Infrastructure.Repositories
                                  .Include(a => a.User)
                                  .Include(a => a.Vehicle)
                                  .ThenInclude(b => b.VehicleImages)
+                                 .Where(a => a.Status == "Active")
                                  .AsQueryable();
 
             if(!string.IsNullOrEmpty(userName))
