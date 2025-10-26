@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -59,5 +60,6 @@ namespace EV.Application.RequestDTOs.UserRequestDTO
         public bool Verified { get; set; } = false;
 
         public string? Status { get; set; } = "Pending";
+
     }
 }

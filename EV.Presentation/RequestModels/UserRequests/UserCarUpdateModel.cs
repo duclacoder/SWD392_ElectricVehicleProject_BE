@@ -83,5 +83,8 @@ namespace EV.Presentation.RequestModels.UserRequests
         [Required]
         [RegularExpression(@"^[A-Z]{3}$", ErrorMessage = "Currency must be a 3-letter ISO code (e.g., USD, EUR).")]
         public string? Currency { get; set; }
+
+        //[Required]
+        public IFormFile? Image { get; set; }
     }
 }
