@@ -22,5 +22,9 @@ namespace EV.Application.Interfaces.ServiceInterfaces
         Task<ResponseDTO<PostPackageCustom>> UpdatePostPackage(int id,CreatePostPackageRequestDTO postPackageCustom);
 
         Task<ResponseDTO<PostPackageCustom>> DeletePostPackage(int id);
+
+        Task<ResponseDTO<PagedResult<PostPackageCustom>>> GetActivePostPackage(GetAllPostPackageRequestDTO getAllPostPackageRequestDTO);
+
+        Task<ResponseDTO<PagedResult<PostPackageCustom>>> SearchPostPackageByPackageName(string packageName, int page, int pageSize);
     }
 }

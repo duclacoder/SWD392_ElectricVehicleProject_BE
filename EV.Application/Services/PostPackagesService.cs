@@ -48,6 +48,23 @@ namespace EV.Application.Services
             return new ResponseDTO<PostPackageCustom>("Delete successfully", true, result);
         }
 
+        public async Task<ResponseDTO<PagedResult<PostPackageCustom>>> GetActivePostPackage(GetAllPostPackageRequestDTO getAllPostPackageRequestDTO)
+        {
+            var result = await _unitOfWork.postPackageRepository.GetActivePostPackage((getAllPostPackageRequestDTO.Page - 1) * getAllPostPackageRequestDTO.PageSize, getAllPostPackageRequestDTO.PageSize);
+
+            var total = result.Count();
+            var pageResult = new PagedResult<PostPackageCustom>
+            {
+                Items = result.ToList(),
+                TotalItems = total,
+                Page = getAllPostPackageRequestDTO.Page,
+                PageSize = getAllPostPackageRequestDTO.PageSize,
+                TotalPages = (int)Math.Ceiling(total / (double)getAllPostPackageRequestDTO.PageSize)
+            };
+
+            return new ResponseDTO<PagedResult<PostPackageCustom>>("Get active packages successfully", true, pageResult);
+        }
+
         public async Task<ResponseDTO<PagedResult<PostPackageCustom>>> GetAllPostPackage(GetAllPostPackageRequestDTO getAllPostPackageRequestDTO)
         {
             var result = await _unitOfWork.postPackageRepository.GetAllPostPackage((getAllPostPackageRequestDTO.Page - 1) *  getAllPostPackageRequestDTO.PageSize, getAllPostPackageRequestDTO.PageSize);
@@ -76,6 +93,29 @@ namespace EV.Application.Services
 
             return new ResponseDTO<PostPackageCustom>($"Get post {id} successfully", true, result);
 
+        }
+
+        public async Task<ResponseDTO<PagedResult<PostPackageCustom>>> SearchPostPackageByPackageName(string packageName, int page, int pageSize)
+        {
+            int skip = (page - 1) * pageSize;
+
+            var result = await _unitOfWork.postPackageRepository.SearchPostPackageByPackageName(packageName, skip, pageSize);
+
+            int totalItems = result.Count();
+
+            var pagedResult = new PagedResult<PostPackageCustom>
+            {
+                Items = result.ToList(),
+                TotalItems = totalItems,
+                Page = page,
+                PageSize = pageSize,
+                TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize)
+            };
+
+            return new ResponseDTO<PagedResult<PostPackageCustom>>(
+                   $"Search post package by name '{packageName}' successfully",
+                   true,
+                   pagedResult);
         }
 
         public async Task<ResponseDTO<PostPackageCustom>> UpdatePostPackage(int id, CreatePostPackageRequestDTO postPackageCustom)
