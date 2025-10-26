@@ -5,6 +5,7 @@ using EV.Application.RequestDTOs.UserRequestDTO;
 using EV.Application.ResponseDTOs;
 using EV.Domain.CustomEntities;
 using EV.Domain.Entities;
+using Microsoft.AspNetCore.Http;
 
 namespace EV.Application.Services
 {
@@ -12,14 +13,16 @@ namespace EV.Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ICloudinaryRepository _cloudinaryRepository;
 
-        public CarService(IUnitOfWork unitOfWork, IMapper mapper)
+        public CarService(IUnitOfWork unitOfWork, IMapper mapper, ICloudinaryRepository cloudinaryRepository)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _cloudinaryRepository = cloudinaryRepository;
         }
 
-        public async Task<ResponseDTO<CarAddResponseDTO>> AddCar(CarAddRequestDTO carAddRequestDTO)
+        public async Task<ResponseDTO<CarAddResponseDTO>> AddCar(CarAddRequestDTO carAddRequestDTO, IFormFile imageUpload)
         {
             if (carAddRequestDTO.Year.HasValue && carAddRequestDTO.Year > DateTime.Now.Year)
             {
@@ -49,11 +52,31 @@ namespace EV.Application.Services
 
             try
             {
-                _unitOfWork.GetGenericRepository<Vehicle>().CreateAsync(addedVehicle);
+                await _unitOfWork.GetGenericRepository<Vehicle>().CreateAsync(addedVehicle);
 
-                await _unitOfWork.SaveChangesAsync();
+                //await _unitOfWork.SaveChangesAsync();
 
                 var addResult = _mapper.Map<CarAddResponseDTO>(addedVehicle);
+
+                var listImages = new List<VehicleImage>();
+
+                if (addResult != null)
+                {
+                    var imageUrl = await _cloudinaryRepository.UploadImageToCloudinaryAsync(imageUpload);
+                    if (!string.IsNullOrEmpty(imageUrl))
+                    {
+                        var vehicleImage = new VehicleImage
+                        {
+                            VehicleId = addedVehicle.VehiclesId,
+                            ImageUrl = imageUrl,
+                        };
+                        listImages.Add(vehicleImage);
+                    }
+                }
+
+                addedVehicle.VehicleImages = listImages;
+
+                await _unitOfWork.SaveChangesAsync();
 
                 return new ResponseDTO<CarAddResponseDTO>("Car added successfully", true, addResult);
             }
@@ -90,7 +113,7 @@ namespace EV.Application.Services
         public async Task<ResponseDTO<UserCarDetails>> UserCarViewDetailsById(UserViewCarDetailsRequestDTO userViewCarDetailsRequestDTO)
         {
             var carDetails = await _unitOfWork.carRepository.UserCarViewDetailsById(userViewCarDetailsRequestDTO.UserId, userViewCarDetailsRequestDTO.VehicleId);
-            
+
             if (carDetails == null)
             {
                 return new ResponseDTO<UserCarDetails>("Can not find the car", false, null);
@@ -119,17 +142,17 @@ namespace EV.Application.Services
                 return new ResponseDTO<string>("Car not found or does not belong to the user", false, "Not Found");
             }
 
-            if(car.Status == "Sold")
+            if (car.Status == "Sold")
             {
                 return new ResponseDTO<string>("Cannot delete a sold car", false, "Sold");
             }
 
-            if(car.Status == "Auctioned")
+            if (car.Status == "Auctioned")
             {
                 return new ResponseDTO<string>("Cannot delete an auctioned car", false, "Auctioned");
             }
 
-            if(car.Status == "Posted")
+            if (car.Status == "Posted")
             {
                 return new ResponseDTO<string>("Cannot delete a posted car", false, "Posted");
             }
@@ -155,7 +178,7 @@ namespace EV.Application.Services
                 return new ResponseDTO<string>("Car not found or does not belong to the user", false, "Not Found");
             }
 
-            if(car.Status != "Deleted")
+            if (car.Status != "Deleted")
             {
                 return new ResponseDTO<string>("Only deleted cars can be undeleted", false, $"Car current status: {car.Status}");
             }
@@ -175,7 +198,7 @@ namespace EV.Application.Services
             }
         }
 
-        public async Task<ResponseDTO<UserCarUpdateReponse>> UserCarUpdate(UserCarUpdateRequest userCarUpdateRequest)
+        public async Task<ResponseDTO<UserCarUpdateReponse>> UserCarUpdate(UserCarUpdateRequest userCarUpdateRequest, IFormFile imageUpdate)
         {
             var findCar = await _unitOfWork.carRepository.GetCarForUpdate(userCarUpdateRequest.UserId, userCarUpdateRequest.VehiclesId);
 
@@ -226,7 +249,38 @@ namespace EV.Application.Services
                 findCar.UpdatedAt = DateTime.Now;
                 findCar.Verified = false;
                 findCar.Status = "Pending";
+
+                if (imageUpdate == null)
+                {
+                    await _unitOfWork.SaveChangesAsync();
+                    var updatedCarNoImage = _mapper.Map<UserCarUpdateReponse>(findCar);
+                    return new ResponseDTO<UserCarUpdateReponse>("Car updated successfully", true, updatedCarNoImage);
+                }
+
+                var deleteImageUrl = findCar.VehicleImages.ToList();
+
+                foreach (var img in deleteImageUrl)
+                {
+                    var deleteResult = await _cloudinaryRepository.DeleteImage(img.ImageUrl);
+                }
+
+
+                var imageUrl = await _cloudinaryRepository.UploadImageToCloudinaryAsync(imageUpdate);
+
+                findCar.VehicleImages.Clear();
+
+                if (!string.IsNullOrEmpty(imageUrl))
+                {
+                    var vehicleImage = new VehicleImage
+                    {
+                        VehicleId = findCar.VehiclesId,
+                        ImageUrl = imageUrl,
+                    };
+                    findCar.VehicleImages.Add(vehicleImage);
+                }
+
                 await _unitOfWork.SaveChangesAsync();
+
 
                 var updatedCar = _mapper.Map<UserCarUpdateReponse>(findCar);
 
@@ -242,7 +296,7 @@ namespace EV.Application.Services
 
         public async Task<ResponseDTO<AuctionVehicleDetails?>> GetCarById(int carId)
         {
-            try 
+            try
             {
                 var car = await _unitOfWork.carRepository.GetAuctionVehicleDetailsById(carId);
 
@@ -253,7 +307,7 @@ namespace EV.Application.Services
 
                 return new ResponseDTO<AuctionVehicleDetails?>("Get car successfully", true, car);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return new ResponseDTO<AuctionVehicleDetails?>($"Error retrieving car: {ex.Message}", false, null);
             }

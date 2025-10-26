@@ -1,6 +1,7 @@
 ﻿using EV.Application.RequestDTOs.UserRequestDTO;
 using EV.Application.ResponseDTOs;
 using EV.Domain.CustomEntities;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace EV.Application.Interfaces.ServiceInterfaces
 {
     public interface ICarService
     {
-        Task<ResponseDTO<CarAddResponseDTO>> AddCar(CarAddRequestDTO carAddRequestDTO);
+        Task<ResponseDTO<CarAddResponseDTO>> AddCar(CarAddRequestDTO carAddRequestDTO, IFormFile imageUpload);
 
         Task<ResponseDTO<PagedResult<UserCarGetAll>>> UserCarGetAll(UserGetAllCarRequestDTO userGetAllCarRequestDTO);
 
@@ -21,7 +22,7 @@ namespace EV.Application.Interfaces.ServiceInterfaces
 
         Task<ResponseDTO<string>> UserUnDeleteCar(int userId, int carId);
 
-        Task<ResponseDTO<UserCarUpdateReponse>> UserCarUpdate(UserCarUpdateRequest userCarUpdateRequest);
+        Task<ResponseDTO<UserCarUpdateReponse>> UserCarUpdate(UserCarUpdateRequest userCarUpdateRequest, IFormFile imageUpdate);
 
         Task<ResponseDTO<AuctionVehicleDetails?>> GetCarById(int carId);
     }

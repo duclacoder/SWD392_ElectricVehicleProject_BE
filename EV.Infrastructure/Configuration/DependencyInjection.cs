@@ -1,7 +1,9 @@
-﻿using EV.Application.Helpers;
+﻿using CloudinaryDotNet;
+using EV.Application.Helpers;
 using EV.Application.Interfaces.RepositoryInterfaces;
 using EV.Application.Interfaces.ServiceInterfaces;
 using EV.Application.Services;
+using EV.Infrastructure.CloudinaryImage;
 using EV.Infrastructure.DBContext;
 using EV.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -35,6 +37,8 @@ namespace EV.Infrastructure.Configuration
             services.AddScoped<IUserPostsService, UserPostService>();
             services.AddScoped<ICarRepository, CarRepository>();
             services.AddScoped<IInspectionFeesRepository, InspectionFeesRepository>();
+            services.AddScoped<IBatteryRepository, BatteryRepository>();
+
             services.AddScoped<IAuctionsFeeRepository, AuctionsFeeRepository>();
             services.AddScoped<IAuctionService, AuctionService>();
             services.AddScoped<IPostPackageService, PostPackagesService>();
@@ -48,7 +52,23 @@ namespace EV.Infrastructure.Configuration
             services.AddScoped<ICarService, CarService>();  
             services.AddScoped<IModelStateCheck, ModelStateCheck>();
             services.AddScoped<IInspectionFeesService, InspectionFeesService>();
+            services.AddScoped<IBatteryService, BatteryService>();
+
             services.AddScoped<IAuctionsFeeService, AuctionsFeeService>();
+            services.AddScoped<ICloudinaryService, CloudinaryService>();
+
+            //cloudinary
+            var cloudName = configuration["CloudinarySettings:CloudName"];
+            var apiKey = configuration["CloudinarySettings:ApiKey"];
+            var apiSecret = configuration["CloudinarySettings:ApiSecret"];
+
+            if (string.IsNullOrEmpty(cloudName) || string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(apiSecret))
+                throw new ArgumentException("Cloudinary credentials are missing in appsettings.json");
+
+            var account = new Account(cloudName, apiKey, apiSecret);
+            var cloudinary = new Cloudinary(account);
+            services.AddSingleton(cloudinary);
+            services.AddScoped<ICloudinaryRepository, CloudinaryRepository>();
 
             return services;
         }
