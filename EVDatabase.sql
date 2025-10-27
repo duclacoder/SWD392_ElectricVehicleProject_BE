@@ -176,23 +176,24 @@ go
 
 CREATE TABLE Payments (
     PaymentsId INT PRIMARY KEY IDENTITY(1,1),
-    UserId INT NOT NULL FOREIGN KEY REFERENCES Users(UsersId),
-    PaymentMethodId INT NOT NULL FOREIGN KEY REFERENCES PaymentsMethods(PaymentMethodId),
-    Gateway NVARCHAR(255) NULL,                  -- Cổng thanh toán (VD: Momo, ZaloPay,...)
-    TransactionDate DATETIME DEFAULT GETDATE(),  -- Ngày giao dịch
-    AccountNumber NVARCHAR(100) NULL,            -- Số tài khoản / ví
-    Content NVARCHAR(500) NULL,                  -- Nội dung chuyển khoản
-    TransferType NVARCHAR(50) NULL,              -- Loại chuyển (VD: manual, online)
-    TransferAmount DECIMAL(18,2) NOT NULL,       -- Số tiền
-    Currency NVARCHAR(100) DEFAULT 'VND',        -- Loại tiền
-    Accumulated DECIMAL(18,2) NULL,              -- Số dư tích lũy (nếu có)
-    ReferenceType NVARCHAR(50) NULL,             -- 'UserPackage', 'AuctionParticipant', ...
-    ReferenceId INT NULL,                        -- Id của bảng tương ứng
-    CreatedAt DATETIME DEFAULT GETDATE(),
-    UpdatedAt DATETIME NULL,
-    Status NVARCHAR(50) DEFAULT 'Pending'        -- Pending, Completed, Failed, Refunded
+    UserId INT FOREIGN KEY REFERENCES Users(UsersId),
+    PaymentMethodId INT FOREIGN KEY REFERENCES PaymentsMethods(PaymentMethodId),
+    Gateway NVARCHAR(255),
+    TransactionDate DATETIME,
+    AccountNumber NVARCHAR(100),
+    Content NVARCHAR(500),
+    TransferType NVARCHAR(50),
+    TransferAmount DECIMAL(18,2),
+    Currency NVARCHAR(100),          -- VND, USD
+    Accumulated DECIMAL(18,2),       -- Remain cash in account
+    CreatedAt DATETIME,
+    UpdatedAt DATETIME,
+    ReferenceId INT NULL,            
+    ReferenceType NVARCHAR(100) NULL,    
+    Status NVARCHAR(50)
 );
 GO
+
 --------------------------------------------------
 -- AUCTION
 --------------------------------------------------
@@ -247,25 +248,24 @@ CREATE TABLE PostPackages (
     PackageName NVARCHAR(255),
     Description TEXT,
     PostPrice DECIMAL(18,2),
-    Currency NVARCHAR(100), --VND, USD
-    PostDuration INT, -- số ngày đăng bài
+	Currency NVARCHAR(100), --VND, USD
+    PostDuration INT,
     Status NVARCHAR(50)
 );
-GO
+go
 
 CREATE TABLE UserPackages (
     UserPackagesId INT PRIMARY KEY IDENTITY(1,1),
-    UserId INT NOT NULL FOREIGN KEY REFERENCES Users(UsersId),
-    PackageId INT NOT NULL FOREIGN KEY REFERENCES PostPackages(PostPackagesId),
-    PaymentsId INT UNIQUE FOREIGN KEY REFERENCES Payments(PaymentsId),  -- 1-1
-    PurchasedPostDuration INT,
+    UserId INT FOREIGN KEY REFERENCES Users(UsersId),
+    PackageId INT FOREIGN KEY REFERENCES PostPackages(PostPackagesId),
+    PaymentsId INT FOREIGN KEY REFERENCES Payments(PaymentsId),
+	PurchasedPostDuration INT,
     PurchasedAtPrice DECIMAL(18,2),
-    Currency NVARCHAR(100),
-    PurchasedAt DATETIME DEFAULT GETDATE(),
+	Currency NVARCHAR(100), --VND, USD
+    PurchasedAt DATETIME,
     Status NVARCHAR(50)
 );
-GO
-
+go
 --------------------------------------------------
 -- HISTORY
 --------------------------------------------------
@@ -285,15 +285,15 @@ go
 
 CREATE TABLE UserPosts (
     UserPostsId INT PRIMARY KEY IDENTITY(1,1),
-    UserId INT NOT NULL FOREIGN KEY REFERENCES Users(UsersId),
+    UserId INT FOREIGN KEY REFERENCES Users(UsersId),
     VehicleId INT NULL FOREIGN KEY REFERENCES Vehicles(VehiclesId),
     BatteryId INT NULL FOREIGN KEY REFERENCES Batteries(BatteriesId),
-    UserPackageId INT FOREIGN KEY REFERENCES UserPackages(UserPackagesId), -- 1-1
-    PostedAt DATETIME DEFAULT GETDATE(),
+    UserPackageId INT FOREIGN KEY REFERENCES UserPackages(UserPackagesId),
+    PostedAt DATETIME,
     ExpiredAt DATETIME,
     Status NVARCHAR(50) -- active, expired, removed
 );
-GO
+go
 
 
 -- Sample Data for SWD392_EV_Management_Project Database
@@ -417,70 +417,52 @@ go
 --------------------------------------------------
 -- PAYMENTS DATA
 --------------------------------------------------
--- Xóa phần INSERT cũ của PAYMENTS, USER PACKAGES, USER POSTS và thay bằng code này
-
---------------------------------------------------
--- PAYMENTS DATA (Cần thêm nhiều payments cho các UserPackages)
---------------------------------------------------
-INSERT INTO Payments (UserId, PaymentMethodId, Gateway, TransactionDate, AccountNumber, Content, TransferType, TransferAmount, Currency, Accumulated, CreatedAt, UpdatedAt, Status) VALUES
+INSERT INTO Payments (UserId, PaymentMethodId, Gateway, TransactionDate, AccountNumber, Content, TransferType, TransferAmount, Currency, Accumulated, CreatedAt, UpdatedAt, ReferenceId, ReferenceType , Status) VALUES
 -- Seller deposits and withdrawals
-(4, 1, 'vnpay.vn', '2024-03-01 08:00:00', 'ACC001', N'Nạp tiền vào tài khoản', 'Deposit', 20000000, 'VND', 20000000, '2024-03-01 08:00:00', '2024-03-01 08:00:00', 'Completed'),
-(6, 2, 'momo.vn', '2024-03-05 09:30:00', 'ACC002', N'Nạp tiền qua MoMo', 'Deposit', 10000000, 'VND', 10000000, '2024-03-05 09:30:00', '2024-03-05 09:30:00', 'Completed'),
-(8, 3, 'zalopay.vn', '2024-03-10 08:15:00', 'ACC003', N'Nạp tiền qua ZaloPay', 'Deposit', 15000000, 'VND', 15000000, '2024-03-10 08:15:00', '2024-03-10 08:15:00', 'Completed'),
-(10, 1, 'vnpay.vn', '2024-03-18 10:00:00', 'ACC004', N'Nạp tiền đấu giá', 'Deposit', 50000000, 'VND', 50000000, '2024-03-18 10:00:00', '2024-03-18 10:00:00', 'Completed'),
+(4, 1, 'vnpay.vn', '2024-03-01 08:00:00', 'ACC001', N'Nạp tiền vào tài khoản', 'Deposit', 20000000, 'VND', 20000000, '2024-03-01 08:00:00', '2024-03-01 08:00:00', 1, 'Package','Completed'),
+(6, 2, 'momo.vn', '2024-03-05 09:30:00', 'ACC002', N'Nạp tiền qua MoMo', 'Deposit', 10000000, 'VND', 10000000, '2024-03-05 09:30:00', '2024-03-05 09:30:00', 2, 'Auction fee','Completed'),
+(8, 3, 'zalopay.vn', '2024-03-10 08:15:00', 'ACC003', N'Nạp tiền qua ZaloPay', 'Deposit', 15000000, 'VND', 15000000, '2024-03-10 08:15:00', '2024-03-10 08:15:00', 1, 'Package','Completed'),
+(10, 1, 'vnpay.vn', '2024-03-18 10:00:00', 'ACC004', N'Nạp tiền đấu giá', 'Deposit', 50000000, 'VND', 50000000, '2024-03-18 10:00:00', '2024-03-18 10:00:00', 1, 'Package','Completed'),
 
 -- Customer deposits for auctions and purchases
-(5, 2, 'momo.vn', '2024-03-19 14:20:00', 'ACC005', N'Đặt cọc tham gia đấu giá VF8 Plus', 'Deposit', 125000000, 'VND', 125000000, '2024-03-19 14:20:00', '2024-03-19 14:20:00', 'Completed'),
-(7, 1, 'vnpay.vn', '2024-03-20 11:00:00', 'ACC006', N'Thanh toán gói đăng tin VIP', 'Payment', 350000, 'VND', 0, '2024-03-20 11:00:00', '2024-03-20 11:00:00', 'Completed'),
-(9, 3, 'zalopay.vn', '2024-03-22 15:30:00', 'ACC007', N'Đặt cọc mua xe Tesla Model Y', 'Deposit', 5000, 'USD', 5000, '2024-03-22 15:30:00', '2024-03-22 15:30:00', 'Completed'),
-(5, 4, '', '2024-03-25 10:00:00', 'BANK123', N'Thanh toán phí kiểm định', 'Payment', 3500000, 'VND', 121500000, '2024-03-25 10:00:00', '2024-03-25 10:00:00', 'Completed'),
+(5, 2, 'momo.vn', '2024-03-19 14:20:00', 'ACC005', N'Đặt cọc tham gia đấu giá VF8 Plus', 'Deposit', 125000000, 'VND', 125000000, '2024-03-19 14:20:00', '2024-03-19 14:20:00', 1, 'Package','Completed'),
+(7, 1, 'vnpay.vn', '2024-03-20 11:00:00', 'ACC006', N'Thanh toán gói đăng tin VIP', 'Payment', 350000, 'VND', 0, '2024-03-20 11:00:00', '2024-03-20 11:00:00', 1, 'Package','Completed'),
+(9, 3, 'zalopay.vn', '2024-03-22 15:30:00', 'ACC007', N'Đặt cọc mua xe Tesla Model Y', 'Deposit', 5000, 'USD', 5000, '2024-03-22 15:30:00', '2024-03-22 15:30:00', 1, 'Package','Completed'),
+(5, 4, '', '2024-03-25 10:00:00', 'BANK123', N'Thanh toán phí kiểm định', 'Payment', 3500000, 'VND', 121500000, '2024-03-25 10:00:00', '2024-03-25 10:00:00', 1, 'Package','Completed'),
 
--- Package purchases (thêm payments cho tất cả packages)
-(4, 1, 'vnpay.vn', '2024-03-26 09:00:00', 'ACC001', N'Mua gói đăng tin Nổi Bật', 'Payment', 200000, 'VND', 19800000, '2024-03-26 09:00:00', '2024-03-26 09:00:00', 'Completed'), -- PaymentsId = 9
-(6, 2, 'momo.vn', '2024-03-27 10:30:00', 'ACC002', N'Mua gói đăng tin VIP', 'Payment', 350000, 'VND', 9650000, '2024-03-27 10:30:00', '2024-03-27 10:30:00', 'Completed'), -- PaymentsId = 10
-(8, 1, 'vnpay.vn', '2024-03-28 08:00:00', 'ACC003', N'Mua gói đăng tin Cơ Bản', 'Payment', 100000, 'VND', 14900000, '2024-03-28 08:00:00', '2024-03-28 08:00:00', 'Completed'), -- PaymentsId = 11
-(10, 1, 'vnpay.vn', '2024-03-15 13:00:00', 'ACC004', N'Mua gói đăng tin Nổi Bật', 'Payment', 200000, 'VND', 49800000, '2024-03-15 13:00:00', '2024-03-15 13:00:00', 'Completed'), -- PaymentsId = 12
-(4, 1, 'vnpay.vn', '2024-02-01 09:00:00', 'ACC001', N'Mua gói đăng tin Cơ Bản', 'Payment', 100000, 'VND', 19900000, '2024-02-01 09:00:00', '2024-02-01 09:00:00', 'Completed'), -- PaymentsId = 13
-(6, 2, 'momo.vn', '2024-02-10 10:00:00', 'ACC002', N'Mua gói đăng tin USD', 'Payment', 5, 'USD', 9995, '2024-02-10 10:00:00', '2024-02-10 10:00:00', 'Completed'), -- PaymentsId = 14
+-- Package purchases
+(4, 1, 'vnpay.vn', '2024-03-26 09:00:00', 'ACC001', N'Mua gói đăng tin Nổi Bật', 'Payment', 200000, 'VND', 19800000, '2024-03-26 09:00:00', '2024-03-26 09:00:00', 1, 'Package','Completed'),
+(6, 2, 'momo.vn', '2024-03-27 10:30:00', 'ACC002', N'Mua gói đăng tin VIP', 'Payment', 350000, 'VND', 9650000, '2024-03-27 10:30:00', '2024-03-27 10:30:00', 1, 'Package','Completed'),
+(8, 1, 'vnpay.vn', '2024-03-28 08:00:00', 'ACC003', N'Mua gói đăng tin Cơ Bản', 'Payment', 100000, 'VND', 14900000, '2024-03-28 08:00:00', '2024-03-28 08:00:00', 1, 'Package','Completed'),
 
 -- Inspection fee payments
-(4, 1, 'vnpay.vn', '2024-03-02 08:00:00', 'ACC001', N'Phí kiểm định VF8 Plus', 'Payment', 3500000, 'VND', 16500000, '2024-03-02 08:00:00', '2024-03-02 08:00:00', 'Completed'),
-(6, 2, 'momo.vn', '2024-03-06 09:00:00', 'ACC002', N'Inspection fee Tesla Model Y', 'Payment', 150, 'USD', 9650000, '2024-03-06 09:00:00', '2024-03-06 09:00:00', 'Completed'),
-(8, 3, 'zalopay.vn', '2024-03-11 13:00:00', 'ACC003', N'Phí kiểm định BYD Tang', 'Payment', 3500000, 'VND', 11500000, '2024-03-11 13:00:00', '2024-03-11 13:00:00', 'Completed');
-GO
+(4, 1, 'vnpay.vn', '2024-03-02 08:00:00', 'ACC001', N'Phí kiểm định VF8 Plus', 'Payment', 3500000, 'VND', 16500000, '2024-03-02 08:00:00', '2024-03-02 08:00:00', 1, 'Package','Completed'),
+(6, 2, 'momo.vn', '2024-03-06 09:00:00', 'ACC002', N'Inspection fee Tesla Model Y', 'Payment', 150, 'USD', 9650000, '2024-03-06 09:00:00', '2024-03-06 09:00:00', 1, 'Package','Completed'),
+(8, 3, 'zalopay.vn', '2024-03-11 13:00:00', 'ACC003', N'Phí kiểm định BYD Tang', 'Payment', 3500000, 'VND', 11500000, '2024-03-11 13:00:00', '2024-03-11 13:00:00', 1, 'Package','Completed');
 
 --------------------------------------------------
--- USER PACKAGES DATA (Đảm bảo mỗi record có PaymentsId duy nhất)
+-- USER PACKAGES DATA
 --------------------------------------------------
 INSERT INTO UserPackages (UserId, PackageId, PaymentsId, PurchasedPostDuration, PurchasedAtPrice, Currency, PurchasedAt, Status) VALUES
-(4, 2, 9, 45, 200000, 'VND', '2024-03-26 09:00:00', 'Active'),      -- UserPackagesId = 1
-(6, 3, 10, 60, 350000, 'VND', '2024-03-27 10:30:00', 'Active'),     -- UserPackagesId = 2
-(8, 1, 11, 30, 100000, 'VND', '2024-03-28 08:00:00', 'Active'),     -- UserPackagesId = 3
-(10, 2, 12, 45, 200000, 'VND', '2024-03-15 14:00:00', 'Active'),    -- UserPackagesId = 4
-(4, 1, 13, 30, 100000, 'VND', '2024-02-01 10:00:00', 'Expired'),    -- UserPackagesId = 5
-(6, 4, 14, 30, 5, 'USD', '2024-02-10 11:00:00', 'Expired');         -- UserPackagesId = 6
-GO
+(4, 2, 9, 45, 200000, 'VND', '2024-03-26 09:00:00', 'Active'),
+(6, 3, 10, 60, 350000, 'VND', '2024-03-27 10:30:00', 'Active'),
+(8, 1, 11, 30, 100000, 'VND', '2024-03-28 08:00:00', 'Active'),
+(10, 2, NULL, 45, 200000, 'VND', '2024-03-15 14:00:00', 'Active'),
+(4, 1, NULL, 30, 100000, 'VND', '2024-02-01 10:00:00', 'Expired'),
+(6, 4, NULL, 30, 5, 'USD', '2024-02-10 11:00:00', 'Expired');
 
 --------------------------------------------------
--- USER POSTS DATA (Sửa lại UserPackageId cho đúng)
+-- USER POSTS DATA
 --------------------------------------------------
 INSERT INTO UserPosts (UserId, VehicleId, BatteryId, UserPackageId, PostedAt, ExpiredAt, Status) VALUES
--- Vehicle posts (6 posts)
-(4, 1, NULL, 1, '2024-03-26 10:00:00', '2024-05-10 10:00:00', 'Active'),
-(6, 2, NULL, 2, '2024-03-27 11:00:00', '2024-05-26 11:00:00', 'Active'),
-(8, 3, NULL, 3, '2024-03-28 09:00:00', '2024-04-27 09:00:00', 'Active'),
-(10, 6, NULL, 4, '2024-03-22 12:00:00', '2024-04-21 12:00:00', 'Active'),
-(9, 7, NULL, 3, '2024-03-24 14:00:00', '2024-04-23 14:00:00', 'Active'),
-(10, 8, NULL, 2, '2024-03-25 10:00:00', '2024-04-24 10:00:00', 'Active'),
-
--- Battery posts (6 posts, trong đó 5 active, 1 expired)
-(8, NULL, 3, 2, '2024-03-10 11:00:00', '2024-04-09 11:00:00', 'Active'),
-(4, NULL, 4, 3, '2024-02-15 09:00:00', '2024-03-16 09:00:00', 'Expired'),
-(4, NULL, 1, NULL, '2024-03-01 10:00:00', '2024-03-31 10:00:00', 'Active'),
-(6, NULL, 2, NULL, '2024-03-05 15:00:00', '2024-04-04 15:00:00', 'Active'),
-(10, NULL, 5, NULL, '2024-03-18 12:00:00', '2024-04-17 12:00:00', 'Active'),
-(6, NULL, 6, NULL, '2024-03-20 16:00:00', '2024-04-19 16:00:00', 'Active');
-GO
+-- Vehicle posts
+(4, 1, 1, 1, '2024-03-26 10:00:00', '2024-05-10 10:00:00', 'Active'),
+(6, 2, 1, 2, '2024-03-27 11:00:00', '2024-05-26 11:00:00', 'Active'),
+(8, 3, 1, 3, '2024-03-28 09:00:00', '2024-04-27 09:00:00', 'Active'),
+(10, 6, 1, 2, '2024-03-22 12:00:00', '2024-05-06 12:00:00', 'Active'),
+(9, 7, 1, 1, '2024-03-24 14:00:00', '2024-04-23 14:00:00', 'Active'),
+(10, 8, 1, 3, '2024-03-25 10:00:00', '2024-04-24 10:00:00', 'Active')
+go
 
 --------------------------------------------------
 -- AUCTIONS DATA
@@ -603,4 +585,6 @@ select * from Payments
 select * from PaymentsMethods
 
 select * from UserPosts
+
+select * from PostPackages
 

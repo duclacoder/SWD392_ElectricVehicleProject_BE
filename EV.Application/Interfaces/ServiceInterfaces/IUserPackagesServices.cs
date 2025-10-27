@@ -24,6 +24,6 @@ namespace EV.Application.Interfaces.ServiceInterfaces
         Task<ResponseDTO<UserPackagesCustom>> DeleteUserPackage(int id);
 
         Task<ResponseDTO<PagedResult<UserPackagesCustom>>> GetUserPackageByUserNameAndPackageName(GetUserPackageByUserNameAndPackageNameRequestDTO request);
-
+        Task<ResponseDTO<UserPackagesCustom>> GetUserPackageByUserId(int id);
     }
 }

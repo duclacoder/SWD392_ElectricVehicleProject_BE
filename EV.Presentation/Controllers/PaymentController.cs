@@ -15,16 +15,14 @@ namespace EV.Presentation.Controllers
         private readonly IPaymentService _paymentService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IVnPayService _vnPayService;
-        private readonly IPostPackageService _postpackageService;
-        private readonly IUserPackagesServices _userPackagesServices;
+        private readonly IUserPackagesServices _userPackageService;
 
-        public PaymentController(IPaymentService paymentService, IUnitOfWork unitOfWork, IVnPayService vnPayService, IPostPackageService postpackageService, IUserPackagesServices userPackagesServices)
+        public PaymentController(IPaymentService paymentService, IUnitOfWork unitOfWork, IVnPayService vnPayService, IUserPackagesServices userPackageService)
         {
             _paymentService = paymentService;
             _unitOfWork = unitOfWork;
             _vnPayService = vnPayService;
-            _postpackageService = postpackageService;
-            _userPackagesServices = userPackagesServices;
+            _userPackageService = userPackageService;
         }
 
         [HttpGet("GetAllPayment")]
@@ -43,41 +41,21 @@ namespace EV.Presentation.Controllers
             if (request.TransferAmount <= 0)
                 return BadRequest(new ResponseDTO<object>("TransferAmount must be greater than zero", false));
 
-            if (request.PostPackageId <= 0 || request.PostPackageId == null)
+            if (request.UserPackageId <= 0)
                 return BadRequest(new ResponseDTO<object>("PostPackageId is required", false));
 
-            var packageResponse = await _postpackageService.GetPostPackageById(request.PostPackageId);
-            if (!packageResponse.IsSuccess || packageResponse.Result is null)
-                return BadRequest(new ResponseDTO<object>("Post package not found", false));
-
-            var package = packageResponse.Result;
-
-            // 1) Tạo UserPackage trước (Pending)
-            var newUserPackage = new UserPackagesDTO
-            {
-                UserId = request.UserId.Value,
-                PackagesName = package.PackageName,
-                PurchasedDuration = package.PostDuration.Value,
-                Currency = package.Currency,
-                PurchasedAtPrice = package.PostPrice.Value,
-            };
-
-            // Gọi service repo để tạo (tên method tuỳ implementation, đổi nếu khác)
-            // Ví dụ _userPackagesServices.CreateUserPackageAsync(userPackage)
-            await _userPackagesServices.CreateUserPackage(newUserPackage);
-
-            // 2) Tạo Payment tham chiếu đến UserPackage mới tạo
-
-            //var userPackage = await _userPackagesServices.GetUserPackageById()
+            var userPackage = (await _userPackageService.GetUserPackageById(request.UserPackageId)).Result;
+            if (userPackage is null)
+                return BadRequest(new ResponseDTO<object>("User package not found", false));
 
             var newPayment = new Payment
             {
                 UserId = request.UserId.Value,
                 TransferAmount = request.TransferAmount,
-                Currency = package.Currency ?? "VND",
+                Currency = userPackage.Currency ?? "VND",
                 TransactionDate = DateTime.UtcNow,
                 ReferenceType = "UserPackage",
-                //ReferenceId = newUserPackage.UserPackagesId, // liên kết logic
+                ReferenceId = userPackage.UserPackagesId, 
                 Status = "Pending",
                 CreatedAt = DateTime.UtcNow,
                 Content = "Thanh toan goi"
@@ -93,7 +71,7 @@ namespace EV.Presentation.Controllers
             var result = new
             {
                 PaymentId = newPayment.PaymentsId,
-                //UserPackageId = newUserPackage.UserPackagesId,
+                UserPackageId = userPackage.UserPackagesId,
                 PaymentAmount = newPayment.TransferAmount,
                 PaymentUrl = vnpayUrl
             };
@@ -162,31 +140,28 @@ namespace EV.Presentation.Controllers
                     payment.Accumulated = (payment.Accumulated ?? 0) + payment.TransferAmount;
 
                     _paymentService.UpdatePayment(payment);
-                    await _unitOfWork.SaveChangesAsync();
 
-                    // Nếu là UserPackage => active gói
                     if (string.Equals(payment.ReferenceType, "UserPackage", StringComparison.OrdinalIgnoreCase)
                         && payment.ReferenceId.HasValue)
                     {
-                        //var userPackage = new UserPackagesDTO()
-                        //{
-                        //    UserPackagesId = payment.ReferenceId.Value,
-
-                        //};
-
-                        //if (userPackage != null)
-                        //{
-                        //    await _userPackagesServices.UpdateUserPackage(payment.UserPackage.UserPackagesId, userPackage);
-                        //    await _unitOfWork.SaveChangesAsync();
-                        //}
+                        var userPackage = (await _userPackageService.GetUserPackageById(payment.ReferenceId.Value)).Result;
+                        UserPackagesDTO userPackagesDTO = new UserPackagesDTO
+                        {
+                            UserPackageId = payment.ReferenceId.Value,
+                            PackagesName = userPackage.Package?.PackageName ?? "",
+                            PurchasedDuration = userPackage.PurchasedDuration ?? 0,
+                            PurchasedAtPrice = userPackage.PurchasedAtPrice ?? 0,
+                            Currency = userPackage.Currency ?? "VND"
+                        };
+                        userPackage.Status = "Active";
+                        await _userPackageService.UpdateUserPackage(payment.ReferenceId.Value, userPackagesDTO);
+                        _paymentService.UpdatePayment(payment);
                     }
                 }
-
-                // Redirect về client success page
+                await _unitOfWork.SaveChangesAsync();
                 return Redirect("http://localhost:5173/paymentSuccess");
             }
 
-            // Trường hợp thất bại
             return Redirect("http://localhost:5173/paymentFail");
         }
     }

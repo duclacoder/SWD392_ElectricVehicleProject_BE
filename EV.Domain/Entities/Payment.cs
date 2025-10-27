@@ -7,9 +7,9 @@ public partial class Payment
 {
     public int PaymentsId { get; set; }
 
-    public int UserId { get; set; }
+    public int? UserId { get; set; }
 
-    public int PaymentMethodId { get; set; }
+    public int? PaymentMethodId { get; set; }
 
     public string? Gateway { get; set; }
 
@@ -21,19 +21,19 @@ public partial class Payment
 
     public string? TransferType { get; set; }
 
-    public decimal TransferAmount { get; set; }
+    public decimal? TransferAmount { get; set; }
 
     public string? Currency { get; set; }
 
     public decimal? Accumulated { get; set; }
 
-    public string? ReferenceType { get; set; }
-
-    public int? ReferenceId { get; set; }
-
     public DateTime? CreatedAt { get; set; }
 
     public DateTime? UpdatedAt { get; set; }
+
+    public int? ReferenceId { get; set; }
+
+    public string? ReferenceType { get; set; }
 
     public string? Status { get; set; }
 
@@ -41,9 +41,9 @@ public partial class Payment
 
     public virtual ICollection<AuctionParticipant> AuctionParticipants { get; set; } = new List<AuctionParticipant>();
 
-    public virtual PaymentsMethod PaymentMethod { get; set; } = null!;
+    public virtual PaymentsMethod? PaymentMethod { get; set; }
 
-    public virtual User User { get; set; } = null!;
+    public virtual User? User { get; set; }
 
-    public virtual UserPackage? UserPackage { get; set; }
+    public virtual ICollection<UserPackage> UserPackages { get; set; } = new List<UserPackage>();
 }

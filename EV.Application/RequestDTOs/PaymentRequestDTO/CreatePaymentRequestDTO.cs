@@ -10,7 +10,7 @@ namespace EV.Application.RequestDTOs.PaymentRequestDTO
     public class CreatePaymentRequestDTO
     {
         public int? UserId { get; set; }
-        public int PostPackageId { get; set; }
+        public int UserPackageId { get; set; }
         public decimal TransferAmount { get; set; }
     }
 }

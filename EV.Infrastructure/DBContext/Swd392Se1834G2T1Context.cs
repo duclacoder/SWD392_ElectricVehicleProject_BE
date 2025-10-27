@@ -54,15 +54,15 @@ public partial class Swd392Se1834G2T1Context : DbContext
 
     public virtual DbSet<VehicleInspection> VehicleInspections { get; set; }
 
-//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-//        => optionsBuilder.UseSqlServer("server=(local); database=SWD392_SE1834_G2_T1; uid=sa; pwd=12345; TrustServerCertificate=True;");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("server=(local); database=SWD392_SE1834_G2_T1; uid=sa; pwd=12345; TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Activity>(entity =>
         {
-            entity.HasKey(e => e.ActivitiesId).HasName("PK__Activiti__382149550607E0B1");
+            entity.HasKey(e => e.ActivitiesId).HasName("PK__Activiti__3821495538C2C95E");
 
             entity.Property(e => e.Action).HasMaxLength(50);
             entity.Property(e => e.CreatedAt).HasColumnType("datetime");
@@ -72,16 +72,16 @@ public partial class Swd392Se1834G2T1Context : DbContext
 
             entity.HasOne(d => d.Payment).WithMany(p => p.Activities)
                 .HasForeignKey(d => d.PaymentId)
-                .HasConstraintName("FK__Activitie__Payme__7F2BE32F");
+                .HasConstraintName("FK__Activitie__Payme__797309D9");
 
             entity.HasOne(d => d.User).WithMany(p => p.Activities)
                 .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK__Activitie__UserI__7E37BEF6");
+                .HasConstraintName("FK__Activitie__UserI__787EE5A0");
         });
 
         modelBuilder.Entity<Auction>(entity =>
         {
-            entity.HasKey(e => e.AuctionsId).HasName("PK__Auctions__926DD8056D7A7A49");
+            entity.HasKey(e => e.AuctionsId).HasName("PK__Auctions__926DD805592D9045");
 
             entity.Property(e => e.EndTime).HasColumnType("datetime");
             entity.Property(e => e.EntryFee).HasColumnType("decimal(18, 2)");
@@ -93,20 +93,20 @@ public partial class Swd392Se1834G2T1Context : DbContext
 
             entity.HasOne(d => d.AuctionsFee).WithMany(p => p.Auctions)
                 .HasForeignKey(d => d.AuctionsFeeId)
-                .HasConstraintName("FK__Auctions__Auctio__68487DD7");
+                .HasConstraintName("FK__Auctions__Auctio__6477ECF3");
 
             entity.HasOne(d => d.Seller).WithMany(p => p.Auctions)
                 .HasForeignKey(d => d.SellerId)
-                .HasConstraintName("FK__Auctions__Seller__6754599E");
+                .HasConstraintName("FK__Auctions__Seller__6383C8BA");
 
             entity.HasOne(d => d.Vehicle).WithMany(p => p.Auctions)
                 .HasForeignKey(d => d.VehicleId)
-                .HasConstraintName("FK__Auctions__Vehicl__66603565");
+                .HasConstraintName("FK__Auctions__Vehicl__628FA481");
         });
 
         modelBuilder.Entity<AuctionBid>(entity =>
         {
-            entity.HasKey(e => e.AuctionBidsId).HasName("PK__AuctionB__9A008868DC535C7E");
+            entity.HasKey(e => e.AuctionBidsId).HasName("PK__AuctionB__9A0088689E117DB1");
 
             entity.Property(e => e.BidAmount).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.BidTime).HasColumnType("datetime");
@@ -114,20 +114,20 @@ public partial class Swd392Se1834G2T1Context : DbContext
 
             entity.HasOne(d => d.Auction).WithMany(p => p.AuctionBids)
                 .HasForeignKey(d => d.AuctionId)
-                .HasConstraintName("FK__AuctionBi__Aucti__70DDC3D8");
+                .HasConstraintName("FK__AuctionBi__Aucti__6D0D32F4");
 
             entity.HasOne(d => d.AuctionParticipant).WithMany(p => p.AuctionBids)
                 .HasForeignKey(d => d.AuctionParticipantId)
-                .HasConstraintName("FK__AuctionBi__Aucti__71D1E811");
+                .HasConstraintName("FK__AuctionBi__Aucti__6E01572D");
 
             entity.HasOne(d => d.Bidder).WithMany(p => p.AuctionBids)
                 .HasForeignKey(d => d.BidderId)
-                .HasConstraintName("FK__AuctionBi__Bidde__72C60C4A");
+                .HasConstraintName("FK__AuctionBi__Bidde__6EF57B66");
         });
 
         modelBuilder.Entity<AuctionParticipant>(entity =>
         {
-            entity.HasKey(e => e.AuctionParticipantId).HasName("PK__AuctionP__2D7593FB1C8A3F59");
+            entity.HasKey(e => e.AuctionParticipantId).HasName("PK__AuctionP__2D7593FBF40460B1");
 
             entity.Property(e => e.DepositAmount).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.DepositTime).HasColumnType("datetime");
@@ -141,20 +141,20 @@ public partial class Swd392Se1834G2T1Context : DbContext
 
             entity.HasOne(d => d.Auctions).WithMany(p => p.AuctionParticipants)
                 .HasForeignKey(d => d.AuctionsId)
-                .HasConstraintName("FK__AuctionPa__Aucti__6D0D32F4");
+                .HasConstraintName("FK__AuctionPa__Aucti__693CA210");
 
             entity.HasOne(d => d.Payments).WithMany(p => p.AuctionParticipants)
                 .HasForeignKey(d => d.PaymentsId)
-                .HasConstraintName("FK__AuctionPa__Payme__6B24EA82");
+                .HasConstraintName("FK__AuctionPa__Payme__6754599E");
 
             entity.HasOne(d => d.User).WithMany(p => p.AuctionParticipants)
                 .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK__AuctionPa__UserI__6C190EBB");
+                .HasConstraintName("FK__AuctionPa__UserI__68487DD7");
         });
 
         modelBuilder.Entity<AuctionsFee>(entity =>
         {
-            entity.HasKey(e => e.AuctionsFeeId).HasName("PK__Auctions__3F45AFA8D59C43DF");
+            entity.HasKey(e => e.AuctionsFeeId).HasName("PK__Auctions__3F45AFA88EBDBF26");
 
             entity.ToTable("AuctionsFee");
 
@@ -170,7 +170,7 @@ public partial class Swd392Se1834G2T1Context : DbContext
 
         modelBuilder.Entity<Battery>(entity =>
         {
-            entity.HasKey(e => e.BatteriesId).HasName("PK__Batterie__C34B8A74E9757F64");
+            entity.HasKey(e => e.BatteriesId).HasName("PK__Batterie__C34B8A74A609D9DA");
 
             entity.Property(e => e.BatteryName).HasMaxLength(255);
             entity.Property(e => e.Brand).HasMaxLength(255);
@@ -189,7 +189,7 @@ public partial class Swd392Se1834G2T1Context : DbContext
 
         modelBuilder.Entity<BatteryImage>(entity =>
         {
-            entity.HasKey(e => e.BatteryImagesId).HasName("PK__BatteryI__3938BC56F79C6620");
+            entity.HasKey(e => e.BatteryImagesId).HasName("PK__BatteryI__3938BC56F94B7EB3");
 
             entity.Property(e => e.ImageUrl).HasColumnType("text");
 
@@ -200,7 +200,7 @@ public partial class Swd392Se1834G2T1Context : DbContext
 
         modelBuilder.Entity<BuySell>(entity =>
         {
-            entity.HasKey(e => e.BuySellId).HasName("PK__BuySell__2E36A970B76CDECD");
+            entity.HasKey(e => e.BuySellId).HasName("PK__BuySell__2E36A970F9E5E544");
 
             entity.ToTable("BuySell");
 
@@ -228,7 +228,7 @@ public partial class Swd392Se1834G2T1Context : DbContext
 
         modelBuilder.Entity<InspectionFee>(entity =>
         {
-            entity.HasKey(e => e.InspectionFeesId).HasName("PK__Inspecti__D0FFEC457C8C8229");
+            entity.HasKey(e => e.InspectionFeesId).HasName("PK__Inspecti__D0FFEC456CFAC111");
 
             entity.Property(e => e.CreatedAt).HasColumnType("datetime");
             entity.Property(e => e.Currency).HasMaxLength(100);
@@ -241,45 +241,35 @@ public partial class Swd392Se1834G2T1Context : DbContext
 
         modelBuilder.Entity<Payment>(entity =>
         {
-            entity.HasKey(e => e.PaymentsId).HasName("PK__Payments__FD75744A83C5AE6E");
+            entity.HasKey(e => e.PaymentsId).HasName("PK__Payments__FD75744AB7531332");
 
             entity.Property(e => e.AccountNumber).HasMaxLength(100);
             entity.Property(e => e.Accumulated).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Content).HasMaxLength(500);
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-            entity.Property(e => e.Currency)
-                .HasMaxLength(100)
-                .HasDefaultValue("VND");
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+            entity.Property(e => e.Currency).HasMaxLength(100);
             entity.Property(e => e.Gateway).HasMaxLength(255);
-            entity.Property(e => e.ReferenceType).HasMaxLength(50);
-            entity.Property(e => e.Status)
-                .HasMaxLength(50)
-                .HasDefaultValue("Pending");
-            entity.Property(e => e.TransactionDate)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+            entity.Property(e => e.ReferenceType).HasMaxLength(100);
+            entity.Property(e => e.Status).HasMaxLength(50);
+            entity.Property(e => e.TransactionDate).HasColumnType("datetime");
             entity.Property(e => e.TransferAmount).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.TransferType).HasMaxLength(50);
             entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
 
             entity.HasOne(d => d.PaymentMethod).WithMany(p => p.Payments)
                 .HasForeignKey(d => d.PaymentMethodId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Payments__Paymen__5FB337D6");
 
             entity.HasOne(d => d.User).WithMany(p => p.Payments)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Payments__UserId__5EBF139D");
         });
 
         modelBuilder.Entity<PaymentsMethod>(entity =>
         {
-            entity.HasKey(e => e.PaymentMethodId).HasName("PK__Payments__DC31C1D3C64F492C");
+            entity.HasKey(e => e.PaymentMethodId).HasName("PK__Payments__DC31C1D381A752BF");
 
-            entity.HasIndex(e => e.MethodCode, "UQ__Payments__11E9210DEA71670B").IsUnique();
+            entity.HasIndex(e => e.MethodCode, "UQ__Payments__11E9210D7C39B584").IsUnique();
 
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
@@ -295,7 +285,7 @@ public partial class Swd392Se1834G2T1Context : DbContext
 
         modelBuilder.Entity<PostPackage>(entity =>
         {
-            entity.HasKey(e => e.PostPackagesId).HasName("PK__PostPack__57954778D870238D");
+            entity.HasKey(e => e.PostPackagesId).HasName("PK__PostPack__57954778AA898BC8");
 
             entity.Property(e => e.Currency).HasMaxLength(100);
             entity.Property(e => e.Description).HasColumnType("text");
@@ -306,22 +296,22 @@ public partial class Swd392Se1834G2T1Context : DbContext
 
         modelBuilder.Entity<Role>(entity =>
         {
-            entity.HasKey(e => e.RolesId).HasName("PK__Roles__C4B27840CA70E579");
+            entity.HasKey(e => e.RolesId).HasName("PK__Roles__C4B27840B2FBDC26");
 
-            entity.HasIndex(e => e.Name, "UQ__Roles__737584F696273C04").IsUnique();
+            entity.HasIndex(e => e.Name, "UQ__Roles__737584F66C88607A").IsUnique();
 
             entity.Property(e => e.Name).HasMaxLength(255);
         });
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.UsersId).HasName("PK__Users__A349B062296892C9");
+            entity.HasKey(e => e.UsersId).HasName("PK__Users__A349B06288E29BB5");
 
-            entity.HasIndex(e => e.Phone, "UQ__Users__5C7E359EA798CEF5").IsUnique();
+            entity.HasIndex(e => e.Phone, "UQ__Users__5C7E359E382C466E").IsUnique();
 
-            entity.HasIndex(e => e.Email, "UQ__Users__A9D105344BF3226A").IsUnique();
+            entity.HasIndex(e => e.Email, "UQ__Users__A9D10534286EDA68").IsUnique();
 
-            entity.HasIndex(e => e.UserName, "UQ__Users__C9F284566160A9E8").IsUnique();
+            entity.HasIndex(e => e.UserName, "UQ__Users__C9F284564293373C").IsUnique();
 
             entity.Property(e => e.CreatedAt).HasColumnType("datetime");
             entity.Property(e => e.Email).HasMaxLength(255);
@@ -342,63 +332,54 @@ public partial class Swd392Se1834G2T1Context : DbContext
 
         modelBuilder.Entity<UserPackage>(entity =>
         {
-            entity.HasKey(e => e.UserPackagesId).HasName("PK__UserPack__48B463EC46F92FA1");
-
-            entity.HasIndex(e => e.PaymentsId, "UQ__UserPack__FD75744BAE4C73DA").IsUnique();
+            entity.HasKey(e => e.UserPackagesId).HasName("PK__UserPack__48B463ECB96615FC");
 
             entity.Property(e => e.Currency).HasMaxLength(100);
-            entity.Property(e => e.PurchasedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+            entity.Property(e => e.PurchasedAt).HasColumnType("datetime");
             entity.Property(e => e.PurchasedAtPrice).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Status).HasMaxLength(50);
 
             entity.HasOne(d => d.Package).WithMany(p => p.UserPackages)
                 .HasForeignKey(d => d.PackageId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__UserPacka__Packa__797309D9");
+                .HasConstraintName("FK__UserPacka__Packa__74AE54BC");
 
-            entity.HasOne(d => d.Payments).WithOne(p => p.UserPackage)
-                .HasForeignKey<UserPackage>(d => d.PaymentsId)
-                .HasConstraintName("FK__UserPacka__Payme__7A672E12");
+            entity.HasOne(d => d.Payments).WithMany(p => p.UserPackages)
+                .HasForeignKey(d => d.PaymentsId)
+                .HasConstraintName("FK__UserPacka__Payme__75A278F5");
 
             entity.HasOne(d => d.User).WithMany(p => p.UserPackages)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__UserPacka__UserI__787EE5A0");
+                .HasConstraintName("FK__UserPacka__UserI__73BA3083");
         });
 
         modelBuilder.Entity<UserPost>(entity =>
         {
-            entity.HasKey(e => e.UserPostsId).HasName("PK__UserPost__4364383F17738CFA");
+            entity.HasKey(e => e.UserPostsId).HasName("PK__UserPost__4364383F98156923");
 
             entity.Property(e => e.ExpiredAt).HasColumnType("datetime");
-            entity.Property(e => e.PostedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+            entity.Property(e => e.PostedAt).HasColumnType("datetime");
             entity.Property(e => e.Status).HasMaxLength(50);
 
             entity.HasOne(d => d.Battery).WithMany(p => p.UserPosts)
                 .HasForeignKey(d => d.BatteryId)
-                .HasConstraintName("FK__UserPosts__Batte__03F0984C");
+                .HasConstraintName("FK__UserPosts__Batte__7E37BEF6");
 
             entity.HasOne(d => d.User).WithMany(p => p.UserPosts)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__UserPosts__UserI__02084FDA");
+                .HasConstraintName("FK__UserPosts__UserI__7C4F7684");
 
             entity.HasOne(d => d.UserPackage).WithMany(p => p.UserPosts)
                 .HasForeignKey(d => d.UserPackageId)
-                .HasConstraintName("FK__UserPosts__UserP__04E4BC85");
+                .HasConstraintName("FK__UserPosts__UserP__7F2BE32F");
 
             entity.HasOne(d => d.Vehicle).WithMany(p => p.UserPosts)
                 .HasForeignKey(d => d.VehicleId)
-                .HasConstraintName("FK__UserPosts__Vehic__02FC7413");
+                .HasConstraintName("FK__UserPosts__Vehic__7D439ABD");
         });
 
         modelBuilder.Entity<Vehicle>(entity =>
         {
-            entity.HasKey(e => e.VehiclesId).HasName("PK__Vehicles__C683EFB2F4B9FF68");
+            entity.HasKey(e => e.VehiclesId).HasName("PK__Vehicles__C683EFB25B481DBB");
 
             entity.Property(e => e.Acceleration).HasColumnType("decimal(4, 2)");
             entity.Property(e => e.BatteryCapacity).HasColumnType("decimal(5, 2)");
@@ -425,7 +406,7 @@ public partial class Swd392Se1834G2T1Context : DbContext
 
         modelBuilder.Entity<VehicleImage>(entity =>
         {
-            entity.HasKey(e => e.VehicleImagesId).HasName("PK__VehicleI__872777FC92DB0D92");
+            entity.HasKey(e => e.VehicleImagesId).HasName("PK__VehicleI__872777FCDEA46E98");
 
             entity.Property(e => e.ImageUrl).HasColumnType("text");
 
@@ -436,7 +417,7 @@ public partial class Swd392Se1834G2T1Context : DbContext
 
         modelBuilder.Entity<VehicleInspection>(entity =>
         {
-            entity.HasKey(e => e.VehicleInspectionsId).HasName("PK__VehicleI__E465142825CC265A");
+            entity.HasKey(e => e.VehicleInspectionsId).HasName("PK__VehicleI__E4651428E1232CAC");
 
             entity.Property(e => e.CancelReason).HasColumnType("text");
             entity.Property(e => e.InspectionDate).HasColumnType("datetime");
