@@ -1,4 +1,6 @@
-﻿using EV.Application.Interfaces.ServiceInterfaces;
+﻿using EV.Application.Interfaces.RepositoryInterfaces;
+using EV.Application.Interfaces.ServiceInterfaces;
+using EV.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -16,7 +18,7 @@ namespace EV.Application.Services
     {
         private readonly IConfiguration _config;
 
-        public VnPayService(IConfiguration config)
+        public VnPayService(IUnitOfWork unitOfWork, IConfiguration config)
         {
             _config = config;
         }
@@ -50,30 +52,6 @@ namespace EV.Application.Services
             return paymentUrl;
         }
 
-        private string VnPayEncode(string input)
-        {
-            var encoded = HttpUtility.UrlEncode(input, Encoding.UTF8);
-            encoded = encoded.Replace("+", "%20")
-                             .Replace("%3a", "%3A")
-                             .Replace("%2d", "%2D")
-                             .Replace("%2f", "%2F")
-                             .Replace("%3d", "%3D")
-                             .Replace("%26", "%26");
-            return encoded;
-        }
-
-        private string HmacSHA512Upper(string key, string input)
-        {
-            var keyBytes = Encoding.UTF8.GetBytes(key ?? "");
-            var inputBytes = Encoding.UTF8.GetBytes(input ?? "");
-            using (var hmac = new HMACSHA512(keyBytes))
-            {
-                var hashBytes = hmac.ComputeHash(inputBytes);
-                return BitConverter.ToString(hashBytes).Replace("-", "").ToUpperInvariant();
-            }
-        }
-
-        // ValidateSignature (dùng trong ReturnUrl)
         public bool ValidateSignature(IQueryCollection query)
         {
             var vnpay = new VnPayLibrary();
@@ -94,18 +72,5 @@ namespace EV.Application.Services
             bool checkSignature = vnpay.ValidateSignature(vnp_SecureHash, hashSecret);
             return checkSignature;
         }
-
-        private static string HmacSHA512(string key, string inputData)
-        {
-            byte[] keyBytes = Encoding.UTF8.GetBytes(key);
-            byte[] inputBytes = Encoding.UTF8.GetBytes(inputData);
-
-            using (var hmac = new HMACSHA512(keyBytes))
-            {
-                byte[] hashBytes = hmac.ComputeHash(inputBytes);
-                return BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
-            }
-        }
-
     }
 }

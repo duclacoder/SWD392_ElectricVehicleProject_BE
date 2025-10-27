@@ -8,7 +8,7 @@ using EV.Domain.Entities;
 using EV.Presentation.RequestModels.AdminRequests;
 using EV.Presentation.RequestModels.UserRequests;
 
-namespace EV.Application.Helpers
+namespace EV.Presentation.Middleware
 {
     public class MappingProfile : Profile
     {

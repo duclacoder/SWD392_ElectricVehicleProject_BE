@@ -29,6 +29,8 @@ public partial class Auction
 
     public virtual ICollection<AuctionBid> AuctionBids { get; set; } = new List<AuctionBid>();
 
+    public virtual ICollection<AuctionParticipant> AuctionParticipants { get; set; } = new List<AuctionParticipant>();
+
     public virtual AuctionsFee? AuctionsFee { get; set; }
 
     public virtual User? Seller { get; set; }

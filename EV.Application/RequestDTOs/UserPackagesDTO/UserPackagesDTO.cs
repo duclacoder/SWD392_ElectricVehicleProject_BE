@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EV.Application.RequestDTOs.UserPackages
+namespace EV.Application.RequestDTOs.UserPackagesDTO
 {
     public class UserPackagesDTO
     {
-       public int? UserId { get; set; }
+        public int? UserId { get; set; }
 
         public string PackagesName { get; set; }
 

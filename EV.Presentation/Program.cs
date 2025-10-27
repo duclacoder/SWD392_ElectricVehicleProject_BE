@@ -1,7 +1,7 @@
-using EV.Application.Helpers;
 using EV.Infrastructure.Configuration;
 using EV.Presentation.Extensions;
 using EV.Presentation.Hubs;
+using EV.Presentation.Middleware;
 using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
