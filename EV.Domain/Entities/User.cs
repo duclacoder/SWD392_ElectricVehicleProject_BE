@@ -31,6 +31,8 @@ public partial class User
 
     public virtual ICollection<AuctionBid> AuctionBids { get; set; } = new List<AuctionBid>();
 
+    public virtual ICollection<AuctionParticipant> AuctionParticipants { get; set; } = new List<AuctionParticipant>();
+
     public virtual ICollection<Auction> Auctions { get; set; } = new List<Auction>();
 
     public virtual ICollection<Battery> Batteries { get; set; } = new List<Battery>();

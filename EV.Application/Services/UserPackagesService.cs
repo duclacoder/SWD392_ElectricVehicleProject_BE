@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using EV.Application.Interfaces.RepositoryInterfaces;
 using EV.Application.Interfaces.ServiceInterfaces;
-using EV.Application.RequestDTOs.UserPackages;
 using EV.Application.RequestDTOs.UserPackagesDTO;
 using EV.Application.ResponseDTOs;
 using EV.Domain.CustomEntities;

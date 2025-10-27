@@ -1,6 +1,7 @@
 ﻿using EV.Application.Interfaces.RepositoryInterfaces;
 using EV.Application.Interfaces.ServiceInterfaces;
 using EV.Application.RequestDTOs.PaymentRequestDTO;
+using EV.Application.RequestDTOs.UserPackagesDTO;
 using EV.Application.ResponseDTOs;
 using EV.Domain.Entities;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -14,12 +15,16 @@ namespace EV.Presentation.Controllers
         private readonly IPaymentService _paymentService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IVnPayService _vnPayService;
+        private readonly IPostPackageService _postpackageService;
+        private readonly IUserPackagesServices _userPackagesServices;
 
-        public PaymentController(IPaymentService paymentService, IUnitOfWork unitOfWork, IVnPayService vnPayService)
+        public PaymentController(IPaymentService paymentService, IUnitOfWork unitOfWork, IVnPayService vnPayService, IPostPackageService postpackageService, IUserPackagesServices userPackagesServices)
         {
             _paymentService = paymentService;
             _unitOfWork = unitOfWork;
             _vnPayService = vnPayService;
+            _postpackageService = postpackageService;
+            _userPackagesServices = userPackagesServices;
         }
 
         [HttpGet("GetAllPayment")]
@@ -32,42 +37,68 @@ namespace EV.Presentation.Controllers
         [HttpPost("CreatePayment")]
         public async Task<ActionResult<ResponseDTO<object>>> CreatePayment(CreatePaymentRequestDTO request)
         {
+            if (request.UserId is null)
+                return BadRequest(new ResponseDTO<object>("UserId is required", false));
+
+            if (request.TransferAmount <= 0)
+                return BadRequest(new ResponseDTO<object>("TransferAmount must be greater than zero", false));
+
+            if (request.PostPackageId <= 0 || request.PostPackageId == null)
+                return BadRequest(new ResponseDTO<object>("PostPackageId is required", false));
+
+            var packageResponse = await _postpackageService.GetPostPackageById(request.PostPackageId);
+            if (!packageResponse.IsSuccess || packageResponse.Result is null)
+                return BadRequest(new ResponseDTO<object>("Post package not found", false));
+
+            var package = packageResponse.Result;
+
+            // 1) Tạo UserPackage trước (Pending)
+            var newUserPackage = new UserPackagesDTO
+            {
+                UserId = request.UserId.Value,
+                PackagesName = package.PackageName,
+                PurchasedDuration = package.PostDuration.Value,
+                Currency = package.Currency,
+                PurchasedAtPrice = package.PostPrice.Value,
+            };
+
+            // Gọi service repo để tạo (tên method tuỳ implementation, đổi nếu khác)
+            // Ví dụ _userPackagesServices.CreateUserPackageAsync(userPackage)
+            await _userPackagesServices.CreateUserPackage(newUserPackage);
+
+            // 2) Tạo Payment tham chiếu đến UserPackage mới tạo
+
+            //var userPackage = await _userPackagesServices.GetUserPackageById()
+
             var newPayment = new Payment
             {
-                UserId = request.UserId,
+                UserId = request.UserId.Value,
                 TransferAmount = request.TransferAmount,
-                Status = "Pending"
+                Currency = package.Currency ?? "VND",
+                TransactionDate = DateTime.UtcNow,
+                ReferenceType = "UserPackage",
+                //ReferenceId = newUserPackage.UserPackagesId, // liên kết logic
+                Status = "Pending",
+                CreatedAt = DateTime.UtcNow,
+                Content = "Thanh toan goi"
             };
 
             await _paymentService.CreatePaymentAsync(newPayment);
-            await _unitOfWork.SaveChangesAsync();
-            _vnPayService.CreatePaymentUrl(newPayment.PaymentsId.ToString(), newPayment.TransferAmount, HttpContext.Connection.RemoteIpAddress?.ToString() ?? "");
-            return new ResponseDTO<object>("Payment created successfully", true, newPayment);
+            await _unitOfWork.SaveChangesAsync(); // => newPayment.PaymentsId có giá trị
 
-        }
+            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1";
+            var vnpayUrl = _vnPayService.CreatePaymentUrl(newPayment.PaymentsId.ToString(), newPayment.TransferAmount, ipAddress);
 
-        [HttpPatch("Direct_Pay")]
-        public async Task<ActionResult<ResponseDTO<object>>> DirectPay(int paymentId)
-        {
-            var payment = await _paymentService.GetPaymentByIdAsync(paymentId);
-            if (payment is null)
+            // Trả về PaymentId và UserPackageId cho client (và url thanh toán)
+            var result = new
             {
-                return BadRequest(new ResponseDTO<object>("Payment is not exist", false));
-            }
+                PaymentId = newPayment.PaymentsId,
+                //UserPackageId = newUserPackage.UserPackagesId,
+                PaymentAmount = newPayment.TransferAmount,
+                PaymentUrl = vnpayUrl
+            };
 
-            payment!.Status = "Paid";
-            payment!.PaymentMethodId = 3;
-            payment.Gateway = "Direct";
-            payment.TransactionDate = DateTime.Now;
-            payment.Content = "Thanh toán trực tiếp";
-            payment.UpdatedAt = DateTime.Now;
-
-            // (Tuỳ chọn) Cộng dồn vào Accumulated 
-            payment.Accumulated = (payment.Accumulated ?? 0) + payment.TransferAmount;
-
-            _paymentService.UpdatePayment(payment);
-            await _unitOfWork.SaveChangesAsync();
-            return new ResponseDTO<object>("Payment successful", true, payment);
+            return Ok(new ResponseDTO<object>("Payment created successfully", true, result));
         }
 
         [HttpGet("VNPay")]
@@ -91,67 +122,72 @@ namespace EV.Presentation.Controllers
                     ipAddress = "127.0.0.1";
 
                 var vnpayUrl = _vnPayService.CreatePaymentUrl(payment.PaymentsId.ToString(), payment.TransferAmount, ipAddress);
-                await _unitOfWork.SaveChangesAsync();
                 Redirect(vnpayUrl);
                 return new ResponseDTO<object>("Payment successful", true, vnpayUrl);
             }
             return BadRequest(new ResponseDTO<object>("Payment has been paid", false));
         }
 
-
-
         [HttpGet("/VNPay-ReturnUrl")]
         public async Task<ActionResult<ResponseDTO<object>>> PaymentReturn()
         {
             var query = HttpContext.Request.Query;
-
-            // 1️⃣ Xác thực chữ ký
             var isValidSignature = _vnPayService.ValidateSignature(query);
             if (!isValidSignature)
-            {
                 return BadRequest(new ResponseDTO<object>("Invalid signature", false));
-            }
 
-            // 2️⃣ Lấy các giá trị trả về từ VNPay
             string responseCode = query["vnp_ResponseCode"];
             string vnp_TxnRef = query["vnp_TxnRef"]; // (PaymentId)
             string vnp_TransactionNo = query["vnp_TransactionNo"]; // VNPay id
-            string vnp_PayDate = query["vnp_PayDate"]; 
-            string vnp_Amount = query["vnp_Amount"]; 
+            string vnp_PayDate = query["vnp_PayDate"];
+            string vnp_Amount = query["vnp_Amount"];
             string vnp_OrderInfo = query["vnp_OrderInfo"];
 
-            if (responseCode == "00")
+            if (responseCode == "00" && int.TryParse(vnp_TxnRef, out int paymentId))
             {
-                if (int.TryParse(vnp_TxnRef, out int paymentId))
+                var payment = await _paymentService.GetPaymentByIdAsync(paymentId);
+                if (payment != null)
                 {
-                    var payment = await _paymentService.GetPaymentByIdAsync(paymentId);
-                    if (payment != null)
-                    {                        
-                        payment.Status = "Paid";
-                        payment.PaymentMethodId = 1; 
-                        payment.Gateway = "VNPay";
-                        payment.TransactionDate = DateTime.Now;
-                        payment.Content = vnp_OrderInfo ?? "Thanh toán qua VNPay";
+                    payment.Status = "Paid";
+                    payment.PaymentMethodId = 1;
+                    payment.Gateway = "VNPay";
+                    payment.TransactionDate = DateTime.Now;
+                    payment.Content = vnp_OrderInfo ?? "Thanh toán qua VNPay";
 
-                        if (decimal.TryParse(vnp_Amount, out decimal amount))
-                            payment.TransferAmount = amount;
+                    if (decimal.TryParse(vnp_Amount, out decimal amount))
+                        payment.TransferAmount = amount;
 
-                        payment.AccountNumber = vnp_TransactionNo;
-                        payment.UpdatedAt = DateTime.Now;
+                    payment.AccountNumber = vnp_TransactionNo;
+                    payment.UpdatedAt = DateTime.Now;
+                    payment.Accumulated = (payment.Accumulated ?? 0) + payment.TransferAmount;
 
-                        // (Tuỳ chọn) Cộng dồn vào Accumulated 
-                        payment.Accumulated = (payment.Accumulated ?? 0) + payment.TransferAmount;
+                    _paymentService.UpdatePayment(payment);
+                    await _unitOfWork.SaveChangesAsync();
 
-                        _paymentService.UpdatePayment(payment);
-                        await _unitOfWork.SaveChangesAsync();
+                    // Nếu là UserPackage => active gói
+                    if (string.Equals(payment.ReferenceType, "UserPackage", StringComparison.OrdinalIgnoreCase)
+                        && payment.ReferenceId.HasValue)
+                    {
+                        //var userPackage = new UserPackagesDTO()
+                        //{
+                        //    UserPackagesId = payment.ReferenceId.Value,
+
+                        //};
+
+                        //if (userPackage != null)
+                        //{
+                        //    await _userPackagesServices.UpdateUserPackage(payment.UserPackage.UserPackagesId, userPackage);
+                        //    await _unitOfWork.SaveChangesAsync();
+                        //}
                     }
                 }
+
+                // Redirect về client success page
                 return Redirect("http://localhost:5173/paymentSuccess");
             }
-            else
-            {
-                return Redirect("http://localhost:5173/paymentFail");
-            }
+
+            // Trường hợp thất bại
+            return Redirect("http://localhost:5173/paymentFail");
         }
     }
 }
