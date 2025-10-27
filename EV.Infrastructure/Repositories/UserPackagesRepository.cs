@@ -1,5 +1,6 @@
 ﻿using EV.Application.Interfaces.RepositoryInterfaces;
 using EV.Application.RequestDTOs.UserPackagesDTO;
+using EV.Application.ResponseDTOs;
 using EV.Domain.CustomEntities;
 using EV.Domain.Entities;
 using EV.Infrastructure.DBContext;
@@ -32,13 +33,14 @@ namespace EV.Infrastructure.Repositories
                 PurchasedPostDuration = userPackages.PurchasedDuration,
                 PurchasedAtPrice = userPackages.PurchasedAtPrice,
                 PurchasedAt = DateTime.Now,
-                Status = "Active"
+                Status = "Pending"
             };
 
             _context.UserPackages.Add(entity);
 
             return new UserPackagesCustom
             {
+                UserPackagesId = entity.UserPackagesId,
                 UserName = user.UserName,
                 PackagesName = userPackages.PackagesName,
                 PurchasedDuration = userPackages.PurchasedDuration,
@@ -56,15 +58,16 @@ namespace EV.Infrastructure.Repositories
                 .Include(a => a.User)
                 .Include(b => b.Package)
                 .FirstOrDefaultAsync(up => up.UserPackagesId == id);
-            
+
             if (userPackages == null) return null;
 
-            userPackages.Status = "InActive";
+            userPackages.Status = "Deleted";
             //await _context.SaveChangesAsync();
             _context.UserPackages.Update(userPackages);
 
             return new UserPackagesCustom
             {
+                UserPackagesId = userPackages.UserPackagesId,
                 UserName = userPackages.User?.UserName,
                 PackagesName = userPackages.Package?.PackageName,
                 Currency = userPackages?.Currency,
@@ -84,6 +87,7 @@ namespace EV.Infrastructure.Repositories
                    .Take(take)
                    .Select(a => new UserPackagesCustom
                    {
+                       UserPackagesId = a.UserPackagesId,
                        UserName = a.User.UserName,
                        PackagesName = a.Package.PackageName,
                        PurchasedDuration = a.PurchasedPostDuration,
@@ -97,22 +101,46 @@ namespace EV.Infrastructure.Repositories
 
         public async Task<UserPackagesCustom> GetUserPackageById(int id)
         {
-           var x = await _context.UserPackages
-                .Include(a => a.User)
-                .Include (b => b.Package)
-                .FirstOrDefaultAsync(x => x.UserPackagesId == id);
+            var x = await _context.UserPackages
+                 .Include(a => a.User)
+                 .Include(b => b.Package)
+                 .FirstOrDefaultAsync(x => x.UserPackagesId == id);
 
             if (x == null) return null;
             return new UserPackagesCustom
             {
+                UserPackagesId = x.UserPackagesId,
                 UserName = x.User?.UserName,
                 PackagesName = x.Package?.PackageName,
                 PurchasedDuration = x.PurchasedPostDuration,
                 PurchasedAtPrice = x.PurchasedAtPrice,
                 Currency = x.Currency,
                 PurchasedAt = x.PurchasedAt,
-                Status = x.Status
+                Status = x.Status ?? "Pending"
             };
+        }
+
+        public Task<UserPackagesCustom> GetUserPackageByUserId(int userId)
+        {
+            var userPackage = _context.UserPackages
+                .Include(a => a.User)
+                .Include(b => b.Package)
+                .Where(a => a.UserId == userId)
+                .OrderByDescending(a => a.PurchasedAt)
+                .Select(a => new UserPackagesCustom
+                {
+                    UserPackagesId = a.UserPackagesId,
+                    UserName = a.User.UserName,
+                    PackagesName = a.Package.PackageName,
+                    PurchasedDuration = a.PurchasedPostDuration,
+                    PurchasedAtPrice = a.PurchasedAtPrice,
+                    Currency = a.Currency,
+                    PurchasedAt = a.PurchasedAt,
+                    Status = a.Status
+                })
+                .FirstOrDefaultAsync();
+
+            return userPackage;
         }
 
         public async Task<IEnumerable<UserPackagesCustom>> GetUserPackageByUserNameAndPackageName(string userName, string packageName, int skip, int take)
@@ -127,13 +155,13 @@ namespace EV.Infrastructure.Repositories
                                        .Include(a => a.User)
                                        .Include(b => b.Package)
                                        .AsQueryable();
-            
-            if(!string.IsNullOrEmpty(userName))
+
+            if (!string.IsNullOrEmpty(userName))
             {
                 userPackages = userPackages.Where(a => a.User.UserName == userName);
             }
 
-            if(!string.IsNullOrEmpty(packageName))
+            if (!string.IsNullOrEmpty(packageName))
             {
                 userPackages = userPackages.Where(b => b.Package.PackageName == packageName);
             }
@@ -145,6 +173,7 @@ namespace EV.Infrastructure.Repositories
 
             return items.Select(a => new UserPackagesCustom
             {
+                UserPackagesId = a.UserPackagesId,
                 UserName = a.User?.UserName,
                 PackagesName = a.Package?.PackageName,
                 PurchasedDuration = a.PurchasedPostDuration,
@@ -167,7 +196,7 @@ namespace EV.Infrastructure.Repositories
             if (userPackages.UserId.HasValue)
             {
                 var user = await _context.Users.FindAsync(userPackages.UserId.Value);
-                if(user != null)
+                if (user != null)
                 {
                     x.UserId = user.UsersId;
                 }
@@ -187,6 +216,7 @@ namespace EV.Infrastructure.Repositories
 
             return new UserPackagesCustom
             {
+                UserPackagesId = x.UserPackagesId,
                 UserName = x.User?.UserName,
                 PackagesName = userPackages.PackagesName,
                 PurchasedDuration = userPackages.PurchasedDuration,

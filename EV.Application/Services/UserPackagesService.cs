@@ -77,6 +77,14 @@ namespace EV.Application.Services
             return new ResponseDTO<UserPackagesCustom>("Get successfully", true, result);
         }
 
+        public async Task<ResponseDTO<UserPackagesCustom>> GetUserPackageByUserId(int id)
+        {
+            var result = await _unitOfWork.userPackagesRepository.GetUserPackageByUserId(id);
+            if (result == null)
+                return new ResponseDTO<UserPackagesCustom>("User package not found", false);
+            return new ResponseDTO<UserPackagesCustom>("Get successfully", true, result);
+        }
+
         public async Task<ResponseDTO<PagedResult<UserPackagesCustom>>> GetUserPackageByUserNameAndPackageName(GetUserPackageByUserNameAndPackageNameRequestDTO request)
         {
             var x = await _unitOfWork.userPackagesRepository.GetUserPackageByUserNameAndPackageName(request.UserName, request.PackageName, (request.Page - 1) * request.PageSize, request.PageSize);
@@ -117,5 +125,6 @@ namespace EV.Application.Services
 
             return new ResponseDTO<UserPackagesCustom>("Updated successfully", true, result);
         }
+
     }
 }
