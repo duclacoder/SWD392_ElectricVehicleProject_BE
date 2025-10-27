@@ -1,5 +1,5 @@
 ﻿using EV.Application.Interfaces.RepositoryInterfaces;
-using EV.Application.RequestDTOs.UserPackages;
+using EV.Application.RequestDTOs.UserPackagesDTO;
 using EV.Domain.CustomEntities;
 using EV.Domain.Entities;
 using EV.Infrastructure.DBContext;
@@ -27,7 +27,7 @@ namespace EV.Infrastructure.Repositories
 
             var entity = new UserPackage
             {
-                UserId = userPackages.UserId,
+                UserId = userPackages.UserId.Value,
                 PackageId = package.PostPackagesId,
                 PurchasedPostDuration = userPackages.PurchasedDuration,
                 PurchasedAtPrice = userPackages.PurchasedAtPrice,
