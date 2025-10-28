@@ -1,5 +1,6 @@
 ﻿using EV.Application.Interfaces.RepositoryInterfaces;
 using EV.Application.Interfaces.ServiceInterfaces;
+using EV.Application.RequestDTOs.AuctionFeeRequestDTO;
 using EV.Application.RequestDTOs.PaymentRequestDTO;
 using EV.Application.RequestDTOs.UserPackagesDTO;
 using EV.Application.ResponseDTOs;
@@ -16,13 +17,17 @@ namespace EV.Presentation.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly IVnPayService _vnPayService;
         private readonly IUserPackagesServices _userPackageService;
-
-        public PaymentController(IPaymentService paymentService, IUnitOfWork unitOfWork, IVnPayService vnPayService, IUserPackagesServices userPackageService)
+        private readonly IAuctionsFeeService _auctionsFeeService;
+        private readonly IUserService _userService;
+        private readonly IAuctionParticipantService _auctionParticipantService;
+        public PaymentController(IPaymentService paymentService, IUnitOfWork unitOfWork, IVnPayService vnPayService, IUserPackagesServices userPackageService, IAuctionsFeeService auctionsFeeService, IUserService userService)
         {
             _paymentService = paymentService;
             _unitOfWork = unitOfWork;
             _vnPayService = vnPayService;
             _userPackageService = userPackageService;
+            _auctionsFeeService = auctionsFeeService;
+            _userService = userService;
         }
 
         [HttpGet("GetAllPayment")]
@@ -38,45 +43,85 @@ namespace EV.Presentation.Controllers
             if (request.UserId is null)
                 return BadRequest(new ResponseDTO<object>("UserId is required", false));
 
-            if (request.TransferAmount <= 0)
-                return BadRequest(new ResponseDTO<object>("TransferAmount must be greater than zero", false));
-
-            if (request.UserPackageId <= 0)
-                return BadRequest(new ResponseDTO<object>("PostPackageId is required", false));
-
-            var userPackage = (await _userPackageService.GetUserPackageById(request.UserPackageId)).Result;
-            if (userPackage is null)
-                return BadRequest(new ResponseDTO<object>("User package not found", false));
-
-            var newPayment = new Payment
+            if ((!request.UserPackageId.HasValue || request.UserPackageId <= 0) && (request.AuctionsFeeId <= 0 || !request.AuctionsFeeId.HasValue))
             {
-                UserId = request.UserId.Value,
-                TransferAmount = request.TransferAmount,
-                Currency = userPackage.Currency ?? "VND",
-                TransactionDate = DateTime.UtcNow,
-                ReferenceType = "UserPackage",
-                ReferenceId = userPackage.UserPackagesId, 
-                Status = "Pending",
-                CreatedAt = DateTime.UtcNow,
-                Content = "Thanh toan goi"
-            };
+                return BadRequest(new ResponseDTO<object>("Either UserPackageId or AuctionsFeeId is required", false));
+            } 
+            if (request.UserPackageId.HasValue && request.AuctionsFeeId.HasValue )
+                return BadRequest(new ResponseDTO<object>("Only UserPackageId or AuctionsFeeId", false));
 
-            await _paymentService.CreatePaymentAsync(newPayment);
-            await _unitOfWork.SaveChangesAsync(); // => newPayment.PaymentsId có giá trị
-
-            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1";
-            var vnpayUrl = _vnPayService.CreatePaymentUrl(newPayment.PaymentsId.ToString(), newPayment.TransferAmount, ipAddress);
-
-            // Trả về PaymentId và UserPackageId cho client (và url thanh toán)
-            var result = new
+            if (request.UserPackageId.HasValue && request.UserPackageId > 0)
             {
-                PaymentId = newPayment.PaymentsId,
-                UserPackageId = userPackage.UserPackagesId,
-                PaymentAmount = newPayment.TransferAmount,
-                PaymentUrl = vnpayUrl
-            };
+                var userPackage = (await _userPackageService.GetUserPackageById(request.UserPackageId.Value)).Result;
+                if (userPackage is null)
+                    return BadRequest(new ResponseDTO<object>("User package not found", false));
 
-            return Ok(new ResponseDTO<object>("Payment created successfully", true, result));
+                var newPayment = new Payment
+                {
+                    UserId = request.UserId.Value,
+                    TransferAmount = userPackage.PurchasedAtPrice,
+                    Currency = userPackage.Currency ?? "VND",
+                    TransactionDate = DateTime.UtcNow,
+                    ReferenceType = "UserPackage",
+                    ReferenceId = userPackage.UserPackagesId,
+                    Status = "Pending",
+                    CreatedAt = DateTime.UtcNow,
+                    Content = "Thanh toan goi"
+                };
+
+                await _paymentService.CreatePaymentAsync(newPayment);
+                await _unitOfWork.SaveChangesAsync(); // => newPayment.PaymentsId có giá trị
+
+                var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1";
+                var vnpayUrl = _vnPayService.CreatePaymentUrl(newPayment.PaymentsId.ToString(), newPayment.TransferAmount, ipAddress);
+
+                // Trả về PaymentId và UserPackageId cho client (và url thanh toán)
+                var result = new
+                {
+                    PaymentId = newPayment.PaymentsId,
+                    UserPackageId = userPackage.UserPackagesId,
+                    PaymentAmount = newPayment.TransferAmount,
+                    PaymentUrl = vnpayUrl
+                };
+                return Ok(new ResponseDTO<object>("Payment created successfully", true, result));
+            }
+
+            if (request.AuctionsFeeId.HasValue && request.AuctionsFeeId > 0)
+            {
+                var auctionFee = (await _auctionsFeeService.GetAuctionFeeById(request.AuctionsFeeId.Value)).Result;
+                if (auctionFee is null)
+                    return BadRequest(new ResponseDTO<object>("Auction Fee not found", false));
+
+                var newPayment = new Payment
+                {
+                    UserId = request.UserId.Value,
+                    TransferAmount = auctionFee.EntryFee,
+                    Currency = auctionFee.Currency ?? "VND",
+                    TransactionDate = DateTime.UtcNow,
+                    ReferenceType = "AuctionFee",
+                    ReferenceId = auctionFee.AuctionsFeeId,
+                    Status = "Pending",
+                    CreatedAt = DateTime.UtcNow,
+                    Content = "Phi tham gia dau gia"
+                };
+
+                await _paymentService.CreatePaymentAsync(newPayment);
+                await _unitOfWork.SaveChangesAsync();
+
+                var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1";
+                var vnpayUrl = _vnPayService.CreatePaymentUrl(newPayment.PaymentsId.ToString(), newPayment.TransferAmount, ipAddress);
+
+                var result = new
+                {
+                    PaymentId = newPayment.PaymentsId,
+                    AuctionFeeId = auctionFee.AuctionsFeeId,
+                    PaymentAmount = newPayment.TransferAmount,
+                    PaymentUrl = vnpayUrl
+                };
+                return Ok(new ResponseDTO<object>("Payment created successfully", true, result));
+            }
+
+            return Ok(new ResponseDTO<object>("Payment created successfully", true));
         }
 
         [HttpGet("VNPay")]
@@ -139,7 +184,6 @@ namespace EV.Presentation.Controllers
                     payment.UpdatedAt = DateTime.Now;
                     payment.Accumulated = (payment.Accumulated ?? 0) + payment.TransferAmount;
 
-                    _paymentService.UpdatePayment(payment);
 
                     if (string.Equals(payment.ReferenceType, "UserPackage", StringComparison.OrdinalIgnoreCase)
                         && payment.ReferenceId.HasValue)
@@ -154,8 +198,42 @@ namespace EV.Presentation.Controllers
                             Currency = userPackage.Currency ?? "VND"
                         };
                         userPackage.Status = "Active";
-                        await _userPackageService.UpdateUserPackage(payment.ReferenceId.Value, userPackagesDTO);
                         _paymentService.UpdatePayment(payment);
+                        await _userPackageService.UpdateUserPackage(payment.ReferenceId.Value, userPackagesDTO);
+                    }
+
+                    if (string.Equals(payment.ReferenceType, "AuctionFee", StringComparison.OrdinalIgnoreCase)
+                        && payment.ReferenceId.HasValue)
+                    {
+                        var auctionFee = (await _auctionsFeeService.GetAuctionFeeById(payment.ReferenceId.Value)).Result;
+
+                        UpdateAuctionFeeDTO auctionFeeDTO = new UpdateAuctionFeeDTO()
+                        {
+                            Type = auctionFee.Type ?? "",
+                            Description = auctionFee.Description,
+                            EntryFee = auctionFee.EntryFee ?? 0,
+                            Currency = auctionFee.Currency ?? "VND",
+                            Status = "Paid"
+                        };
+
+                        var auctionId = auctionFee.Auctions?.FirstOrDefault(a => a.AuctionsFeeId == payment.ReferenceId)?.AuctionsId;
+
+                        var auctionParticipant = new AuctionParticipant
+                        {
+                            AuctionsId = auctionId.Value,
+                            UserId = payment.UserId,
+                            PaymentsId = payment.PaymentsId,
+                            Status = "Active",
+                            RefundStatus = "NotRefunded",
+                            IsWinningBid = false,
+                            User = (await _userService.GetUserById(payment.UserId.Value)).Result,
+                            DepositAmount = auctionFee.EntryFee ?? 0,
+                            DepositTime = DateTime.Now,
+                            Payments = payment
+                        };
+
+                        await _auctionParticipantService.CreateAuctionParticipantAsync(auctionParticipant);
+                        await _auctionsFeeService.UpdateAuctionFee(payment.ReferenceId.Value, auctionFeeDTO);
                     }
                 }
                 await _unitOfWork.SaveChangesAsync();

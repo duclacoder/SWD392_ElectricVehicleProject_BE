@@ -47,6 +47,9 @@ namespace EV.Infrastructure.Configuration
             services.AddScoped<IPaymentRepository, PaymentRepository>();
             services.AddScoped<IVnPayService, VnPayService>();
 
+            services.AddScoped<IAuctionParticipantService, AuctionParticipantService>();
+            services.AddScoped<IAuctionParticipantRepository, AuctionParticipantRepository>();
+
             //Service injection
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICarService, CarService>();  
