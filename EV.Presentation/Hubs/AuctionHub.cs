@@ -24,7 +24,16 @@ namespace EV.Presentation.Hubs
                     return;
                 }
 
-                //var currentPrice = await _context.AuctionBids.Where(b => b.AuctionId == auctionId).Select(b => b.BidAmount).DefaultIfEmpty((decimal?)auction.StartPrice).MaxAsync();
+                var participant = await _context.AuctionParticipants
+                                                .FirstOrDefaultAsync(p => p.AuctionsId == auctionId && p.UserId == bidderId && p.Status == "Active");
+
+                if (participant == null || participant.DepositAmount <= 0)
+                {
+                    await Clients.Caller.SendAsync("BidRejected",
+                        "You must pay the participation fee before joining the auction.");
+                    return;
+                }
+
                 var bids = await _context.AuctionBids
                                          .Where(b => b.AuctionId == auctionId)
                                          .Select(b => b.BidAmount)

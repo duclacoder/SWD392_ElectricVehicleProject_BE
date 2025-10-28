@@ -24,7 +24,7 @@ namespace EV.Infrastructure.Repositories
 
         public async Task<UserPostCustom> CreateUserPost(CreateUserPostDTO createUserPostDTO)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(a => a.UserName == createUserPostDTO.UserName);
+            var user = await _context.Users.FirstOrDefaultAsync(a => a.UsersId == createUserPostDTO.UserId);
 
             if (user == null)
             {
@@ -55,6 +55,7 @@ namespace EV.Infrastructure.Repositories
             {
                 throw new Exception($"Không tìm thấy gói hợp lệ với tên: {createUserPostDTO.PackageName}");
             }
+
 
             var userPost = new UserPost
             {
@@ -146,7 +147,7 @@ namespace EV.Infrastructure.Repositories
             };
         }
 
-        public async Task<(IEnumerable<UserPostCustom> Items, int TotalCount)> GetAllUserPosts(int skip, int take, string userName)
+        public async Task<(IEnumerable<UserPostCustom> Items, int TotalCount)> GetAllUserPosts(int skip, int take, int? userId)
         {
             var items = _context.UserPosts
                                  .Include(a => a.User)
@@ -155,9 +156,13 @@ namespace EV.Infrastructure.Repositories
                                  .Where(a => a.Status == "Active")
                                  .AsQueryable();
 
-            if(!string.IsNullOrEmpty(userName))
+            if(userId.HasValue)
             {
-               items = items.Where(a => a.User.UserName == userName);
+               items = items.Where(a => a.User.UsersId == userId);
+            }
+            else
+            {
+                items = items.Where(a => a.Status == "Active");
             }
 
 
@@ -172,7 +177,7 @@ namespace EV.Infrastructure.Repositories
             var result = post.Select(post => new UserPostCustom
             {
                 UserPostId = post.UserPostsId,
-                UserName = post.User.UserName,
+                UserName = post.User?.UserName,
                 Title = post.Vehicle?.Brand + " " + post.Vehicle?.Model + " " + post.Vehicle?.Color + " " + post.Vehicle?.Year,
                 Vehicle = new VehicleUserPost
                 {

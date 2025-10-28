@@ -49,7 +49,7 @@ namespace EV.Application.Services
             var (data, totalItem) = await _unitOfWork.userPostsRepository.GetAllUserPosts(
                                  (getAllUserPostRequestDTO.Page - 1) * getAllUserPostRequestDTO.PageSize,
                                  getAllUserPostRequestDTO.PageSize,
-                                 getAllUserPostRequestDTO.UserName);
+                                 getAllUserPostRequestDTO.UserId);
 
             var pageResult = new PagedResult<UserPostCustom>
             {
