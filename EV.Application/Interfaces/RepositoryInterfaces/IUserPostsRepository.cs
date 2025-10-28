@@ -10,7 +10,7 @@ namespace EV.Application.Interfaces.RepositoryInterfaces
 {
     public interface IUserPostsRepository
     {
-        Task<(IEnumerable<UserPostCustom> Items, int TotalCount)> GetAllUserPosts(int skip, int take, string UserName);
+        Task<(IEnumerable<UserPostCustom> Items, int TotalCount)> GetAllUserPosts(int skip, int take, int? userId);
 
         Task<UserPostCustom> GetUserPostById(int id);
 

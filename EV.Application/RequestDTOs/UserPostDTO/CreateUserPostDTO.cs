@@ -9,7 +9,7 @@ namespace EV.Application.RequestDTOs.UserPostDTO
 {
     public class CreateUserPostDTO
     {
-        public string? UserName { get; set; }
+        public int UserId { get; set; }
 
         public string? Title { get; set; }
 
