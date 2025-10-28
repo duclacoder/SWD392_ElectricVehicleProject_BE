@@ -31,7 +31,8 @@ namespace EV.Application.Interfaces.RepositoryInterfaces
         IBatteryRepository batteryRepository { get; }
 
         IAuctionsFeeRepository auctionsFeeRepository { get; }
-        //Single commit point
+
+        IAuctionParticipantRepository auctionParticipantRepository { get; }
         Task<int> SaveChangesAsync();
     }
 }

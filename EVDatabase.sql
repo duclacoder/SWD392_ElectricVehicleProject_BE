@@ -1,4 +1,5 @@
-﻿use master
+﻿
+use master
 go
 
 IF EXISTS (SELECT name FROM sys.databases WHERE name = 'SWD392_SE1834_G2_T1')
@@ -220,7 +221,6 @@ CREATE TABLE AuctionParticipants (
     AuctionsId INT FOREIGN KEY REFERENCES Auctions(AuctionsId),
     AuctionId INT NOT NULL,
     DepositAmount DECIMAL(18,2) NOT NULL,
-    PaymentId INT NULL, -- nếu bạn muốn liên kết đến bảng Payments
     DepositTime DATETIME,
     RefundStatus VARCHAR(50),
     Status VARCHAR(50), 
@@ -308,7 +308,7 @@ INSERT INTO Roles (Name) VALUES
 
 -- USERS
 INSERT INTO Users (UserName, FullName, Email, Phone, Password, ImageUrl, RoleId, CreatedAt, UpdatedAt, Status) VALUES
-('admin', N'Bố Admin', 'admin@gm.c', '0901234567', '1', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJEqnKT0022XaMCyb6K37bte9OIjdUGLCHTA&s', 3, '2024-01-15 08:00:00', '2024-01-15 08:00:00', 'Active'),
+('admin', N'Bố Admin', 'ducpvse183843@fpt.edu.vn', '0901234567', '1', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJEqnKT0022XaMCyb6K37bte9OIjdUGLCHTA&s', 3, '2024-01-15 08:00:00', '2024-01-15 08:00:00', 'Active'),
 ('staff', N'Má Staff', 'staff1@gm.c', '0901234568', '1', 'https://tiemchupanh.com/wp-content/uploads/2024/07/4ed9efe2b3fd60a339ec23-683x1024.jpg', 2, '2024-01-20 08:00:00', '2024-01-20 08:00:00', 'Active'),
 ('staff01', N'Bố Staff', 'staff2@gm.c', '0901234569', '1', 'https://chothuestudio.com/wp-content/uploads/2024/07/TCA_3837.jpg', 2, '2024-01-25 08:00:00', '2024-01-25 08:00:00', 'Active'),
 ('seller01', N'Phạm Minh Hải', 'hai.pham@gmail.com', '0912345678', 'hashed_password_seller1', 'https://example.com/images/seller1.jpg', 1, '2024-02-01 10:00:00', '2024-02-01 10:00:00', 'Active'),
