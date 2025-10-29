@@ -61,7 +61,7 @@ namespace EV.Infrastructure.Repositories
                 StartPrice = createAuctionDTO.StartPrice,
                 StartTime = DateTime.Now,
                 EndTime = (DateTime)createAuctionDTO.EndTime,
-                AuctionsFeeId = createAuctionDTO.AuctionsFeeId,
+                //AuctionsFeeId = createAuctionDTO.AuctionsFeeId,
                 FeePerMinute = createAuctionDTO .FeePerMinute,
                 OpenFee = createAuctionDTO.OpenFee,
                 EntryFee = createAuctionDTO?.EntryFee,
