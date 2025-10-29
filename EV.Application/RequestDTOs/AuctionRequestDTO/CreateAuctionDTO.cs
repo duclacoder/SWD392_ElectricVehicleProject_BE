@@ -14,7 +14,7 @@ namespace EV.Application.RequestDTOs.AuctionRequestDTO
         //public DateTime StartTime { get; set; }
         public DateTime? EndTime { get; set; }
 
-        public int? AuctionsFeeId { get; set; }
+        //public int? AuctionsFeeId { get; set; }
 
         public decimal? FeePerMinute { get; set; }
 
