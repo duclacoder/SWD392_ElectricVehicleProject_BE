@@ -8,8 +8,10 @@ namespace EV.Application.RequestDTOs.UserRequestDTO
 {
     public class RegisterRequestDTO
     {
-        public string Email;
-        public string Password; 
-        public string confirmPassword;
+        //public required string Username {get; set;}
+        public required string Email { get; set; }
+        public required string Password { get; set; }
+        //public required string Phone { get; set; }
+        public required string confirmPassword { get; set; }
     }
 }

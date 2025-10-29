@@ -1,0 +1,21 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EV.Application.RequestDTOs.UserPackagesDTO
+{
+    public class UserPackagesDTO
+    {
+        public int? UserId { get; set; }
+        public int UserPackageId { get; set; }
+        public string PackagesName { get; set; }
+
+        public int PurchasedDuration { get; set; }
+
+        public decimal PurchasedAtPrice { get; set; }
+
+        public string Currency { get; set; }
+    }
+}

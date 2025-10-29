@@ -1,4 +1,7 @@
-﻿namespace EV.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
+
+namespace EV.Domain.Entities;
 
 public partial class User
 {
@@ -27,6 +30,8 @@ public partial class User
     public virtual ICollection<Activity> Activities { get; set; } = new List<Activity>();
 
     public virtual ICollection<AuctionBid> AuctionBids { get; set; } = new List<AuctionBid>();
+
+    public virtual ICollection<AuctionParticipant> AuctionParticipants { get; set; } = new List<AuctionParticipant>();
 
     public virtual ICollection<Auction> Auctions { get; set; } = new List<Auction>();
 

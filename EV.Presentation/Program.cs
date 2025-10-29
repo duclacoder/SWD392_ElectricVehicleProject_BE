@@ -1,6 +1,8 @@
-using EV.Application.Helpers;
 using EV.Infrastructure.Configuration;
 using EV.Presentation.Extensions;
+using EV.Presentation.Hubs;
+using EV.Presentation.Middleware;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,9 +16,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddInfranstructureToApplication(builder.Configuration);
 builder.Services.AuthenticationServices(builder);
 builder.Services.SwaggerServices(builder);
+builder.Services.RedisService(builder.Configuration);
+
 
 //Mapper
-builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
+
+builder.Services.AddSignalR();
 
 
 builder.Services.AddCors(options =>
@@ -48,5 +54,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<AuctionHub>("/auctionHub");
 
 app.Run();

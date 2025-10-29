@@ -11,6 +11,8 @@ public partial class UserPackage
 
     public int? PackageId { get; set; }
 
+    public int? PaymentsId { get; set; }
+
     public int? PurchasedPostDuration { get; set; }
 
     public decimal? PurchasedAtPrice { get; set; }
@@ -22,6 +24,8 @@ public partial class UserPackage
     public string? Status { get; set; }
 
     public virtual PostPackage? Package { get; set; }
+
+    public virtual Payment? Payments { get; set; }
 
     public virtual User? User { get; set; }
 
