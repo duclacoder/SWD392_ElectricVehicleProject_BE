@@ -1,4 +1,5 @@
-﻿using EV.Domain.Entities;
+﻿using EV.Application.RequestDTOs.AuctionParticipantDTO;
+using EV.Domain.Entities;
 
 namespace EV.Application.Interfaces.ServiceInterfaces
 {
@@ -7,7 +8,7 @@ namespace EV.Application.Interfaces.ServiceInterfaces
         Task<bool> IsUserParticipatingInAuction(int userId, int auctionId);
         Task<List<AuctionParticipant>> GetAllAuctionsParticipantAsync();
         Task<AuctionParticipant> GetAuctionParticipantByIdAsync(int auctionParticipantId);
-        Task CreateAuctionParticipantAsync(AuctionParticipant auctionParticipant);
+        Task CreateAuctionParticipantAsync(CreateAuctionParticipantRequestDTO auctionParticipant);
         void UpdateAuctionParticipant(AuctionParticipant auctionParticipant);
         Task DeleteAuctionParticipant(int auctionParticipantId);
     }
