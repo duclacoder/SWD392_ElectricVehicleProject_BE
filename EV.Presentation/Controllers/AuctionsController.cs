@@ -52,7 +52,5 @@ namespace EV.Presentation.Controllers
             var response = await _auctionService.DeleteAuction(id);
             return Ok(response);
         }
-
-      
     }
 }

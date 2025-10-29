@@ -6,6 +6,7 @@ namespace EV.Application.RequestDTOs.AuctionFeeRequestDTO
     public class CreateAuctionFeeDTO
     {
         [Required]
+        public int? AuctionsId { get; set; }
         public string? Description { get; set; }
 
         public decimal? FeePerMinute { get; set; }

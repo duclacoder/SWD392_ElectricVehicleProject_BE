@@ -1,5 +1,6 @@
 ﻿using EV.Application.Interfaces.RepositoryInterfaces;
 using EV.Application.Interfaces.ServiceInterfaces;
+using EV.Application.RequestDTOs.AuctionParticipantDTO;
 using EV.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -17,9 +18,20 @@ namespace EV.Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task CreateAuctionParticipantAsync(AuctionParticipant auctionParticipant)
+        public async Task CreateAuctionParticipantAsync(CreateAuctionParticipantRequestDTO auctionParticipant)
         {
-            await _unitOfWork.auctionParticipantRepository.CreateAsync(auctionParticipant);
+            var newAuctionParticipant = new AuctionParticipant
+            {
+                PaymentsId = auctionParticipant.PaymentsId,
+                UserId = auctionParticipant.UserId,
+                AuctionsId = auctionParticipant.AuctionsId,
+                DepositAmount = auctionParticipant.DepositAmount,
+                DepositTime = auctionParticipant.DepositTime,
+                RefundStatus = auctionParticipant.RefundStatus,
+                Status = auctionParticipant.Status,
+                IsWinningBid = auctionParticipant.IsWinningBid
+            };
+            await _unitOfWork.auctionParticipantRepository.CreateAsync(newAuctionParticipant);
         }
 
         public async Task DeleteAuctionParticipant(int auctionParticipantId)
