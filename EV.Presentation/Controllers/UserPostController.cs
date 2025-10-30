@@ -39,7 +39,7 @@ namespace EV.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateUserPost([FromBody] CreateUserPostDTO dto)
+        public async Task<IActionResult> CreateUserPost([FromForm] CreateUserPostDTO dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
@@ -62,10 +62,15 @@ namespace EV.Presentation.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var result = await _userPostsService.UpdateUserPost(id, dto);
-            if (!result.IsSuccess) return NotFound(result);
-
-            return Ok(result);
+            try
+            {
+                await _userPostsService.UpdateUserPost(id, dto);
+                return Ok(new { message = "Cập nhật bài đăng thành công." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         [HttpDelete("{id}")]

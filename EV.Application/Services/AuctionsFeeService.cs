@@ -94,5 +94,16 @@ namespace EV.Application.Services
             await _unitOfWork.SaveChangesAsync();
             return new ResponseDTO<AuctionsFee>("Updated successfully", true, result);
         }
+
+        public async Task<ResponseDTO<AuctionsFee>> GetAuctionsFeeByAuctionIdAsync(int auctionId)
+        {
+            var result = await _unitOfWork.auctionsFeeRepository.GetAuctionsFeeByAuctionIdAsync(auctionId);
+            if(result == null)
+            {
+                return new ResponseDTO<AuctionsFee>("Auction not found", false);
+            }
+
+            return new ResponseDTO<AuctionsFee>("Get successfully", true, result);
+        }
     }
 }
