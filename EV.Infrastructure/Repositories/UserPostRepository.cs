@@ -2,6 +2,7 @@
 using EV.Application.RequestDTOs.UserPostDTO;
 using EV.Domain.CustomEntities;
 using EV.Domain.Entities;
+using EV.Infrastructure.CloudinaryImage;
 using EV.Infrastructure.DBContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
@@ -18,8 +19,13 @@ namespace EV.Infrastructure.Repositories
     {
 
         private readonly Swd392Se1834G2T1Context _context;
+        private readonly ICloudinaryRepository _cloudinaryRepository;
 
-        public UserPostRepository(Swd392Se1834G2T1Context context) => _context = context;
+        public UserPostRepository(Swd392Se1834G2T1Context context, ICloudinaryRepository cloudinaryRepository)
+        {
+            _context = context;
+            _cloudinaryRepository = cloudinaryRepository;
+        }
 
 
         public async Task<UserPostCustom> CreateUserPost(CreateUserPostDTO createUserPostDTO)
@@ -31,6 +37,14 @@ namespace EV.Infrastructure.Repositories
                 return null;
             }
 
+            var availableUserPackage = await _context.UserPackages
+                                              .FirstOrDefaultAsync(p => p.UserId == createUserPostDTO.UserId
+                                                                      && p.Status == "Pending");
+
+            if (availableUserPackage == null)
+            {
+                throw new Exception("Bạn không có gói đăng bài nào hợp lệ hoặc đã sử dụng hết. Vui lòng mua gói mới để đăng bài.");
+            }
             var vehicle = new Vehicle
             {
                 Brand = createUserPostDTO.Vehicle?.Brand,
@@ -47,20 +61,10 @@ namespace EV.Infrastructure.Repositories
             };
             _context.Vehicles.Add(vehicle);
 
-            var userPackage = await _context.UserPackages
-                                           .FirstOrDefaultAsync(p => p.Package.PackageName == createUserPostDTO.PackageName
-                                             && p.Status == "Active");
-
-            if (userPackage == null)
-            {
-                throw new Exception($"Không tìm thấy gói hợp lệ với tên: {createUserPostDTO.PackageName}");
-            }
-
-
             var userPost = new UserPost
             {
                 UserId = user.UsersId,
-                UserPackageId = userPackage.PackageId,
+                UserPackageId = availableUserPackage.UserPackagesId,
                 Vehicle = vehicle,
                 PostedAt = DateTime.Now,
                 ExpiredAt = DateTime.Now.AddMonths(1),
@@ -69,17 +73,26 @@ namespace EV.Infrastructure.Repositories
             
             _context.UserPosts.Add(userPost);
 
-            if(createUserPostDTO.ImageUrls != null && createUserPostDTO.ImageUrls.Any())
+            availableUserPackage.Status = "Used";
+            _context.UserPackages.Update(availableUserPackage);
+
+
+            var uploadedImageUrls = new List<string>();
+            if (createUserPostDTO.ImageUrls != null && createUserPostDTO.ImageUrls.Any())
             {
                 foreach(var img in  createUserPostDTO.ImageUrls)
                 {
+                    var imageUrls = await _cloudinaryRepository.UploadImageToCloudinaryAsync(img);
+                    uploadedImageUrls.Add(imageUrls);
                     _context.VehicleImages.Add(new VehicleImage
                     {
                         Vehicle = vehicle,
-                        ImageUrl = img,
+                        ImageUrl = imageUrls
                     });
                 }
             }
+
+            await _context.SaveChangesAsync();
 
             return new UserPostCustom
             {
@@ -99,7 +112,7 @@ namespace EV.Infrastructure.Repositories
                     CreatedAt = DateTime.Now,
                     Status = "Active"
                 },
-                Images = createUserPostDTO.ImageUrls?.ToList(),
+                Images = uploadedImageUrls,
                 CreatedAt = DateTime.Now,
                 Status =  userPost.Status
             };
@@ -240,49 +253,20 @@ namespace EV.Infrastructure.Repositories
             };
         }
 
-        public async Task<UserPostCustom> UpdateUserPost(int id, UpdateUserPostDTO userPost)
-        {
-           var existing = await _context.UserPosts
-                                        .Include(a => a.Vehicle)
-                                        .ThenInclude(a => a.User)
-                                        .FirstOrDefaultAsync(a => a.UserPostsId == id);
-           if(existing == null)
-           {
-              return null;
-           }
-           if(userPost.Vehicle != null)
-           {
-                existing.Vehicle.Brand = userPost.Vehicle.Brand;
-                existing.Vehicle.Model = userPost.Vehicle.Model;
-                existing.Vehicle.Year = userPost.Vehicle.Year;
-                existing.Vehicle.Color = userPost.Vehicle.Color;
-                existing.Vehicle.Price = userPost.Vehicle.Price;
-                existing.Vehicle.Description = userPost.Vehicle.Description;
-                existing.Vehicle.BodyType = userPost.Vehicle.BodyType;
-                existing.Vehicle.RangeKm = userPost.Vehicle.RangeKm;
-                existing.Vehicle.MotorPowerKw = userPost.Vehicle.MotorPowerKw;
-           }
-           if (userPost.ImageUrls != null && userPost.ImageUrls.Any())
-           {
-                _context.VehicleImages.RemoveRange(existing.Vehicle?.VehicleImages);
-
-                foreach (var url in userPost.ImageUrls)
-                {
-                    _context.VehicleImages.Add(new VehicleImage
-                    {
-                        VehicleId = existing.Vehicle.VehiclesId,
-                        ImageUrl = url
-                    });
-                }
-                _context.UserPosts.Update(existing);
-                await _context.SaveChangesAsync();
-           }
-            return new UserPostCustom
+            public async Task UpdateUserPost(int id, UpdateUserPostDTO userPost)
             {
-                UserPostId = existing.UserPostsId,
-                UserName = existing.User.UserName,
-                Title = existing.Vehicle?.Brand + " " + existing.Vehicle?.Model + " " + existing.Vehicle?.Color + " " + existing.Vehicle?.Year
-            };
-        }
+                var existing = await _context.UserPosts
+                                             .Include(a => a.Vehicle)
+                                             .ThenInclude(a => a.User)
+                                             .FirstOrDefaultAsync(a => a.UserPostsId == id);
+                if (existing == null)
+                {
+                throw new Exception("Bài đăng không tồn tại.");
+                }
+                if (existing.Status == "Active")
+                {
+                    throw new Exception("Không thể chỉnh sửa bài đăng đã được duyệt. Vui lòng xóa và đăng bài mới.");
+                }
+            }
     }
 }

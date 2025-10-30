@@ -13,5 +13,7 @@ namespace EV.Application.Interfaces.ServiceInterfaces
         Task<ResponseDTO<AuctionsFee>> UpdateAuctionFee(int id, UpdateAuctionFeeDTO updateDTO);
         Task<ResponseDTO<AuctionsFee>> DeleteAuctionFee(int id);
         Task<ResponseDTO<AuctionsFee>> UndeleteAuctionFee(int id);
+
+        Task<ResponseDTO<AuctionsFee>> GetAuctionsFeeByAuctionIdAsync(int auctionId);
     }
 }

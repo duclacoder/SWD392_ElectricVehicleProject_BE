@@ -71,7 +71,9 @@ namespace EV.Infrastructure.Repositories
 
         public async Task<AuctionCustom> DeleteAuction(int id)
         {
-            var auction = await _context.Auctions.FirstAsync(a => a.AuctionsId == id);
+            var auction = await _context.Auctions
+                                        .Include(a => a.Seller)
+                                        .FirstAsync(a => a.AuctionsId == id);
             if (auction == null) return null;
 
             auction.Status = "InActive";
@@ -99,6 +101,8 @@ namespace EV.Infrastructure.Repositories
             var items = _context.Auctions
                                 .Include(a => a.Seller)
                                 .Include(a => a.AuctionBids)
+                                .Include(a => a.Vehicle)
+                                        .ThenInclude(v => v.VehicleImages)
                                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(sellerUserName))
@@ -127,7 +131,11 @@ namespace EV.Infrastructure.Repositories
                     BidderUserName = b.Bidder?.UserName,
                     BidAmount = b.BidAmount,
                     BidTime = b.BidTime,
-                }).ToList() ?? new List<AuctionBidCustom>()
+                }).ToList() ?? new List<AuctionBidCustom>(),
+                Images = a.Vehicle?.VehicleImages?
+                                   .Select(img => img.ImageUrl)
+                                   .Where(url => !string.IsNullOrEmpty(url))
+                                   .ToList() ?? new List<string>(),
             });
         }
 

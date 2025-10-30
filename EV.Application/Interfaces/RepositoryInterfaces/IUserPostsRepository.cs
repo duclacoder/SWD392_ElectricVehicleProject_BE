@@ -16,7 +16,7 @@ namespace EV.Application.Interfaces.RepositoryInterfaces
 
         Task<UserPostCustom> CreateUserPost(CreateUserPostDTO createUserPostDTO);
 
-        Task<UserPostCustom> UpdateUserPost(int id, UpdateUserPostDTO userPost);
+        Task UpdateUserPost(int id, UpdateUserPostDTO userPost);
 
         Task<UserPostCustom> DeleteUserPost(int id);
 

@@ -16,6 +16,9 @@ namespace EV.Domain.CustomEntities
         public DateTime EndTime { get; set; }
         public int? AuctionsFeeId { get; set; }
 
+        public List<string>? Images { get; set; }
+
+
         public decimal? FeePerMinute { get; set; }
 
         public decimal? OpenFee { get; set; }

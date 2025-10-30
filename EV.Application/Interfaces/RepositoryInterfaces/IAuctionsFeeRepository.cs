@@ -14,5 +14,7 @@ namespace EV.Application.Interfaces.RepositoryInterfaces
         Task<AuctionsFee?> DeleteAsync(int id);
         Task<AuctionsFee?> UndeleteAsync(int id);
         Task<int> CountAsync(string? status, string? type);
+
+        Task<AuctionsFee> GetAuctionsFeeByAuctionIdAsync(int auctionId);
     }
 }

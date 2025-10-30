@@ -14,7 +14,7 @@ namespace EV.Application.Interfaces.ServiceInterfaces
         Task<ResponseDTO<PagedResult<UserPostCustom>>> GetAllUserPosts(GetAllUserPostRequestDTO getAllUserPostRequestDTO);
         Task<ResponseDTO<UserPostCustom>> GetUserPostById(int id);
         Task<ResponseDTO<UserPostCustom>> CreateUserPost(CreateUserPostDTO createUserPostDTO);
-        Task<ResponseDTO<UserPostCustom>> UpdateUserPost(int id, UpdateUserPostDTO dto);
+        Task UpdateUserPost(int id, UpdateUserPostDTO dto);
         Task<ResponseDTO<UserPostCustom>> DeleteUserPost(int id);
     }
 }
