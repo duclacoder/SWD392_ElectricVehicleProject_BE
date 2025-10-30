@@ -57,5 +57,12 @@ namespace EV.Presentation.Controllers
             var response = await _auctionsFeeService.UndeleteAuctionFee(id);
             return Ok(response);
         }
+
+        [HttpGet("GetAuctionFee/{auctionId}")]
+        public async Task<IActionResult> GetByAuctionFeeByAucionId(int auctionId)
+        {
+            var response = await _auctionsFeeService.GetAuctionsFeeByAuctionIdAsync(auctionId);
+            return Ok(response);
+        }
     }
 }
