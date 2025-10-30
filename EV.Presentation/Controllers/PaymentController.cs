@@ -75,19 +75,13 @@ namespace EV.Presentation.Controllers
                     Content = "Thanh toan goi"
                 };
 
-                await _paymentService.CreatePaymentAsync(newPayment);
                 await _unitOfWork.SaveChangesAsync();
 
-                var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1";
-                var vnpayUrl = _vnPayService.CreatePaymentUrl(newPayment.PaymentsId.ToString(), newPayment.TransferAmount, ipAddress);
-
-                // Trả về PaymentId và UserPackageId cho client (và url thanh toán)
                 var result = new
                 {
                     PaymentId = newPayment.PaymentsId,
                     UserPackageId = userPackage.UserPackagesId,
                     PaymentAmount = newPayment.TransferAmount,
-                    PaymentUrl = vnpayUrl
                 };
                 return Ok(new ResponseDTO<object>("Payment created successfully", true, result));
             }
@@ -119,10 +113,10 @@ namespace EV.Presentation.Controllers
 
                 var result = new
                 {
-                    PaymentId = newPayment.PaymentsId,
-                    AuctionFeeId = auctionFee.AuctionsFeeId,
-                    PaymentAmount = newPayment.TransferAmount,
-                    PaymentUrl = vnpayUrl
+                    newPayment.PaymentsId,
+                    auctionFee.AuctionsFeeId,
+                    newPayment.TransferAmount,
+                    vnpayUrl
                 };
                 return Ok(new ResponseDTO<object>("Payment created successfully", true, result));
             }
