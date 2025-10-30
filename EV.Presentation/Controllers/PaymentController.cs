@@ -190,7 +190,6 @@ namespace EV.Presentation.Controllers
                         var userPackage = (await _userPackageService.GetUserPackageById(payment.ReferenceId.Value)).Result;
                         UserPackagesDTO userPackagesDTO = new UserPackagesDTO
                         {
-                            UserPackageId = payment.ReferenceId.Value,
                             PackagesName = userPackage.Package?.PackageName ?? "",
                             PurchasedDuration = userPackage.PurchasedDuration ?? 0,
                             PurchasedAtPrice = userPackage.PurchasedAtPrice ?? 0,
