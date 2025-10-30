@@ -1,4 +1,5 @@
 ﻿using EV.Application.RequestDTOs.UserPackagesDTO;
+using EV.Application.ResponseDTOs;
 using EV.Domain.CustomEntities;
 using System;
 using System.Collections.Generic;
@@ -21,5 +22,6 @@ namespace EV.Application.Interfaces.RepositoryInterfaces
         Task<UserPackagesCustom> GetUserPackageById(int id);
 
         Task<IEnumerable<UserPackagesCustom>> GetUserPackageByUserNameAndPackageName(string userName,string packageName, int skip, int take);
+        Task<UserPackagesCustom> GetUserPackageByUserId(int userId);
     }
 }

@@ -49,12 +49,14 @@ namespace EV.Infrastructure
         private IBatteryRepository _batteryRepository;
         public IBatteryRepository batteryRepository => _batteryRepository ??= new BatteryRepository(_context);
 
+
+        private IAuctionParticipantRepository _auctionParticipantRepository;
+        public IAuctionParticipantRepository auctionParticipantRepository => _auctionParticipantRepository ??= new AuctionParticipantRepository(_context);
+
         public IGenericRepository<T> GetGenericRepository<T>() where T : class
         {
             return new GenericRepository<T>(_context);
         }
-
-
 
         public async Task<int> SaveChangesAsync()
         {

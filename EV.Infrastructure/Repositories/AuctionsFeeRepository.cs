@@ -23,6 +23,7 @@ namespace EV.Infrastructure.Repositories
         {
             var auctionFee = new AuctionsFee
             {
+                AuctionsId = dto.AuctionsId,
                 Description = dto.Description,
                 FeePerMinute = dto.FeePerMinute,
                 EntryFee = dto.EntryFee,

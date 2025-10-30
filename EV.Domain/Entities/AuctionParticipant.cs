@@ -13,11 +13,7 @@ public partial class AuctionParticipant
 
     public int? AuctionsId { get; set; }
 
-    public int AuctionId { get; set; }
-
     public decimal DepositAmount { get; set; }
-
-    public int? PaymentId { get; set; }
 
     public DateTime? DepositTime { get; set; }
 

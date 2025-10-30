@@ -10,10 +10,9 @@ namespace EV.Application.Interfaces.ServiceInterfaces
     public interface IPaymentService 
     {
         Task<List<Payment>> GetAllPaymentsAsync();
-        Task<Payment?> GetPaymentByIdAsync(int id);
+        Task<Payment> GetPaymentByIdAsync(int id);
         Task CreatePaymentAsync(Payment payment);
         void UpdatePayment(Payment payment);
         void DeletePaymentAsync(Payment payment);
-
     }
 }
