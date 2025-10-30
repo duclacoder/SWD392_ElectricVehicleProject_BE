@@ -74,14 +74,14 @@ namespace EV.Presentation.Controllers
                     CreatedAt = DateTime.UtcNow,
                     Content = "Thanh toan goi"
                 };
-
+                await _paymentService.CreatePaymentAsync(newPayment);
                 await _unitOfWork.SaveChangesAsync();
 
                 var result = new
                 {
-                    PaymentId = newPayment.PaymentsId,
-                    UserPackageId = userPackage.UserPackagesId,
-                    PaymentAmount = newPayment.TransferAmount,
+                    newPayment.PaymentsId,
+                    userPackage.UserPackagesId,
+                    newPayment.TransferAmount,
                 };
                 return Ok(new ResponseDTO<object>("Payment created successfully", true, result));
             }
@@ -108,15 +108,12 @@ namespace EV.Presentation.Controllers
                 await _paymentService.CreatePaymentAsync(newPayment);
                 await _unitOfWork.SaveChangesAsync();
 
-                var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1";
-                var vnpayUrl = _vnPayService.CreatePaymentUrl(newPayment.PaymentsId.ToString(), newPayment.TransferAmount, ipAddress);
-
                 var result = new
                 {
                     newPayment.PaymentsId,
                     auctionFee.AuctionsFeeId,
                     newPayment.TransferAmount,
-                    vnpayUrl
+
                 };
                 return Ok(new ResponseDTO<object>("Payment created successfully", true, result));
             }
