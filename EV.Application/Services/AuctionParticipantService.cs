@@ -18,6 +18,11 @@ namespace EV.Application.Services
             _unitOfWork = unitOfWork;
         }
 
+        public async Task<bool> CheckEligibility(CheckEligibilityRequestDTO request)
+        {
+            return await _unitOfWork.auctionParticipantRepository.CheckEligibility(request);
+        }
+
         public async Task CreateAuctionParticipantAsync(CreateAuctionParticipantRequestDTO auctionParticipant)
         {
             var newAuctionParticipant = new AuctionParticipant
