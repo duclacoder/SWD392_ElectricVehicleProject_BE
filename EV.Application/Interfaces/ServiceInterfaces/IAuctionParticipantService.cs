@@ -11,5 +11,6 @@ namespace EV.Application.Interfaces.ServiceInterfaces
         Task CreateAuctionParticipantAsync(CreateAuctionParticipantRequestDTO auctionParticipant);
         void UpdateAuctionParticipant(AuctionParticipant auctionParticipant);
         Task DeleteAuctionParticipant(int auctionParticipantId);
+        Task<bool> CheckEligibility(CheckEligibilityRequestDTO request);
     }
 }
