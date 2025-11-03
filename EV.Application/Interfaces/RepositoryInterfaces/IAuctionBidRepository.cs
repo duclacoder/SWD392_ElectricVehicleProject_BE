@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace EV.Application.Interfaces.RepositoryInterfaces
 {
-    public interface IAuctionParticipantRepository : IGenericRepository<AuctionParticipant>
+    public interface IAuctionBidRepository : IGenericRepository<AuctionBid>
     {
-        Task<List<AuctionParticipant>> GetListUserInAuction(int auctionId);
+        Task<AuctionBid> GetHighestBid(int auctionId);
     }
 }

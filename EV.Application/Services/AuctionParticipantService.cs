@@ -1,6 +1,8 @@
 ﻿using EV.Application.Interfaces.RepositoryInterfaces;
 using EV.Application.Interfaces.ServiceInterfaces;
 using EV.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Bcpg.Sig;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,6 +44,53 @@ namespace EV.Application.Services
         {
             throw new NotImplementedException();
         }
+
+        public async Task Refund(int auctionId)
+        {
+            var participants = await _unitOfWork.auctionParticipantRepository.GetListUserInAuction(auctionId);
+            var auction = await _unitOfWork.auctionRepository.GetAuctionById(auctionId);
+
+            if (auction == null || participants == null || !participants.Any())
+                return;
+
+            var highestBid = await _unitOfWork.auctionBidRepository.GetHighestBid(auctionId);                                
+
+            if (highestBid == null)
+                return;
+
+            var winnerUserId = highestBid.BidderId;
+
+            foreach (var participant in participants)
+            {
+                if (participant.UserId == winnerUserId)
+                {
+                    participant.IsWinningBid = true;
+                    participant.RefundStatus = "PendingConfirmation";
+                    participant.Status = "Won";
+                }
+                else if (participant.UserId.HasValue && participant.RefundStatus != "Refunded")
+                {
+                    var user = await _unitOfWork.userRepository.GetUserById(participant.UserId.Value);
+                    if (user != null)
+                    {
+                        var refundAmount = participant.DepositAmount * 0.9m;
+                        user.Wallet = (user.Wallet ?? 0) + refundAmount;
+
+                        await _unitOfWork.userRepository.UpdateUser(user);
+
+                        participant.RefundStatus = "Refunded";
+                        participant.Status = "Lose";
+                    }
+                }
+
+                _unitOfWork.auctionParticipantRepository.Update(participant);
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+
+
 
         public void UpdateAuctionParticipant(AuctionParticipant auctionParticipant)
         {

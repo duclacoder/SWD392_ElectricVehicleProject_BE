@@ -84,6 +84,13 @@ namespace EV.Infrastructure.Repositories
 
         public async Task<User> UpdateUser(User user)
         {
+            var localUser = _context.Users.Local.FirstOrDefault(u => u.UsersId == user.UsersId);
+
+            if (localUser != null)
+            {
+                _context.Entry(localUser).State = EntityState.Detached;
+            }
+
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
             return user;
