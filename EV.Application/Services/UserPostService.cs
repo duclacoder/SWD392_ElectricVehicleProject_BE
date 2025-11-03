@@ -3,6 +3,7 @@ using EV.Application.Interfaces.ServiceInterfaces;
 using EV.Application.RequestDTOs.UserPostDTO;
 using EV.Application.ResponseDTOs;
 using EV.Domain.CustomEntities;
+using EV.Domain.Entities;
 using Org.BouncyCastle.Asn1.Ocsp;
 using System;
 using System.Collections.Generic;
@@ -76,9 +77,9 @@ namespace EV.Application.Services
             return new ResponseDTO<UserPostCustom>("Get successfully", true, result);
         }
 
-        public Task<ResponseDTO<UserPostCustom>> UpdateUserPost(int id, UpdateUserPostDTO dto)
+        public async Task UpdateUserPost(int id, UpdateUserPostDTO dto)
         {
-            throw new NotImplementedException();
+            await _unitOfWork.userPostsRepository.UpdateUserPost(id, dto);
         }
     }
 }

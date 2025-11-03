@@ -1,4 +1,5 @@
 ﻿using EV.Application.Interfaces.RepositoryInterfaces;
+using EV.Infrastructure.CloudinaryImage;
 using EV.Infrastructure.DBContext;
 using EV.Infrastructure.Repositories;
 
@@ -7,11 +8,12 @@ namespace EV.Infrastructure
     public class UnitOfWork : IUnitOfWork
     {
         private readonly Swd392Se1834G2T1Context _context;       
-
+        private readonly ICloudinaryRepository _cloudinaryRepository;
         // CONSTRUCTOR INJECTION for DbContext
-        public UnitOfWork(Swd392Se1834G2T1Context context)
+        public UnitOfWork(Swd392Se1834G2T1Context context, ICloudinaryRepository cloudinaryRepository)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
+            _cloudinaryRepository = cloudinaryRepository ?? throw new ArgumentNullException(nameof(cloudinaryRepository));
         }
 
         //Repository interfaces
@@ -28,7 +30,7 @@ namespace EV.Infrastructure
         public IUserPackagesRepository userPackagesRepository =>_userPackagesRepository ??= new UserPackagesRepository(_context);
 
         private IUserPostsRepository _userPostsRepository;
-        public IUserPostsRepository userPostsRepository => _userPostsRepository ??= new UserPostRepository(_context);
+        public IUserPostsRepository userPostsRepository => _userPostsRepository ??= new UserPostRepository(_context, _cloudinaryRepository);
 
         public IInspectionFeesRepository _inspectionFeesRepository;
         public IInspectionFeesRepository inspectionFeesRepository => _inspectionFeesRepository ??= new InspectionFeesRepository(_context);

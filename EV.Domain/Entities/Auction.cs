@@ -17,8 +17,6 @@ public partial class Auction
 
     public DateTime? EndTime { get; set; }
 
-    public int? AuctionsFeeId { get; set; }
-
     public decimal? FeePerMinute { get; set; }
 
     public decimal? OpenFee { get; set; }
@@ -31,7 +29,7 @@ public partial class Auction
 
     public virtual ICollection<AuctionParticipant> AuctionParticipants { get; set; } = new List<AuctionParticipant>();
 
-    public virtual AuctionsFee? AuctionsFee { get; set; }
+    public virtual ICollection<AuctionsFee> AuctionsFees { get; set; } = new List<AuctionsFee>();
 
     public virtual User? Seller { get; set; }
 

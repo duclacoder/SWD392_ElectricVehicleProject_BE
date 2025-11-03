@@ -1,4 +1,5 @@
-﻿using EV.Domain.Entities;
+﻿using EV.Application.RequestDTOs.AuctionParticipantDTO;
+using EV.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace EV.Application.Interfaces.RepositoryInterfaces
 {
     public interface IAuctionParticipantRepository : IGenericRepository<AuctionParticipant>
     {
+        Task<bool> CheckEligibility(CheckEligibilityRequestDTO request);
         Task<List<AuctionParticipant>> GetListUserInAuction(int auctionId);
     }
 }

@@ -7,6 +7,8 @@ public partial class AuctionsFee
 {
     public int AuctionsFeeId { get; set; }
 
+    public int? AuctionsId { get; set; }
+
     public string? Description { get; set; }
 
     public decimal? FeePerMinute { get; set; }
@@ -23,5 +25,5 @@ public partial class AuctionsFee
 
     public string? Status { get; set; }
 
-    public virtual ICollection<Auction> Auctions { get; set; } = new List<Auction>();
+    public virtual Auction? Auctions { get; set; }
 }
