@@ -43,7 +43,7 @@ namespace EV.Infrastructure.Repositories
                 StartPrice = createAuctionDTO.StartPrice,
                 StartTime = DateTime.Now,
                 EndTime = createAuctionDTO.EndTime,
-                AuctionsFeeId = createAuctionDTO.AuctionsFeeId,
+                //AuctionsFeeId = createAuctionDTO.AuctionsFeeId,
                 FeePerMinute = createAuctionDTO.FeePerMinute,
                 OpenFee = createAuctionDTO.OpenFee,
                 EntryFee = createAuctionDTO.EntryFee,
@@ -61,7 +61,7 @@ namespace EV.Infrastructure.Repositories
                 StartPrice = createAuctionDTO.StartPrice,
                 StartTime = DateTime.Now,
                 EndTime = (DateTime)createAuctionDTO.EndTime,
-                AuctionsFeeId = createAuctionDTO.AuctionsFeeId,
+                //AuctionsFeeId = createAuctionDTO.AuctionsFeeId,
                 FeePerMinute = createAuctionDTO .FeePerMinute,
                 OpenFee = createAuctionDTO.OpenFee,
                 EntryFee = createAuctionDTO?.EntryFee,
@@ -71,7 +71,9 @@ namespace EV.Infrastructure.Repositories
 
         public async Task<AuctionCustom> DeleteAuction(int id)
         {
-            var auction = await _context.Auctions.FirstAsync(a => a.AuctionsId == id);
+            var auction = await _context.Auctions
+                                        .Include(a => a.Seller)
+                                        .FirstAsync(a => a.AuctionsId == id);
             if (auction == null) return null;
 
             auction.Status = "InActive";
@@ -86,7 +88,7 @@ namespace EV.Infrastructure.Repositories
                 StartPrice = (decimal)auction.StartPrice,
                 StartTime = (DateTime)auction.StartTime,
                 EndTime = (DateTime)auction.EndTime,
-                AuctionsFeeId = auction.AuctionsFeeId,
+                //AuctionsFeeId = auction.AuctionsFeeId,
                 FeePerMinute = auction.FeePerMinute,
                 OpenFee = auction.OpenFee,
                 EntryFee = auction.EntryFee,
@@ -99,6 +101,8 @@ namespace EV.Infrastructure.Repositories
             var items = _context.Auctions
                                 .Include(a => a.Seller)
                                 .Include(a => a.AuctionBids)
+                                .Include(a => a.Vehicle)
+                                        .ThenInclude(v => v.VehicleImages)
                                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(sellerUserName))
@@ -116,7 +120,7 @@ namespace EV.Infrastructure.Repositories
                 StartPrice = (decimal)a.StartPrice,
                 StartTime = (DateTime)a.StartTime,
                 EndTime = (DateTime)a.EndTime,
-                AuctionsFeeId = a.AuctionsFeeId,
+                //AuctionsFeeId = a.AuctionsFeeId,
                 FeePerMinute = a.FeePerMinute,
                 OpenFee = a.OpenFee,
                 EntryFee = a.EntryFee,
@@ -127,7 +131,11 @@ namespace EV.Infrastructure.Repositories
                     BidderUserName = b.Bidder?.UserName,
                     BidAmount = b.BidAmount,
                     BidTime = b.BidTime,
-                }).ToList() ?? new List<AuctionBidCustom>()
+                }).ToList() ?? new List<AuctionBidCustom>(),
+                Images = a.Vehicle?.VehicleImages?
+                                   .Select(img => img.ImageUrl)
+                                   .Where(url => !string.IsNullOrEmpty(url))
+                                   .ToList() ?? new List<string>(),
             });
         }
 
@@ -149,7 +157,7 @@ namespace EV.Infrastructure.Repositories
                 StartPrice = (decimal)auction.StartPrice,
                 StartTime = (DateTime)auction.StartTime,
                 EndTime = (DateTime)auction.EndTime,
-                AuctionsFeeId = auction.AuctionsFeeId,
+                //AuctionsFeeId = auction.AuctionsFeeId,
                 FeePerMinute = auction.FeePerMinute,
                 OpenFee = auction.OpenFee,
                 EntryFee = auction.EntryFee,
@@ -184,7 +192,7 @@ namespace EV.Infrastructure.Repositories
                 StartPrice = (decimal)auction.StartPrice,
                 StartTime = (DateTime)auction.StartTime,
                 EndTime = (DateTime)auction.EndTime,
-                AuctionsFeeId = auction.AuctionsFeeId,
+                //AuctionsFeeId = auction.AuctionsFeeId,
                 FeePerMinute = auction.FeePerMinute,
                 OpenFee = auction.OpenFee,
                 EntryFee = auction.EntryFee,

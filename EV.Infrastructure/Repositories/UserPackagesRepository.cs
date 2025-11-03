@@ -34,9 +34,10 @@ namespace EV.Infrastructure.Repositories
                 PurchasedAtPrice = userPackages.PurchasedAtPrice,
                 PurchasedAt = DateTime.Now,
                 Status = "Pending"
-            };
+            };            
 
-            _context.UserPackages.Add(entity);
+            var result = _context.UserPackages.Add(entity);
+            await _context.SaveChangesAsync();
 
             return new UserPackagesCustom
             {

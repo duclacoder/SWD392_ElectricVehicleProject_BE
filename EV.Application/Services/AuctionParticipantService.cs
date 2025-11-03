@@ -1,5 +1,6 @@
 ﻿using EV.Application.Interfaces.RepositoryInterfaces;
 using EV.Application.Interfaces.ServiceInterfaces;
+using EV.Application.RequestDTOs.AuctionParticipantDTO;
 using EV.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -17,9 +18,25 @@ namespace EV.Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task CreateAuctionParticipantAsync(AuctionParticipant auctionParticipant)
+        public async Task<bool> CheckEligibility(CheckEligibilityRequestDTO request)
         {
-            await _unitOfWork.auctionParticipantRepository.CreateAsync(auctionParticipant);
+            return await _unitOfWork.auctionParticipantRepository.CheckEligibility(request);
+        }
+
+        public async Task CreateAuctionParticipantAsync(CreateAuctionParticipantRequestDTO auctionParticipant)
+        {
+            var newAuctionParticipant = new AuctionParticipant
+            {
+                PaymentsId = auctionParticipant.PaymentsId,
+                UserId = auctionParticipant.UserId,
+                AuctionsId = auctionParticipant.AuctionsId,
+                DepositAmount = auctionParticipant.DepositAmount,
+                DepositTime = auctionParticipant.DepositTime,
+                RefundStatus = auctionParticipant.RefundStatus,
+                Status = auctionParticipant.Status,
+                IsWinningBid = auctionParticipant.IsWinningBid
+            };
+            await _unitOfWork.auctionParticipantRepository.CreateAsync(newAuctionParticipant);
         }
 
         public async Task DeleteAuctionParticipant(int auctionParticipantId)

@@ -9,7 +9,6 @@ namespace EV.Application.RequestDTOs.UserPackagesDTO
     public class UserPackagesDTO
     {
         public int? UserId { get; set; }
-        public int UserPackageId { get; set; }
         public string PackagesName { get; set; }
 
         public int PurchasedDuration { get; set; }
