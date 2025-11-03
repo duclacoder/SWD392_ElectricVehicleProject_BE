@@ -20,6 +20,21 @@ namespace EV.Application.Services
             _unitOfWork = unitOfWork;
         }
 
+        public async Task CloseAuction(int auctionId)
+        {
+            var auction = await _unitOfWork.auctionRepository.GetAuctionById(auctionId);
+            if (auction == null)
+                return;
+
+            var auctionCustom = new UpdateAuctionDTO()
+            {
+                Status = "ended",
+            };
+
+            await _unitOfWork.auctionRepository.UpdateAuction(auctionId, auctionCustom);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
         public async Task<ResponseDTO<AuctionCustom>> CreateAuction(CreateAuctionDTO createAuctionDTO)
         {
             var result = await _unitOfWork.auctionRepository.CreateAuction(createAuctionDTO);

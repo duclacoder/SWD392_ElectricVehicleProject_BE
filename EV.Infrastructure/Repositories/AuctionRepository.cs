@@ -71,9 +71,7 @@ namespace EV.Infrastructure.Repositories
 
         public async Task<AuctionCustom> DeleteAuction(int id)
         {
-            var auction = await _context.Auctions
-                                        .Include(a => a.Seller)
-                                        .FirstAsync(a => a.AuctionsId == id);
+            var auction = await _context.Auctions.FirstAsync(a => a.AuctionsId == id);
             if (auction == null) return null;
 
             auction.Status = "InActive";
@@ -101,8 +99,6 @@ namespace EV.Infrastructure.Repositories
             var items = _context.Auctions
                                 .Include(a => a.Seller)
                                 .Include(a => a.AuctionBids)
-                                .Include(a => a.Vehicle)
-                                        .ThenInclude(v => v.VehicleImages)
                                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(sellerUserName))
@@ -131,11 +127,7 @@ namespace EV.Infrastructure.Repositories
                     BidderUserName = b.Bidder?.UserName,
                     BidAmount = b.BidAmount,
                     BidTime = b.BidTime,
-                }).ToList() ?? new List<AuctionBidCustom>(),
-                Images = a.Vehicle?.VehicleImages?
-                                   .Select(img => img.ImageUrl)
-                                   .Where(url => !string.IsNullOrEmpty(url))
-                                   .ToList() ?? new List<string>(),
+                }).ToList() ?? new List<AuctionBidCustom>()
             });
         }
 
@@ -172,26 +164,31 @@ namespace EV.Infrastructure.Repositories
             };
         }
 
-        public async Task<AuctionCustom> UpdateAuction(int id, UpdateAuctionDTO updateAuctionDTO)
+        public async Task<AuctionCustom> UpdateAuction(int id, UpdateAuctionDTO dto)
         {
-            var auction = await _context.Auctions.Include(a => a.Seller)
-                                                 .FirstOrDefaultAsync(a => a.AuctionsId == id);
+            var auction = await _context.Auctions
+                .Include(a => a.Seller)
+                .FirstOrDefaultAsync(a => a.AuctionsId == id);
 
-            if (auction == null) return null;
+            if (auction == null)
+                return null;
 
-            auction.EndTime = updateAuctionDTO.EndTime;
-            auction.Status = updateAuctionDTO.Status;
+            if (dto.Status != null)
+                auction.Status = dto.Status;
 
-            _context.Auctions.Update(auction);
+            if (dto.EndTime.HasValue)
+                auction.EndTime = dto.EndTime.Value;
+
+            await _context.SaveChangesAsync();
 
             return new AuctionCustom
             {
                 AuctionId = auction.AuctionsId,
-                SellerUserName = auction.Seller.UserName,
-                VehicleId = (int)auction.VehicleId,
-                StartPrice = (decimal)auction.StartPrice,
-                StartTime = (DateTime)auction.StartTime,
-                EndTime = (DateTime)auction.EndTime,
+                SellerUserName = auction.Seller?.UserName ?? "",
+                VehicleId = auction.VehicleId ?? 0,
+                StartPrice = auction.StartPrice ?? 0,
+                StartTime = auction.StartTime ?? DateTime.MinValue,
+                EndTime = auction.EndTime ?? DateTime.MinValue,
                 //AuctionsFeeId = auction.AuctionsFeeId,
                 FeePerMinute = auction.FeePerMinute,
                 OpenFee = auction.OpenFee,

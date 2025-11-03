@@ -31,6 +31,7 @@ CREATE TABLE Users (
     RoleId INT FOREIGN KEY REFERENCES Roles(RolesId),
     CreatedAt DATETIME,
     UpdatedAt DATETIME,
+    Wallet DECIMAL(18,2),
     Status NVARCHAR(50) --Active, InActive
 );
 go
@@ -131,6 +132,18 @@ CREATE TABLE VehicleInspections (
 );
 go
 
+CREATE TABLE AuctionsFee (
+    AuctionsFeeId INT PRIMARY KEY IDENTITY(1,1),
+    Description TEXT,
+    FeePerMinute DECIMAL(18,2),
+    EntryFee DECIMAL(18,2),
+    Currency NVARCHAR(50),
+    Type NVARCHAR(50), --fixed, percentage
+    CreatedAt DATETIME,
+    UpdatedAt DATETIME,
+    Status NVARCHAR(50)
+);
+go
 
 
 --------------------------------------------------
@@ -309,7 +322,7 @@ INSERT INTO Roles (Name) VALUES
 
 -- USERS
 INSERT INTO Users (UserName, FullName, Email, Phone, Password, ImageUrl, RoleId, CreatedAt, UpdatedAt, Status) VALUES
-('admin', N'Bố Admin', 'admin@gm.c', '0901234567', '1', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJEqnKT0022XaMCyb6K37bte9OIjdUGLCHTA&s', 3, '2024-01-15 08:00:00', '2024-01-15 08:00:00', 'Active'),
+('admin', N'Bố Admin', 'ducpvse183843@fpt.edu.vn', '0901234567', '1', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJEqnKT0022XaMCyb6K37bte9OIjdUGLCHTA&s', 3, '2024-01-15 08:00:00', '2024-01-15 08:00:00', 'Active'),
 ('staff', N'Má Staff', 'staff1@gm.c', '0901234568', '1', 'https://tiemchupanh.com/wp-content/uploads/2024/07/4ed9efe2b3fd60a339ec23-683x1024.jpg', 2, '2024-01-20 08:00:00', '2024-01-20 08:00:00', 'Active'),
 ('staff01', N'Bố Staff', 'staff2@gm.c', '0901234569', '1', 'https://chothuestudio.com/wp-content/uploads/2024/07/TCA_3837.jpg', 2, '2024-01-25 08:00:00', '2024-01-25 08:00:00', 'Active'),
 ('seller01', N'Phạm Minh Hải', 'hai.pham@gmail.com', '0912345678', 'hashed_password_seller1', 'https://example.com/images/seller1.jpg', 1, '2024-02-01 10:00:00', '2024-02-01 10:00:00', 'Active'),
@@ -468,41 +481,29 @@ go
 --------------------------------------------------
 -- AUCTIONS DATA
 --------------------------------------------------
-INSERT INTO Auctions (VehicleId, SellerId, StartPrice, StartTime, EndTime,  FeePerMinute, OpenFee, EntryFee, Status) VALUES
-(1, 4, 1100000000, '2024-04-01 09:00:00', '2024-04-01 12:00:00', 100000, 5000000, 1000000, 'Scheduled'),
-(2, 6, 45000, '2024-04-05 14:00:00', '2024-04-05 17:00:00', 2, 100, 25, 'Scheduled'),
-(3, 8, 900000000, '2024-03-28 10:00:00', '2024-03-28 13:00:00',  100000, 5000000, 1000000, 'Completed'),
-(7, 9, 30000, '2024-04-10 15:00:00', '2024-04-10 18:00:00', 2, 100, 25, 'Scheduled');
-go
+INSERT INTO Auctions (VehicleId, SellerId, StartPrice, StartTime, EndTime, AuctionsFeeId, FeePerMinute, OpenFee, EntryFee, Status) VALUES
+(1, 4, 1100000000, '2024-04-01 09:00:00', '2024-04-01 12:00:00', 3, 100000, 5000000, 1000000, 'Scheduled'),
+(2, 6, 45000, '2024-04-05 14:00:00', '2024-04-05 17:00:00', 2, 2, 100, 25, 'Scheduled'),
+(3, 8, 900000000, '2024-03-28 10:00:00', '2024-03-28 13:00:00', 3, 100000, 5000000, 1000000, 'Completed'),
+(7, 9, 30000, '2024-04-10 15:00:00', '2024-04-10 18:00:00', 2, 2, 100, 25, 'Scheduled');
+
 --------------------------------------------------
 -- AUCTION PARTICIPANTS DATA
 --------------------------------------------------
-INSERT INTO AuctionParticipants (PaymentsId, UserId, AuctionsId, DepositAmount, DepositTime, RefundStatus, Status, IsWinningBid) VALUES
+INSERT INTO AuctionParticipants (PaymentsId, UserId, AuctionsId, AuctionId, DepositAmount, PaymentId, DepositTime, RefundStatus, Status, IsWinningBid) VALUES
 -- Auction 1 participants (VF8 Plus)
-(5, 5, 1,  125000000, '2024-03-30 10:00:00', 'Pending', 'Active', 0),
-(4, 10, 1,  125000000,  '2024-03-30 14:30:00', 'Pending', 'Active', 0),
+(5, 5, 1, 1, 125000000, 5, '2024-03-30 10:00:00', 'Pending', 'Active', 0),
+(4, 10, 1, 1, 125000000, 4, '2024-03-30 14:30:00', 'Pending', 'Active', 0),
 
 -- Auction 2 participants (Tesla Model Y)
-(7, 9, 2,  5000, '2024-04-04 11:00:00', 'Pending', 'Active', 0),
-(5, 5, 2,  5000,  '2024-04-04 15:20:00', 'Pending', 'Active', 0),
+(7, 9, 2, 2, 5000, 7, '2024-04-04 11:00:00', 'Pending', 'Active', 0),
+(5, 5, 2, 2, 5000, 5, '2024-04-04 15:20:00', 'Pending', 'Active', 0),
 
 -- Auction 3 participants (BYD Tang - Completed)
-(5, 5, 3,  100000000,  '2024-03-27 09:00:00', 'Completed', 'Completed', 1),
-(NULL, 7, 3,  100000000, '2024-03-27 10:30:00', 'Refunded', 'Completed', 0),
-(4, 10, 3,  100000000, '2024-03-27 11:45:00', 'Refunded', 'Completed', 0);
+(5, 5, 3, 3, 100000000, 5, '2024-03-27 09:00:00', 'Completed', 'Completed', 1),
+(NULL, 7, 3, 3, 100000000, NULL, '2024-03-27 10:30:00', 'Refunded', 'Completed', 0),
+(4, 10, 3, 3, 100000000, 4, '2024-03-27 11:45:00', 'Refunded', 'Completed', 0);
 
---------------------------------------------------
--- AUCTION BIDS DATA
---------------------------------------------------
-INSERT INTO AuctionBids (AuctionId, AuctionParticipantId, BidderId, BidAmount, BidTime, Status) VALUES
--- Bids for Auction 3 (BYD Tang - Completed)
-(3, 5, 5, 900000000, '2024-03-28 10:05:00', 'Valid'),
-(3, 6, 7, 920000000, '2024-03-28 10:15:00', 'Valid'),
-(3, 5, 5, 940000000, '2024-03-28 10:30:00', 'Valid'),
-(3, 7, 10, 955000000, '2024-03-28 10:45:00', 'Valid'),
-(3, 5, 5, 970000000, '2024-03-28 11:00:00', 'Valid'),
-(3, 6, 7, 980000000, '2024-03-28 11:20:00', 'Valid'),
-(3, 5, 5, 1000000000, '2024-03-28 12:50:00', 'Winning');
 
 --------------------------------------------------
 -- BUY SELL TRANSACTIONS DATA
@@ -581,13 +582,22 @@ SELECT 'Activities', COUNT(*) FROM Activities;
 
 select * from Users
 
-select * from Payments
+--select * from Payments
 
-select * from PaymentsMethods
+--select * from PaymentsMethods
 
-select * from UserPosts
+--select * from UserPosts
 
-select * from PostPackages
+--select * from PostPackages
+
+select * from AuctionsFee
+
+select * from Auctions
+
+select * from AuctionBids
+
+select * from AuctionParticipants
+
 
 select * from AuctionParticipants
 

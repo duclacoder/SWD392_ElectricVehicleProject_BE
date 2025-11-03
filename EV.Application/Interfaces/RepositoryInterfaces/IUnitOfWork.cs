@@ -30,6 +30,8 @@ namespace EV.Application.Interfaces.RepositoryInterfaces
 
         IBatteryRepository batteryRepository { get; }
 
+        IAuctionBidRepository auctionBidRepository { get; }
+
         IAuctionsFeeRepository auctionsFeeRepository { get; }
 
         IAuctionParticipantRepository auctionParticipantRepository { get; }
