@@ -11,5 +11,6 @@ namespace EV.Application.Interfaces.RepositoryInterfaces
     public interface IAuctionParticipantRepository : IGenericRepository<AuctionParticipant>
     {
         Task<bool> CheckEligibility(CheckEligibilityRequestDTO request);
+        Task<List<AuctionParticipant>> GetListUserInAuction(int auctionId);
     }
 }

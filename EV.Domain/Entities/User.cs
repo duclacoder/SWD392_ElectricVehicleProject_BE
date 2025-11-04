@@ -25,6 +25,8 @@ public partial class User
 
     public DateTime? UpdatedAt { get; set; }
 
+    public decimal? Wallet { get; set; }
+
     public string? Status { get; set; }
 
     public virtual ICollection<Activity> Activities { get; set; } = new List<Activity>();

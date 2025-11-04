@@ -66,26 +66,13 @@ namespace EV.Application.Services
 
             if (user == null)
             {
-
-                //var otp = new Random().Next(100000, 999999).ToString();
-                //await _redisService.StoreDataAsync(googleData.Email, otp, TimeSpan.FromMinutes(5));
-
-                //var body = await _emailService.LoadTemplateAsync("OtpTemplate.html", new Dictionary<string, string>
-                //{
-                //    { "OTP_CODE", otp }
-                //});                
-
-                //await _emailService.SendMailAsync(googleData.Email, "Your OTP Code", body);
                 return new ResponseDTO<object>("OTP sent to your email", true);
             }
             else user = await _unitOfWork.authRepository.LoginGoogle(googleData.Email);
 
-            var result = new
-            {
-                token = _jwtService.GenerateToken(user),
-            };
+            var token = _jwtService.GenerateToken(user);
 
-            return new ResponseDTO<object>("Login google successful", true, result);
+            return new ResponseDTO<object>("Login google successful", true, token);
         }
 
     }

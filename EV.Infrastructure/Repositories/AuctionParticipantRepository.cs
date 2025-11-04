@@ -27,5 +27,14 @@ namespace EV.Infrastructure.Repositories
                             && p.Status == "Active");
             return hasDeposit;
         }
+
+        public async Task<List<AuctionParticipant>> GetListUserInAuction(int auctionId)
+        {
+            return await _context.AuctionParticipants
+                .Include(p => p.AuctionBids) 
+                .Where(p => p.AuctionsId == auctionId)
+                .ToListAsync();
+        }
+
     }
 }
