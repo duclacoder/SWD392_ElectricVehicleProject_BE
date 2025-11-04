@@ -83,9 +83,9 @@ namespace EV.Application.Services
                 {
                     participant.IsWinningBid = true;
                     participant.RefundStatus = "PendingConfirmation";
-                    participant.Status = "Won";
+                    participant.Status = "Won"; 
                 }
-                else if (participant.UserId.HasValue && participant.RefundStatus != "Refunded")
+                else if (participant.UserId.HasValue && participant.RefundStatus != "Refunded" && participant.Status == "Active")
                 {
                     var user = await _unitOfWork.userRepository.GetUserById(participant.UserId.Value);
                     if (user != null)
@@ -96,7 +96,7 @@ namespace EV.Application.Services
                         await _unitOfWork.userRepository.UpdateUser(user);
 
                         participant.RefundStatus = "Refunded";
-                        participant.Status = "Lose";
+                        participant.Status = "Lost";
                     }
                 }
 
