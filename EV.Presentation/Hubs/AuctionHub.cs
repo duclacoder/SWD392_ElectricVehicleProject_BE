@@ -49,20 +49,25 @@ namespace EV.Presentation.Hubs
                     await Clients.Caller.SendAsync("BidRejected", $"Bid must be higher than {bidderAmount}");
                     return;
                 }
+
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.UsersId == bidderId);
+                string bidderFullName = user != null ? user.FullName : "Unknown User";
+
                 var newBid = new AuctionBid
                 {
                     AuctionId = auctionId,
                     BidderId = bidderId,
                     BidAmount = bidderAmount,
                     BidTime = DateTime.Now,
-                    Status = "Active"
+                    Status = "Active",
+                    AuctionParticipantId = participant.AuctionParticipantId
                 };
 
                 _context.AuctionBids.Add(newBid);
                 await _context.SaveChangesAsync();
 
                 await Clients.Group($"auction_{auctionId}")
-                    .SendAsync("ReceiveBid", auctionId, bidderId, bidderAmount);
+                    .SendAsync("ReceiveBid", bidderFullName, bidderAmount);
             }
            catch(Exception ex)
             {
