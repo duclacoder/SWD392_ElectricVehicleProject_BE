@@ -132,8 +132,7 @@ namespace EV.Infrastructure.Repositories
 
         public async Task<AuctionsFee> GetAuctionsFeeByAuctionIdAsync(int auctionId)
         {
-            var auctionFee = await _context.AuctionsFees
-                                     .FirstOrDefaultAsync(af => af.AuctionsId == auctionId);
+            var auctionFee = await _context.AuctionsFees.FirstOrDefaultAsync(af => af.AuctionsId == auctionId);
 
             return auctionFee!;
         }

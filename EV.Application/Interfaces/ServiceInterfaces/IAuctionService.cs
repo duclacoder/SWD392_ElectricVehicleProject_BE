@@ -20,6 +20,6 @@ namespace EV.Application.Interfaces.ServiceInterfaces
         Task<ResponseDTO<AuctionCustom>> UpdateAuction(int id, UpdateAuctionDTO updateAuctionDTO);
 
         Task<ResponseDTO<AuctionCustom>> DeleteAuction(int id);
-
+        Task CloseAuction(int auctionId);
     }
 }

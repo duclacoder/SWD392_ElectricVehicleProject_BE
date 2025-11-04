@@ -1,5 +1,6 @@
 ﻿using EV.Application.Interfaces.ServiceInterfaces;
 using EV.Application.RequestDTOs.AuctionRequestDTO;
+using EV.Application.ResponseDTOs;
 using EV.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,13 +13,15 @@ namespace EV.Presentation.Controllers
     public class AuctionsController : ControllerBase
     {
         private readonly IAuctionService _auctionService;
+        private readonly IAuctionParticipantService _auctionParticipantService;
 
-        public AuctionsController(IAuctionService auctionService)
+        public AuctionsController(IAuctionService auctionService, IAuctionParticipantService auctionParticipantService)
         {
             _auctionService = auctionService;
+            _auctionParticipantService = auctionParticipantService;
         }
 
-         [HttpGet]
+        [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] GetAllAuctionRequestDTO request)
         {
             var response = await _auctionService.GetAllAuction(request);
@@ -52,5 +55,14 @@ namespace EV.Presentation.Controllers
             var response = await _auctionService.DeleteAuction(id);
             return Ok(response);
         }
+
+        [HttpGet("Refund")]
+        public async Task<ActionResult<ResponseDTO<object>>> Refund(int auctionId)
+        {
+            await _auctionParticipantService.Refund(auctionId);
+            await _auctionService.CloseAuction(auctionId);
+            return Ok(new ResponseDTO<object>("Refund successful", true));
+        }
+        
     }
 }
