@@ -27,7 +27,7 @@ CREATE TABLE Users (
     Email NVARCHAR(255) UNIQUE,
     Phone NVARCHAR(50) UNIQUE,
     Password VARCHAR(255),
-    ImageUrl text,
+    ImageUrl VARCHAR(255),
     RoleId INT FOREIGN KEY REFERENCES Roles(RolesId),
     CreatedAt DATETIME,
     UpdatedAt DATETIME,
@@ -44,7 +44,7 @@ CREATE TABLE Batteries (
     BatteriesId INT PRIMARY KEY IDENTITY(1,1),
     UserId INT FOREIGN KEY REFERENCES Users(UsersId), -- seller
     BatteryName NVARCHAR(255),
-    Description TEXT,
+    Description VARCHAR(255),
     Brand NVARCHAR(255),
     Capacity INT,          -- in Ah
     Voltage DECIMAL(5,2),  -- e.g. 12.0, 48.0
@@ -60,7 +60,7 @@ go
 CREATE TABLE BatteryImages (
     BatteryImagesId INT PRIMARY KEY IDENTITY(1,1),
     BatteryId INT FOREIGN KEY REFERENCES Batteries(BatteriesId),
-    ImageUrl TEXT,
+    ImageUrl VARCHAR(255),
 );
 go
 
@@ -72,7 +72,7 @@ CREATE TABLE Vehicles (
     VehiclesId INT PRIMARY KEY IDENTITY(1,1),
     UserId INT FOREIGN KEY REFERENCES Users(UsersId),
     VehicleName NVARCHAR(255),
-    Description TEXT,
+    Description VARCHAR(255),
     Brand NVARCHAR(255),
     Model NVARCHAR(255),
 	Color NVARCHAR(50),
@@ -102,13 +102,13 @@ go
 CREATE TABLE VehicleImages (
     VehicleImagesId INT PRIMARY KEY IDENTITY(1,1),
     VehicleId INT FOREIGN KEY REFERENCES Vehicles(VehiclesId),
-    ImageUrl text,
+    ImageUrl VARCHAR(255),
 );
 go
 
 CREATE TABLE InspectionFees (
     InspectionFeesId INT PRIMARY KEY IDENTITY(1,1),
-    Description TEXT,
+    Description VARCHAR(255),
     FeeAmount DECIMAL(18,2),
     Currency NVARCHAR(100), --VND, USD
     Type NVARCHAR(50), --fixed, percentage
@@ -124,27 +124,13 @@ CREATE TABLE VehicleInspections (
     VehicleId INT FOREIGN KEY REFERENCES Vehicles(VehiclesId),
     StaffId INT FOREIGN KEY REFERENCES Users(UsersId),
     InspectionDate DATETIME,
-    Notes TEXT,
-	CancelReason TEXT,
+    Notes VARCHAR(255),
+	CancelReason VARCHAR(255),
     InspectionFeeId INT FOREIGN KEY REFERENCES InspectionFees(InspectionFeesId),
     InspectionFee DECIMAL(18,2),
     Status NVARCHAR(50)
 );
 go
-
-CREATE TABLE AuctionsFee (
-    AuctionsFeeId INT PRIMARY KEY IDENTITY(1,1),
-    Description TEXT,
-    FeePerMinute DECIMAL(18,2),
-    EntryFee DECIMAL(18,2),
-    Currency NVARCHAR(50),
-    Type NVARCHAR(50), --fixed, percentage
-    CreatedAt DATETIME,
-    UpdatedAt DATETIME,
-    Status NVARCHAR(50)
-);
-go
-
 
 --------------------------------------------------
 -- TRANSACTIONS
@@ -217,7 +203,7 @@ go
 CREATE TABLE AuctionsFee (
     AuctionsFeeId INT PRIMARY KEY IDENTITY(1,1),
     AuctionsId INT FOREIGN KEY REFERENCES Auctions(AuctionsId),
-    Description TEXT,
+    Description VARCHAR(255),
     FeePerMinute DECIMAL(18,2),
     EntryFee DECIMAL(18,2),
     Currency NVARCHAR(50),
@@ -260,7 +246,7 @@ go
 CREATE TABLE PostPackages (
     PostPackagesId INT PRIMARY KEY IDENTITY(1,1),
     PackageName NVARCHAR(255),
-    Description TEXT,
+    Description VARCHAR(255),
     PostPrice DECIMAL(18,2),
 	Currency NVARCHAR(100), --VND, USD
     PostDuration INT,
