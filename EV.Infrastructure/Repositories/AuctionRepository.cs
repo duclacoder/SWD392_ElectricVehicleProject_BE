@@ -99,6 +99,7 @@ namespace EV.Infrastructure.Repositories
             var items = _context.Auctions
                                 .Include(a => a.Seller)
                                 .Include(a => a.AuctionBids)
+                                .ThenInclude(a => a.Bidder)
                                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(sellerUserName))

@@ -92,6 +92,8 @@ namespace EV.Infrastructure.Repositories
                         });
                     }
                 }
+                await _context.SaveChangesAsync();
+                vehicleId = vehicle.VehiclesId;
             }
             else if(createUserPostDTO.Battery != null)
             {
@@ -125,6 +127,8 @@ namespace EV.Infrastructure.Repositories
                         });
                     }
                 }
+                await _context.SaveChangesAsync();
+                batteryId = battery.BatteriesId;
             }
 
             var userPost = new UserPost
@@ -168,7 +172,7 @@ namespace EV.Infrastructure.Repositories
                     Brand = createUserPostDTO.Battery.Brand,
                     Description = createUserPostDTO.Battery.Description,
                     Capacity = createUserPostDTO.Battery.Capacity ?? 0,
-                    Voltage = createUserPostDTO.Battery.Voltage ?? 0,
+                    Voltage = (double)(createUserPostDTO.Battery.Voltage ?? 0),
                     WarrantyMonths = createUserPostDTO.Battery.WarrantyMonths ?? 0,
                     Price = createUserPostDTO.Battery.Price,
                     Currency = createUserPostDTO.Battery.Currency,
@@ -228,7 +232,7 @@ namespace EV.Infrastructure.Repositories
                     Brand = post.Battery.Brand,
                     Description = post.Battery.Description,
                     Capacity = post.Battery.Capacity ?? 0,
-                    Voltage = post.Battery.Voltage ?? 0,
+                    Voltage = (double)(post.Battery.Voltage ?? 0),
                     WarrantyMonths = post.Battery.WarrantyMonths ?? 0,
                     Price = (decimal)post.Battery.Price,
                     Currency = post.Battery.Currency,
@@ -311,7 +315,7 @@ namespace EV.Infrastructure.Repositories
                         Brand = post.Battery.Brand,
                         Description = post.Battery.Description,
                         Capacity = post.Battery.Capacity ?? 0,
-                        Voltage = post.Battery.Voltage ?? 0,
+                        Voltage = (double)(post.Battery.Voltage ?? 0),
                         WarrantyMonths = post.Battery.WarrantyMonths ?? 0,
                         Price = (decimal)post.Battery.Price,
                         Currency = post.Battery.Currency,
@@ -377,7 +381,7 @@ namespace EV.Infrastructure.Repositories
                     Brand = post.Battery.Brand,
                     Description = post.Battery.Description,
                     Capacity = post.Battery.Capacity ?? 0,
-                    Voltage = post.Battery.Voltage ?? 0,
+                    Voltage = (double)(post.Battery.Voltage ?? 0),
                     WarrantyMonths = post.Battery.WarrantyMonths ?? 0,
                     Price = (decimal)post.Battery.Price,
                     Currency = post.Battery.Currency,

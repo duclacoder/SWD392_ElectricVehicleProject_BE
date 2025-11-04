@@ -21,6 +21,7 @@ namespace EV.Infrastructure.Repositories
         public async Task<IEnumerable<AuctionBidCustom>> GetAuctionBidByAuctionId(int auctionId)
         {
             var bids = await _context.AuctionBids
+                               .Include(a => a.Bidder)
                                .Where(b => b.AuctionId == auctionId)
                                .Select(b => new AuctionBidCustom
                                {

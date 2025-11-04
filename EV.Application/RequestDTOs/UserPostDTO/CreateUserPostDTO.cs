@@ -1,5 +1,4 @@
-﻿using EV.Application.RequestDTOs.BatteryPostRequestDTO;
-using EV.Domain.Entities;
+﻿using EV.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
