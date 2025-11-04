@@ -60,6 +60,7 @@ namespace EV.Infrastructure.Configuration
 
             services.AddScoped<IAuctionsFeeService, AuctionsFeeService>();
             services.AddScoped<ICloudinaryService, CloudinaryService>();
+            services.AddScoped<IAuctionBidService, AuctionBidService>();
 
             //cloudinary
             var cloudName = configuration["CloudinarySettings:CloudName"];
