@@ -1,4 +1,5 @@
-﻿using EV.Domain.Entities;
+﻿using EV.Application.ResponseDTOs;
+using EV.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,7 @@ namespace EV.Application.Interfaces.ServiceInterfaces
         Task CreatePaymentAsync(Payment payment);
         void UpdatePayment(Payment payment);
         void DeletePaymentAsync(Payment payment);
+
+        Task<ResponseDTO<List<Payment>>> GetPaymentsByUserIdAsync(int userId);
     }
 }

@@ -123,10 +123,8 @@ namespace EV.Infrastructure.Repositories
                 Status = a.Status,
                 Bids = a.AuctionBids?.Select(b => new AuctionBidCustom
                 {
-                    AuctionBidId = b.AuctionBidsId,
-                    BidderUserName = b.Bidder?.UserName,
+                    BidderFullName = b.Bidder.FullName,
                     BidAmount = b.BidAmount,
-                    BidTime = b.BidTime,
                 }).ToList() ?? new List<AuctionBidCustom>()
             });
         }
@@ -156,10 +154,8 @@ namespace EV.Infrastructure.Repositories
                 Status = auction.Status,
                 Bids = auction.AuctionBids?.Select(b => new AuctionBidCustom
                 {
-                    AuctionBidId = b.AuctionBidsId,
-                    BidderUserName = b.Bidder.UserName,
+                    BidderFullName = b.Bidder.FullName,
                     BidAmount = b.BidAmount ?? 0,
-                    BidTime = b.BidTime ?? null
                 }).ToList() ?? new List<AuctionBidCustom>()
             };
         }

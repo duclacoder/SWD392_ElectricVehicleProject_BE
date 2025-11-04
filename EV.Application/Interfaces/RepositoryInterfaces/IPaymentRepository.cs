@@ -9,5 +9,6 @@ namespace EV.Application.Interfaces.RepositoryInterfaces
 {
     public interface IPaymentRepository  : IGenericRepository<Payment>
     {
+       Task<List<Payment>> GetPaymentsByUserIdAsync(int userId);
     }
 }

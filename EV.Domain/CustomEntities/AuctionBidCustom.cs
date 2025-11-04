@@ -8,9 +8,7 @@ namespace EV.Domain.CustomEntities
 {
     public class AuctionBidCustom
     {
-        public int AuctionBidId { get; set; }
-        public string? BidderUserName { get; set; }
+        public string? BidderFullName { get; set; }
         public decimal? BidAmount { get; set; }
-        public DateTime? BidTime { get; set; }
     }
 }

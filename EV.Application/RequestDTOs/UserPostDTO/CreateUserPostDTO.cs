@@ -1,4 +1,5 @@
-﻿using EV.Domain.Entities;
+﻿using EV.Application.RequestDTOs.BatteryPostRequestDTO;
+using EV.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -17,10 +18,12 @@ namespace EV.Application.RequestDTOs.UserPostDTO
         public int Year { get; set; }
 
         public VehicleUserPostDTO? Vehicle { get; set; }
+        public BatteryUserPostDTO? Battery { get; set; }
 
         public int UserPackageId { get; set; }
 
 
         public List<IFormFile>? ImageUrls { get; set; }
+
     }
 }

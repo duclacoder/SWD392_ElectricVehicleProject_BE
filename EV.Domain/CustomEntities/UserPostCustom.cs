@@ -13,7 +13,8 @@ namespace EV.Domain.CustomEntities
         public string UserName { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public VehicleUserPost Vehicle { get; set; }
+        public VehicleUserPost? Vehicle { get; set; }
+        public BatteryUserPost? Battery { get; set; }
         public List<string> Images { get; set; }
         public DateTime CreatedAt { get; set; }
         public string Status { get; set; }
