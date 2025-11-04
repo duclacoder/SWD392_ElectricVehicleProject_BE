@@ -243,5 +243,18 @@ namespace EV.Presentation.Controllers
 
             return Redirect("http://localhost:5173/paymentFail");
         }
+
+        [HttpGet("{userId}")]
+        public async Task<ActionResult<ResponseDTO<List<Payment>>>> GetPaymentsByUserId(int userId)
+        {
+            var response = await _paymentService.GetPaymentsByUserIdAsync(userId);
+
+            if (!response.IsSuccess)
+            {
+                return NotFound(response);
+            }
+
+            return Ok(response);
+        }
     }
 }
