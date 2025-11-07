@@ -2,6 +2,7 @@
 using EV.Application.Interfaces.RepositoryInterfaces;
 using EV.Application.Interfaces.ServiceInterfaces;
 using EV.Application.ResponseDTOs;
+using EV.Domain.Entities;
 
 namespace EV.Application.Services
 {
@@ -63,6 +64,11 @@ namespace EV.Application.Services
                     result: null
                 );
             }
+        }
+
+        public async Task<User?> GetWinnerByAuctionIdAsync(int auctionId)
+        {
+            return await _unitOfWork.auctionBidRepository.GetWinnerByAuctionId(auctionId);
         }
     }
 }

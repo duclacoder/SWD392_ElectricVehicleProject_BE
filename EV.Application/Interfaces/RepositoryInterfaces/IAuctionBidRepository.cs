@@ -15,5 +15,6 @@ namespace EV.Application.Interfaces.RepositoryInterfaces
 
         Task<IEnumerable<AuctionBidCustom>> GetAuctionBidByAuctionId(int auctionId);
 
+        Task<User?> GetWinnerByAuctionId(int auctionId);
     }
 }

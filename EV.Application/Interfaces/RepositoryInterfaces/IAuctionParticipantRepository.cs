@@ -12,5 +12,6 @@ namespace EV.Application.Interfaces.RepositoryInterfaces
     {
         Task<bool> CheckEligibility(CheckEligibilityRequestDTO request);
         Task<List<AuctionParticipant>> GetListUserInAuction(int auctionId);
+
     }
 }

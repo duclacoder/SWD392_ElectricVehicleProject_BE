@@ -150,7 +150,7 @@ namespace EV.Infrastructure.Repositories
 
             return new UserPostCustom
             {
-                UserName = user.UserName,
+                UserId = user.UsersId,
                 Title = createUserPostDTO.Title,
                 Vehicle = createUserPostDTO.Vehicle != null ? new VehicleUserPost
                 {
@@ -210,7 +210,7 @@ namespace EV.Infrastructure.Repositories
             return new UserPostCustom
             {
                 UserPostId = post.UserPostsId,
-                UserName = post.User.UserName,
+                UserId = post.User.UsersId,
                 Title = isVehiclePost ? $"{post.Vehicle?.Brand} {post.Vehicle?.Model} {post.Vehicle?.Color} {post.Vehicle?.Year}" : $"{post.Battery.Brand} {post.Battery.BatteryName} ({post.Battery.Capacity}Ah)",
                 Vehicle = isVehiclePost ? new VehicleUserPost
                 {
@@ -293,7 +293,7 @@ namespace EV.Infrastructure.Repositories
                 return new UserPostCustom
                 {
                     UserPostId = post.UserPostsId,
-                    UserName = post.User?.UserName,
+                    UserId = (int)(post.User?.UsersId),
                     Title = vehiclePost ? $"{post.Vehicle?.Brand} {post.Vehicle?.Model} {post.Vehicle?.Color} {post.Vehicle?.Year}" : $"{post.Battery?.Brand} {post.Battery?.BatteryName} ({post.Battery?.Capacity}Ah)",
                     Vehicle = vehiclePost ? new VehicleUserPost
                     {
@@ -359,7 +359,7 @@ namespace EV.Infrastructure.Repositories
             return new UserPostCustom
             {
                 UserPostId = post.UserPostsId,
-                UserName = post.User.UserName,
+                UserId = post.User.UsersId,
                 Title = title,
                 Vehicle = post.Vehicle != null ?  new VehicleUserPost
                 {

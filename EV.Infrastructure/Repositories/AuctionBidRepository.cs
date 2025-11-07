@@ -34,5 +34,17 @@ namespace EV.Infrastructure.Repositories
                         .ThenBy(b => b.BidTime)
                         .FirstOrDefaultAsync();
         }
+
+        public async Task<User?> GetWinnerByAuctionId(int auctionId)
+        {
+            var highestBid = await _context.AuctionBids
+                .Include(b => b.Bidder)
+                .Where(b => b.AuctionId == auctionId && b.Status == "Active")
+                .OrderByDescending(b => b.BidAmount)
+                .ThenBy(b => b.BidTime)
+                .FirstOrDefaultAsync();
+
+            return highestBid?.Bidder;
+        }
     }
 }
