@@ -68,6 +68,7 @@ namespace EV.Infrastructure.Repositories
                     RoleName = u.Role.Name,
                     CreatedAt = u.CreatedAt,
                     UpdatedAt = u.UpdatedAt,
+                    Wallet = u.Wallet,
                     Status = u.Status
                 })
                 .FirstOrDefaultAsync(u => u.UsersId == id);

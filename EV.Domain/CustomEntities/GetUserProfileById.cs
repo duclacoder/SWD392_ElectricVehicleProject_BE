@@ -32,5 +32,7 @@ namespace EV.Domain.CustomEntities
         public string? RoleName { get; set; }
 
         public string? Status { get; set; }
+
+        public decimal? Wallet {  get; set; }
     }
 }
