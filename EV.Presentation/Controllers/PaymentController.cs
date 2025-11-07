@@ -1,12 +1,10 @@
-﻿using EV.Application.Interfaces.RepositoryInterfaces;
+﻿using EV.Application.CustomEntities;
+using EV.Application.Interfaces.RepositoryInterfaces;
 using EV.Application.Interfaces.ServiceInterfaces;
-using EV.Application.RequestDTOs.AuctionFeeRequestDTO;
 using EV.Application.RequestDTOs.AuctionParticipantDTO;
 using EV.Application.RequestDTOs.PaymentRequestDTO;
 using EV.Application.RequestDTOs.UserPackagesDTO;
 using EV.Application.ResponseDTOs;
-using EV.Domain.Entities;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EV.Presentation.Controllers
@@ -36,10 +34,10 @@ namespace EV.Presentation.Controllers
         }
 
         [HttpGet("GetAllPayment")]
-        public async Task<ActionResult<ResponseDTO<List<Payment>>>> GetAllPayment()
+        public async Task<ActionResult<ResponseDTO<List<CustomPayment>>>> GetAllPayment()
         {
             var transactions = await _paymentService.GetAllPaymentsAsync();
-            return new ResponseDTO<List<Payment>>("Get all transactions successfully", true, transactions);
+            return new ResponseDTO<List<CustomPayment>>("Get all transactions successfully", true, transactions);
         }
 
         [HttpPost("CreatePayment")]
@@ -62,7 +60,7 @@ namespace EV.Presentation.Controllers
                 if (userPackage is null)
                     return BadRequest(new ResponseDTO<object>("User package not found", false));
 
-                var newPayment = new Payment
+                var newPayment = new CustomPayment
                 {
                     UserId = request.UserId.Value,
                     TransferAmount = userPackage.PurchasedAtPrice,
@@ -74,12 +72,12 @@ namespace EV.Presentation.Controllers
                     CreatedAt = DateTime.UtcNow,
                     Content = "Thanh toan goi"
                 };
-                await _paymentService.CreatePaymentAsync(newPayment);
+                var payment = await _paymentService.CreatePaymentAsync(newPayment);
                 await _unitOfWork.SaveChangesAsync();
 
                 var result = new
                 {
-                    newPayment.PaymentsId,
+                    payment.PaymentsId,
                     userPackage.UserPackagesId,
                     newPayment.TransferAmount,
                 };
@@ -92,7 +90,7 @@ namespace EV.Presentation.Controllers
                 if (auctionFee is null)
                     return BadRequest(new ResponseDTO<object>("Auction Fee not found", false));
 
-                var newPayment = new Payment
+                var newPayment = new CustomPayment
                 {
                     UserId = request.UserId.Value,
                     TransferAmount = auctionFee.EntryFee,
@@ -105,12 +103,12 @@ namespace EV.Presentation.Controllers
                     Content = "Phi tham gia dau gia"
                 };
 
-                await _paymentService.CreatePaymentAsync(newPayment);
+                var payment = await _paymentService.CreatePaymentAsync(newPayment);
                 await _unitOfWork.SaveChangesAsync();
 
                 var result = new
                 {
-                    newPayment.PaymentsId,
+                    payment.PaymentsId,
                     auctionFee.AuctionsFeeId,
                     newPayment.TransferAmount,
 
@@ -245,7 +243,7 @@ namespace EV.Presentation.Controllers
         }
 
         [HttpGet("{userId}")]
-        public async Task<ActionResult<ResponseDTO<List<Payment>>>> GetPaymentsByUserId(int userId)
+        public async Task<ActionResult<ResponseDTO<List<CustomPayment>>>> GetPaymentsByUserId(int userId)
         {
             var response = await _paymentService.GetPaymentsByUserIdAsync(userId);
 

@@ -1,15 +1,9 @@
 ﻿using AutoMapper;
+using EV.Application.CustomEntities;
 using EV.Application.Interfaces.RepositoryInterfaces;
 using EV.Application.Interfaces.ServiceInterfaces;
 using EV.Application.RequestDTOs.InspectionFeeDTO;
-using EV.Application.RequestDTOs.UserRequestDTO;
 using EV.Application.ResponseDTOs;
-using EV.Domain.CustomEntities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EV.Application.Services
 {
@@ -40,7 +34,7 @@ namespace EV.Application.Services
                 TotalPages = (int)Math.Ceiling((double)totalCount / userGetAllInspectionFeeRequestDTO.PageSize)
             };
 
-            if(inspectionFees.Count() == 0)
+            if (inspectionFees.Count() == 0)
             {
                 return new ResponseDTO<PagedResult<UserInspectionFeesGetAll>>("No inspection fees found.", false, null);
             }

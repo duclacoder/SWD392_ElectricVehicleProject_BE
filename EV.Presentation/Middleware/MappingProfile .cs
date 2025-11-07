@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
+using EV.Application.CustomEntities;
 using EV.Application.RequestDTOs.AdminRequestDTO;
 using EV.Application.RequestDTOs.InspectionFeeDTO;
 using EV.Application.RequestDTOs.UserRequestDTO;
 using EV.Application.ResponseDTOs;
-using EV.Domain.CustomEntities;
 using EV.Domain.Entities;
 using EV.Presentation.RequestModels.AdminRequests;
 using EV.Presentation.RequestModels.UserRequests;

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EV.Domain.CustomEntities
+namespace EV.Application.CustomEntities
 {
-    public class UserGetCarForUpdate
+    public class UserCarDetails
     {
         public int VehiclesId { get; set; }
 
@@ -54,8 +54,14 @@ namespace EV.Domain.CustomEntities
 
         public string? Currency { get; set; }
 
+        public DateTime? CreatedAt { get; set; }
+
+        public DateTime? UpdatedAt { get; set; }
+
         public bool? Verified { get; set; }
 
         public string? Status { get; set; }
+
+        public string? ImageUrl { get; set; }
     }
 }

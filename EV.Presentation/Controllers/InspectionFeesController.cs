@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
+using EV.Application.CustomEntities;
 using EV.Application.Interfaces.ServiceInterfaces;
 using EV.Application.RequestDTOs.InspectionFeeDTO;
 using EV.Application.ResponseDTOs;
-using EV.Domain.CustomEntities;
 using EV.Presentation.RequestModels.UserRequests;
 using Microsoft.AspNetCore.Mvc;
 

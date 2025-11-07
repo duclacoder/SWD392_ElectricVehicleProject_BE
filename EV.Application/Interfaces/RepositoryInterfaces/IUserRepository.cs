@@ -1,11 +1,10 @@
-﻿using EV.Application.RequestDTOs.UserRequestDTO;
-using EV.Domain.CustomEntities;
+﻿using EV.Application.CustomEntities;
 using EV.Domain.Entities;
 
 namespace EV.Application.Interfaces.RepositoryInterfaces
 {
     public interface IUserRepository
-    {        
+    {
         Task<IEnumerable<AdminGetAllUsers>> GetAllUsers(int skip, int take);
         Task<int> GetTotalCountUsers();
         Task<User> GetUserById(int id);

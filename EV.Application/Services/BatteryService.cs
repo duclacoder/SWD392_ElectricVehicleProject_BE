@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
+using EV.Application.CustomEntities;
 using EV.Application.Interfaces.RepositoryInterfaces;
 using EV.Application.Interfaces.ServiceInterfaces;
 using EV.Application.RequestDTOs.UserRequestDTO;
 using EV.Application.ResponseDTOs;
-using EV.Domain.CustomEntities;
 using EV.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 
