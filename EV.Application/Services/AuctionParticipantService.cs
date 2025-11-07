@@ -106,7 +106,7 @@ namespace EV.Application.Services
                             TransferAmount = refundAmount,
                             Content = $"Hoàn tiền cho phí tham gia đấu giá xe {vehicle.VehicleName} (-10% phí dịch vụ)",
                             TransactionDate = DateTime.UtcNow,
-                            Status = "Paid",
+                            Status = "Refunded",
                             Gateway = "Hoàn Tiền vào ví",
                             CreatedAt = DateTime.UtcNow,
                             UpdatedAt = DateTime.UtcNow,
@@ -116,7 +116,6 @@ namespace EV.Application.Services
                         await _unitOfWork.paymentRepository.CreateAsync(payment);
                     }
                 }
-
 
                 _unitOfWork.auctionParticipantRepository.Update(participant);
             }

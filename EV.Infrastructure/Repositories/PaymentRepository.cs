@@ -21,7 +21,7 @@ namespace EV.Infrastructure.Repositories
         public async Task<List<CustomPayment>> GetPaymentsByUserIdAsync(int userId)
         {
             var payments = await _context.Payments
-                                         .Where(x => x.UserId == userId && x.Status == "Paid")
+                                         .Where(x => x.UserId == userId && x.Status != "Pending")
                                          .OrderByDescending(x => x.CreatedAt)
                                          .ToListAsync();
 

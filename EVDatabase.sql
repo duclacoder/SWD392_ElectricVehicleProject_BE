@@ -438,17 +438,17 @@ GO
 -- Giả sử ParticipantId của Cường là 1, của Dung là 2
 -- Cường ra giá đầu tiên
 INSERT INTO AuctionBids (AuctionId, AuctionParticipantId, BidderId, BidAmount, BidTime, Status) VALUES
-(1, 1, 5, 905000000.00, GETDATE(), 'Valid');
+(1, 1, 5, 905000000.00, GETDATE(), 'Active');
 GO
 
 -- Dung ra giá cao hơn
 INSERT INTO AuctionBids (AuctionId, AuctionParticipantId, BidderId, BidAmount, BidTime, Status) VALUES
-(1, 2, 6, 910000000.00, DATEADD(minute, 2, GETDATE()), 'Valid');
+(1, 2, 6, 910000000.00, DATEADD(minute, 2, GETDATE()), 'Active');
 GO
 
 -- Cường ra giá cao hơn nữa
 INSERT INTO AuctionBids (AuctionId, AuctionParticipantId, BidderId, BidAmount, BidTime, Status) VALUES
-(1, 1, 5, 915000000.00, DATEADD(minute, 5, GETDATE()), 'Valid');
+(1, 1, 5, 915000000.00, DATEADD(minute, 5, GETDATE()), 'Active');
 GO
 
 -- 6. Kết thúc phiên đấu giá
