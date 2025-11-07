@@ -1,12 +1,7 @@
-﻿using EV.Application.RequestDTOs.UserRequestDTO;
+﻿using EV.Application.CustomEntities;
+using EV.Application.RequestDTOs.UserRequestDTO;
 using EV.Application.ResponseDTOs;
-using EV.Domain.CustomEntities;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EV.Application.Interfaces.ServiceInterfaces
 {

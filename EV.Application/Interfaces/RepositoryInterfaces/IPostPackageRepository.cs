@@ -1,10 +1,5 @@
-﻿using EV.Application.RequestDTOs.PostPackageDTO;
-using EV.Domain.CustomEntities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using EV.Application.CustomEntities;
+using EV.Application.RequestDTOs.PostPackageDTO;
 
 namespace EV.Application.Interfaces.RepositoryInterfaces
 {
@@ -14,7 +9,7 @@ namespace EV.Application.Interfaces.RepositoryInterfaces
 
         Task<PostPackageCustom> CreatePostPackage(CreatePostPackageRequestDTO createPostPackageRequestDTO);
 
-        Task<PostPackageCustom> UpdatePostPackage(int id,  CreatePostPackageRequestDTO updatePostPackageRequestDTO);
+        Task<PostPackageCustom> UpdatePostPackage(int id, CreatePostPackageRequestDTO updatePostPackageRequestDTO);
 
         Task<PostPackageCustom> DeletePostPackage(int id);
 

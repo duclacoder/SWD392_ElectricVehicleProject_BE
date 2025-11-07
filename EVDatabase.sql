@@ -493,6 +493,6 @@ select * from AuctionsFee
 
 select * from Auctions
 
-select * from AuctionBids where AuctionId 
+select * from AuctionBids 
 
-select * from AuctionParticipants where AuctionsId 
+select * from AuctionParticipants 

@@ -1,12 +1,7 @@
-﻿using EV.Application.Interfaces.RepositoryInterfaces;
+﻿using EV.Application.CustomEntities;
+using EV.Application.Interfaces.RepositoryInterfaces;
 using EV.Application.Interfaces.ServiceInterfaces;
 using EV.Application.ResponseDTOs;
-using EV.Domain.CustomEntities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EV.Application.Services
 {

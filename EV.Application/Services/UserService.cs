@@ -1,16 +1,11 @@
-﻿using EV.Application.Interfaces.RepositoryInterfaces;
+﻿using AutoMapper;
+using EV.Application.CustomEntities;
+using EV.Application.Interfaces.RepositoryInterfaces;
 using EV.Application.Interfaces.ServiceInterfaces;
 using EV.Application.RequestDTOs.AdminRequestDTO;
 using EV.Application.RequestDTOs.UserRequestDTO;
 using EV.Application.ResponseDTOs;
-using EV.Domain.CustomEntities;
 using EV.Domain.Entities;
-using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EV.Application.Services
 {
@@ -130,7 +125,7 @@ namespace EV.Application.Services
                 return new ResponseDTO<UserProfileUpdate>("User not found", false, null);
             }
 
-            if(profileUpdateRequestDTO.FullName != null)
+            if (profileUpdateRequestDTO.FullName != null)
             {
                 findUser.FullName = profileUpdateRequestDTO.FullName;
             }
