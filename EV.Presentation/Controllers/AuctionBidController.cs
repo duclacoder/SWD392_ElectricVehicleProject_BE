@@ -32,5 +32,24 @@ namespace EV.Presentation.Controllers
             }
             return Ok(response);
         }
+
+
+        [HttpGet("winner/{auctionId}")]
+        public async Task<IActionResult> GetWinner(int auctionId)
+        {
+            var winner = await _auctionBidService.GetWinnerByAuctionIdAsync(auctionId);
+
+            if (winner == null)
+            {
+                return NotFound(new { message = "Chưa có người thắng trong phiên đấu giá này." });
+            }
+
+            return Ok(new
+            {
+                fullName = winner.FullName,
+                email = winner.Email,
+                phone = winner.Phone
+            });
+        }
     }
 }
