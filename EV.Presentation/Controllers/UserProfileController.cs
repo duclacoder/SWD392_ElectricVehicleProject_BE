@@ -19,7 +19,6 @@ namespace EV.Presentation.Controllers
             _userService = userService;
         }
 
-
         [HttpPost("UpdateUserProfile")]
         public async Task<ActionResult<ResponseDTO<UserProfileUpdate>>> UpdateUserProfile([FromBody] ProfileUpdateRequestModel profileUpdateRequest)
         {
