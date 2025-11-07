@@ -97,8 +97,26 @@ namespace EV.Application.Services
 
                         participant.RefundStatus = "Refunded";
                         participant.Status = "Lost";
+
+                        var vehicle = await _unitOfWork.carRepository.GetAuctionVehicleDetailsById(auctionId);
+
+                        var payment = new Payment
+                        {
+                            UserId = participant.UserId.Value,
+                            TransferAmount = refundAmount,
+                            Content = $"Hoàn tiền cho phí tham gia đấu giá xe {vehicle.VehicleName} (-10% phí dịch vụ)",
+                            TransactionDate = DateTime.UtcNow,
+                            Status = "Paid",
+                            Gateway = "Hoàn Tiền vào ví",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow,
+                            ReferenceType = "Hoàn tiền",
+                            Currency = "VND",
+                        };
+                        await _unitOfWork.paymentRepository.CreateAsync(payment);
                     }
                 }
+
 
                 _unitOfWork.auctionParticipantRepository.Update(participant);
             }
