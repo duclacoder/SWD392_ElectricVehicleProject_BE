@@ -1,6 +1,6 @@
-﻿using EV.Application.Interfaces.RepositoryInterfaces;
+﻿using EV.Application.CustomEntities;
+using EV.Application.Interfaces.RepositoryInterfaces;
 using EV.Application.RequestDTOs.UserPostDTO;
-using EV.Domain.CustomEntities;
 using EV.Domain.Entities;
 using EV.Infrastructure.CloudinaryImage;
 using EV.Infrastructure.DBContext;

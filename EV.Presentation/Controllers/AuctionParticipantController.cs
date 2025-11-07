@@ -1,7 +1,7 @@
-﻿using EV.Application.Interfaces.ServiceInterfaces;
+﻿using EV.Application.CustomEntities;
+using EV.Application.Interfaces.ServiceInterfaces;
 using EV.Application.RequestDTOs.AuctionParticipantDTO;
 using EV.Application.ResponseDTOs;
-using EV.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EV.Presentation.Controllers
@@ -17,11 +17,30 @@ namespace EV.Presentation.Controllers
         }
 
         [HttpGet("getAll")]
-        public async Task<ActionResult<ResponseDTO<List<object>>>> GetAllAuctionParticipants()
+        public async Task<ActionResult<ResponseDTO<List<CustomAuctionParticipant>>>> GetAllAuctionParticipants()
         {
-            var result = await _auctionParticipantService.GetAllAuctionsParticipantAsync();
-            return Ok(new ResponseDTO<List<AuctionParticipant>>("Get all successful", true, result));
+            var list = await _auctionParticipantService.GetAllAuctionsParticipantAsync();
+
+            var result = list.Select(ap => new CustomAuctionParticipant
+            {
+                AuctionParticipantId = ap.AuctionParticipantId,
+                PaymentsId = ap.PaymentsId,
+                UserId = ap.UserId,
+                AuctionsId = ap.AuctionsId,
+                DepositAmount = ap.DepositAmount,
+                DepositTime = ap.DepositTime,
+                RefundStatus = ap.RefundStatus,
+                Status = ap.Status,
+                IsWinningBid = ap.IsWinningBid,
+                AuctionBids = ap.AuctionBids,
+                Auctions = ap.Auctions,
+                Payments = ap.Payments,
+                User = ap.User
+            }).ToList();
+
+            return Ok(new ResponseDTO<List<CustomAuctionParticipant>>("Get all successful", true, result));
         }
+
 
         [HttpPost("Create")]
         public async Task<ActionResult<ResponseDTO<object>>> CreateAuctionParticipant([FromBody] object auctionParticipantDto)

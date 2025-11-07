@@ -1,13 +1,9 @@
 ﻿using AutoMapper;
-using Azure;
+using EV.Application.CustomEntities;
 using EV.Application.Interfaces.ServiceInterfaces;
 using EV.Application.RequestDTOs.PostPackageDTO;
-using EV.Application.RequestDTOs.UserPostDTO;
 using EV.Application.ResponseDTOs;
-using EV.Application.Services;
-using EV.Domain.CustomEntities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

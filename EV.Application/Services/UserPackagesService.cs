@@ -1,16 +1,9 @@
 ﻿using AutoMapper;
+using EV.Application.CustomEntities;
 using EV.Application.Interfaces.RepositoryInterfaces;
 using EV.Application.Interfaces.ServiceInterfaces;
 using EV.Application.RequestDTOs.UserPackagesDTO;
 using EV.Application.ResponseDTOs;
-using EV.Domain.CustomEntities;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EV.Application.Services
 {
@@ -30,7 +23,7 @@ namespace EV.Application.Services
             {
                 return new ResponseDTO<UserPackagesCustom>("User or Package not found", false);
             }
-            
+
             await _unitOfWork.SaveChangesAsync();
             return new ResponseDTO<UserPackagesCustom>("Created successfully", true, result);
 
@@ -39,11 +32,11 @@ namespace EV.Application.Services
         public async Task<ResponseDTO<UserPackagesCustom>> DeleteUserPackage(int id)
         {
             var result = await _unitOfWork.userPackagesRepository.DeleteUserPackage(id);
-            if(result == null)
+            if (result == null)
             {
                 return new ResponseDTO<UserPackagesCustom>("UserPackage not found", false);
             }
-            
+
             await _unitOfWork.SaveChangesAsync();
             return new ResponseDTO<UserPackagesCustom>("Deleted successfully", true, result);
 

@@ -1,13 +1,12 @@
-﻿using EV.Domain.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EV.Domain.CustomEntities
+namespace EV.Application.CustomEntities
 {
-    public class GetUserProfileById
+    public class AdminGetAllUsers
     {
         public int UsersId { get; set; }
 
@@ -19,20 +18,15 @@ namespace EV.Domain.CustomEntities
 
         public string? Phone { get; set; }
 
-        //public string? Password { get; set; }
+        public int? RoleId { get; set; }
 
-        public string? ImageUrl { get; set; }
+        public virtual string? RoleName { get; set; }
 
         public DateTime? CreatedAt { get; set; }
 
         public DateTime? UpdatedAt { get; set; }
 
-        public int? RoleId { get; set; }
-
-        public string? RoleName { get; set; }
-
         public string? Status { get; set; }
 
-        public decimal? Wallet {  get; set; }
     }
 }

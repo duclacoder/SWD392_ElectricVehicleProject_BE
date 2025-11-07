@@ -1,4 +1,5 @@
-﻿using EV.Application.Interfaces.RepositoryInterfaces;
+﻿using EV.Application.CustomEntities;
+using EV.Application.Interfaces.RepositoryInterfaces;
 using EV.Application.Interfaces.ServiceInterfaces;
 using EV.Application.ResponseDTOs;
 using EV.Domain.Entities;
@@ -19,28 +20,28 @@ namespace EV.Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task CreatePaymentAsync(Payment payment)
+        public async Task CreatePaymentAsync(CustomPayment payment)
         {
 
             await _unitOfWork.paymentRepository.CreateAsync(payment);
         }
 
-        public void DeletePaymentAsync(Payment payment)
+        public void DeletePaymentAsync(CustomPayment payment)
         {
             _unitOfWork.paymentRepository.Remove(payment);
         }
 
-        public async Task<List<Payment>> GetAllPaymentsAsync()
+        public async Task<List<CustomPayment>> GetAllPaymentsAsync()
         {
             return await _unitOfWork.paymentRepository.GetAllAsync();
         }
 
-        public async Task<Payment?> GetPaymentByIdAsync(int id)
+        public async Task<CustomPayment?> GetPaymentByIdAsync(int id)
         {
             return await _unitOfWork.paymentRepository.GetByIdAsync(id);
         }
 
-        public async Task<ResponseDTO<List<Payment>>> GetPaymentsByUserIdAsync(int userId)
+        public async Task<ResponseDTO<List<CustomPayment>>> GetPaymentsByUserIdAsync(int userId)
         {
             try
             {
@@ -48,14 +49,14 @@ namespace EV.Application.Services
 
                 if (payments == null || !payments.Any())
                 {
-                    return new ResponseDTO<List<Payment>>
+                    return new ResponseDTO<List<CustomPayment>>
                     (
                        message: "No payments found for this user.",
                        isSuccess: false,
-                       result: new List<Payment>()
+                       result: new List<CustomPayment>()
                     );
                 }
-                return new ResponseDTO<List<Payment>>
+                return new ResponseDTO<List<CustomPayment>>
                 (
                     message: "Payments retrieved successfully.",
                     isSuccess: true,
@@ -64,7 +65,7 @@ namespace EV.Application.Services
             }
             catch (Exception ex)
             {
-                return new ResponseDTO<List<Payment>>
+                return new ResponseDTO<List<CustomPayment>>
                 (
                     message: $"Error retrieving payments: {ex.Message}",
                     isSuccess: false,
@@ -73,7 +74,7 @@ namespace EV.Application.Services
             }
         }
 
-        public void UpdatePayment(Payment payment)
+        public void UpdatePayment(CustomPayment payment)
         {
             _unitOfWork.paymentRepository.Update(payment);
         }

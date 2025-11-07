@@ -1,10 +1,5 @@
-﻿using EV.Domain.CustomEntities;
+﻿using EV.Application.CustomEntities;
 using EV.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EV.Application.Interfaces.RepositoryInterfaces
 {

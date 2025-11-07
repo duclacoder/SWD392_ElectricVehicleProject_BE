@@ -1,5 +1,5 @@
-﻿using EV.Application.Interfaces.RepositoryInterfaces;
-using EV.Domain.CustomEntities;
+﻿using EV.Application.CustomEntities;
+using EV.Application.Interfaces.RepositoryInterfaces;
 using EV.Domain.Entities;
 using EV.Infrastructure.DBContext;
 using Microsoft.EntityFrameworkCore;

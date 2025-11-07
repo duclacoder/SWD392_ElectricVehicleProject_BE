@@ -1,4 +1,5 @@
-﻿using EV.Domain.Entities;
+﻿using EV.Application.CustomEntities;
+using EV.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace EV.Application.Interfaces.RepositoryInterfaces
 {
-    public interface IPaymentRepository  : IGenericRepository<Payment>
+    public interface IPaymentRepository  : IGenericRepository<CustomPayment>
     {
-       Task<List<Payment>> GetPaymentsByUserIdAsync(int userId);
+       Task<List<CustomPayment>> GetPaymentsByUserIdAsync(int userId);
     }
 }

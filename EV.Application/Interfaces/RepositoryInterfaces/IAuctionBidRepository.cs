@@ -1,4 +1,4 @@
-﻿using EV.Domain.CustomEntities;
+﻿using EV.Application.CustomEntities;
 ﻿using EV.Domain.Entities;
 using System;
 using System.Collections.Generic;

@@ -1,13 +1,8 @@
-﻿using EV.Application.Interfaces.RepositoryInterfaces;
+﻿using EV.Application.CustomEntities;
+using EV.Application.Interfaces.RepositoryInterfaces;
 using EV.Application.Interfaces.ServiceInterfaces;
 using EV.Application.RequestDTOs.AuctionRequestDTO;
 using EV.Application.ResponseDTOs;
-using EV.Domain.CustomEntities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EV.Application.Services
 {
@@ -38,7 +33,7 @@ namespace EV.Application.Services
         public async Task<ResponseDTO<AuctionCustom>> CreateAuction(CreateAuctionDTO createAuctionDTO)
         {
             var result = await _unitOfWork.auctionRepository.CreateAuction(createAuctionDTO);
-            if(result == null)
+            if (result == null)
             {
                 return new ResponseDTO<AuctionCustom>("Seller or Vehicle not found", false);
             }
@@ -50,7 +45,7 @@ namespace EV.Application.Services
         public async Task<ResponseDTO<AuctionCustom>> DeleteAuction(int id)
         {
             var result = await _unitOfWork.auctionRepository.DeleteAuction(id);
-            if(result == null)
+            if (result == null)
                 return new ResponseDTO<AuctionCustom>("Auction not found", false);
 
             await _unitOfWork.SaveChangesAsync();
@@ -64,7 +59,7 @@ namespace EV.Application.Services
                 getAllAuctionRequestDTO.PageSize,
                 getAllAuctionRequestDTO.UserName
                 );
-            
+
             var totalItems = data.Count();
 
             var pageResult = new PagedResult<AuctionCustom>
@@ -82,7 +77,7 @@ namespace EV.Application.Services
         public async Task<ResponseDTO<AuctionCustom>> GetAuctionById(int id)
         {
             var result = await _unitOfWork.auctionRepository.GetAuctionById(id);
-            if(result == null)
+            if (result == null)
                 return new ResponseDTO<AuctionCustom>("Auction not found", false);
 
             return new ResponseDTO<AuctionCustom>("Get successfully", true, result);
@@ -91,7 +86,7 @@ namespace EV.Application.Services
         public async Task<ResponseDTO<AuctionCustom>> UpdateAuction(int id, UpdateAuctionDTO updateAuctionDTO)
         {
             var result = await _unitOfWork.auctionRepository.UpdateAuction(id, updateAuctionDTO);
-            if(result == null)
+            if (result == null)
                 return new ResponseDTO<AuctionCustom>("Auction not found", false);
 
             await _unitOfWork.SaveChangesAsync();

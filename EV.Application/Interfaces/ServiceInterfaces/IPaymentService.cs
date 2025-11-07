@@ -1,4 +1,5 @@
-﻿using EV.Application.ResponseDTOs;
+﻿using EV.Application.CustomEntities;
+using EV.Application.ResponseDTOs;
 using EV.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -10,12 +11,12 @@ namespace EV.Application.Interfaces.ServiceInterfaces
 {
     public interface IPaymentService 
     {
-        Task<List<Payment>> GetAllPaymentsAsync();
-        Task<Payment> GetPaymentByIdAsync(int id);
-        Task CreatePaymentAsync(Payment payment);
-        void UpdatePayment(Payment payment);
-        void DeletePaymentAsync(Payment payment);
+        Task<List<CustomPayment>> GetAllPaymentsAsync();
+        Task<CustomPayment> GetPaymentByIdAsync(int id);
+        Task CreatePaymentAsync(CustomPayment payment);
+        void UpdatePayment(CustomPayment payment);
+        void DeletePaymentAsync(CustomPayment payment);
 
-        Task<ResponseDTO<List<Payment>>> GetPaymentsByUserIdAsync(int userId);
+        Task<ResponseDTO<List<CustomPayment>>> GetPaymentsByUserIdAsync(int userId);
     }
 }

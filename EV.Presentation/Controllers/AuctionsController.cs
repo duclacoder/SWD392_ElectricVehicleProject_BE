@@ -1,7 +1,6 @@
 ﻿using EV.Application.Interfaces.ServiceInterfaces;
 using EV.Application.RequestDTOs.AuctionRequestDTO;
 using EV.Application.ResponseDTOs;
-using EV.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -59,10 +58,20 @@ namespace EV.Presentation.Controllers
         [HttpGet("Refund")]
         public async Task<ActionResult<ResponseDTO<object>>> Refund(int auctionId)
         {
+            var auction = (await _auctionService.GetAuctionById(auctionId)).Result;
+            if (auction == null)
+            {
+                return NotFound(new ResponseDTO<object>("Auction not found", false));
+            }
+
+            if (auction.Status == "ended")
+            {
+                return BadRequest(new ResponseDTO<object>("Auction is closed", false));
+            }
             await _auctionParticipantService.Refund(auctionId);
             await _auctionService.CloseAuction(auctionId);
             return Ok(new ResponseDTO<object>("Refund successful", true));
         }
-        
+
     }
 }
