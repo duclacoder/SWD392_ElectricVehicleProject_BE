@@ -14,9 +14,10 @@ namespace EV.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task CreateAsync(T entity)
+        public async Task<T> CreateAsync(T entity)
         {
             await _context.Set<T>().AddAsync(entity);
+            return entity;
         }
 
         public async Task<List<T>> GetAllAsync()
