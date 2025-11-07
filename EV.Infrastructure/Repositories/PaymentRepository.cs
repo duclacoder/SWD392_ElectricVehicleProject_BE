@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace EV.Infrastructure.Repositories
 {
-    public class PaymentRepository : GenericRepository<CustomPayment>, IPaymentRepository
+    public class PaymentRepository : GenericRepository<Payment>, IPaymentRepository
     {
         public PaymentRepository(Swd392Se1834G2T1Context context) : base(context)
         {
@@ -24,6 +24,7 @@ namespace EV.Infrastructure.Repositories
                                          .Where(x => x.UserId == userId && x.Status == "Paid")
                                          .OrderByDescending(x => x.CreatedAt)
                                          .ToListAsync();
+
             var customPayments = payments.Select(p => new CustomPayment
             {
                 PaymentsId = p.PaymentsId,

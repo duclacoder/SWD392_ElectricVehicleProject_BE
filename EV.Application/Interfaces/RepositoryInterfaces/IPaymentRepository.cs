@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace EV.Application.Interfaces.RepositoryInterfaces
 {
-    public interface IPaymentRepository  : IGenericRepository<CustomPayment>
+    public interface IPaymentRepository  : IGenericRepository<Payment>
     {
        Task<List<CustomPayment>> GetPaymentsByUserIdAsync(int userId);
     }

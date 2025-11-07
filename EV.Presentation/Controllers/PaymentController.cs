@@ -72,12 +72,12 @@ namespace EV.Presentation.Controllers
                     CreatedAt = DateTime.UtcNow,
                     Content = "Thanh toan goi"
                 };
-                await _paymentService.CreatePaymentAsync(newPayment);
+                var payment = await _paymentService.CreatePaymentAsync(newPayment);
                 await _unitOfWork.SaveChangesAsync();
 
                 var result = new
                 {
-                    newPayment.PaymentsId,
+                    payment.PaymentsId,
                     userPackage.UserPackagesId,
                     newPayment.TransferAmount,
                 };
@@ -103,12 +103,12 @@ namespace EV.Presentation.Controllers
                     Content = "Phi tham gia dau gia"
                 };
 
-                await _paymentService.CreatePaymentAsync(newPayment);
+                var payment = await _paymentService.CreatePaymentAsync(newPayment);
                 await _unitOfWork.SaveChangesAsync();
 
                 var result = new
                 {
-                    newPayment.PaymentsId,
+                    payment.PaymentsId,
                     auctionFee.AuctionsFeeId,
                     newPayment.TransferAmount,
 
