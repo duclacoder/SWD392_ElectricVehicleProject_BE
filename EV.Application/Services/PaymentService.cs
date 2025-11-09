@@ -175,6 +175,7 @@ namespace EV.Application.Services
         {
             var updatedPayment = new Payment()
             {
+                PaymentsId = payment.PaymentsId,
                 AccountNumber = payment.AccountNumber,
                 Accumulated = payment.Accumulated,
                 Content = payment.Content,
