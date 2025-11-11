@@ -1,6 +1,6 @@
-﻿using EV.Application.Interfaces.RepositoryInterfaces;
+﻿using EV.Application.CustomEntities;
+using EV.Application.Interfaces.RepositoryInterfaces;
 using EV.Application.RequestDTOs.AuctionRequestDTO;
-using EV.Domain.CustomEntities;
 using EV.Domain.Entities;
 using EV.Infrastructure.DBContext;
 using Microsoft.EntityFrameworkCore;
@@ -100,6 +100,8 @@ namespace EV.Infrastructure.Repositories
                                 .Include(a => a.Seller)
                                 .Include(a => a.AuctionBids)
                                 .ThenInclude(a => a.Bidder)
+                                .Include(a => a.Vehicle)
+                                .ThenInclude(a => a.VehicleImages)
                                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(sellerUserName))
@@ -122,6 +124,9 @@ namespace EV.Infrastructure.Repositories
                 OpenFee = a.OpenFee,
                 EntryFee = a.EntryFee,
                 Status = a.Status,
+                Images = a.Vehicle?.VehicleImages?
+                                   .Select(img => img.ImageUrl)
+                                   .ToList() ?? new List<string>(),
                 Bids = a.AuctionBids?.Select(b => new AuctionBidCustom
                 {
                     BidderFullName = b.Bidder.FullName,

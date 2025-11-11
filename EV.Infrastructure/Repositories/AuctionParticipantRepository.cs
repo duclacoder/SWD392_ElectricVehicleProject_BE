@@ -31,10 +31,14 @@ namespace EV.Infrastructure.Repositories
         public async Task<List<AuctionParticipant>> GetListUserInAuction(int auctionId)
         {
             return await _context.AuctionParticipants
-                .Include(p => p.AuctionBids) 
-                .Where(p => p.AuctionsId == auctionId)
+                .Include(p => p.AuctionBids)
+                .Where(p => p.AuctionsId == auctionId && p.UserId.HasValue)
+                .GroupBy(p => p.UserId)
+                .Select(g => g.OrderByDescending(p => p.AuctionParticipantId).FirstOrDefault())
                 .ToListAsync();
         }
+
+
 
     }
 }

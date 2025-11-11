@@ -1,6 +1,6 @@
-﻿using EV.Application.Interfaces.RepositoryInterfaces;
+﻿using EV.Application.CustomEntities;
+using EV.Application.Interfaces.RepositoryInterfaces;
 using EV.Application.RequestDTOs.UserRequestDTO;
-using EV.Domain.CustomEntities;
 using EV.Domain.Entities;
 using EV.Infrastructure.DBContext;
 using Microsoft.EntityFrameworkCore;
@@ -68,6 +68,7 @@ namespace EV.Infrastructure.Repositories
                     RoleName = u.Role.Name,
                     CreatedAt = u.CreatedAt,
                     UpdatedAt = u.UpdatedAt,
+                    Wallet = u.Wallet,
                     Status = u.Status
                 })
                 .FirstOrDefaultAsync(u => u.UsersId == id);

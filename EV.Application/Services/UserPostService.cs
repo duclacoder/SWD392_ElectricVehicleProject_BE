@@ -1,15 +1,8 @@
-﻿using EV.Application.Interfaces.RepositoryInterfaces;
+﻿using EV.Application.CustomEntities;
+using EV.Application.Interfaces.RepositoryInterfaces;
 using EV.Application.Interfaces.ServiceInterfaces;
 using EV.Application.RequestDTOs.UserPostDTO;
 using EV.Application.ResponseDTOs;
-using EV.Domain.CustomEntities;
-using EV.Domain.Entities;
-using Org.BouncyCastle.Asn1.Ocsp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EV.Application.Services
 {
@@ -17,7 +10,7 @@ namespace EV.Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public UserPostService(IUnitOfWork unitOfWork) 
+        public UserPostService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
@@ -26,7 +19,7 @@ namespace EV.Application.Services
         {
             var result = await _unitOfWork.userPostsRepository.CreateUserPost(createUserPostDTO);
 
-            if(result == null)
+            if (result == null)
             {
                 return new ResponseDTO<UserPostCustom>("User not found", false);
             }

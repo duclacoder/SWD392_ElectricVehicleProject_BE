@@ -35,6 +35,7 @@ namespace EV.Application.Interfaces.RepositoryInterfaces
         IAuctionsFeeRepository auctionsFeeRepository { get; }
 
         IAuctionParticipantRepository auctionParticipantRepository { get; }
+        IDashboardRepository dashboardRepository { get; }
         Task<int> SaveChangesAsync();
     }
 }

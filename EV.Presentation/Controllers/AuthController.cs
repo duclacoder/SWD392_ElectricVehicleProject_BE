@@ -2,9 +2,6 @@
 using EV.Application.Interfaces.ServiceInterfaces;
 using EV.Application.RequestDTOs.UserRequestDTO;
 using EV.Application.ResponseDTOs;
-using EV.Application.Services;
-using EV.Domain.Entities;
-using Google.Apis.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -114,9 +111,9 @@ namespace EV.Presentation.Controllers
                 if (!result.IsSuccess)
                 {
                     return BadRequest(new ResponseDTO<object>(result.Message, false));
-                }                
+                }
                 return Ok(new ResponseDTO<object>(result.Message, true, result.Result));
-            }            
+            }
 
             //return Ok(new ResponseDTO<string>("OTP confirmed", true, ""));
         }
@@ -206,7 +203,7 @@ namespace EV.Presentation.Controllers
                 return BadRequest(new ResponseDTO<object>("Confirmed password is required", false));
             }
 
-            if (!request.Password.Equals(request.ConfirmPassword)) 
+            if (!request.Password.Equals(request.ConfirmPassword))
             {
                 return BadRequest(new ResponseDTO<object>("Confirmed password not match", false));
             }

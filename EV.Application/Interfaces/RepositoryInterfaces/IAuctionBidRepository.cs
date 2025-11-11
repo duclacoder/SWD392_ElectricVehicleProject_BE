@@ -1,4 +1,4 @@
-﻿using EV.Domain.CustomEntities;
+﻿using EV.Application.CustomEntities;
 ﻿using EV.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -15,5 +15,6 @@ namespace EV.Application.Interfaces.RepositoryInterfaces
 
         Task<IEnumerable<AuctionBidCustom>> GetAuctionBidByAuctionId(int auctionId);
 
+        Task<User?> GetWinnerByAuctionId(int auctionId);
     }
 }

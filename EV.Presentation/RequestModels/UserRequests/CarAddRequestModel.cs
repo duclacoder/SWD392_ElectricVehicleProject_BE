@@ -83,7 +83,7 @@ namespace EV.Presentation.RequestModels.UserRequests
         public int? WarrantyMonths { get; set; }
 
         [Required]
-        [Range(1, 100000000)] // reasonable price cap
+        [Range(1, double.MaxValue)] // reasonable price cap
         public decimal? Price { get; set; }
 
         [Required]

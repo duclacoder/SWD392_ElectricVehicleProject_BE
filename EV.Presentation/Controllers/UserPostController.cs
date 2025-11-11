@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
+using EV.Application.CustomEntities;
 using EV.Application.Interfaces.ServiceInterfaces;
 using EV.Application.RequestDTOs.UserPostDTO;
 using EV.Application.ResponseDTOs;
-using EV.Domain.CustomEntities;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EV.Domain.CustomEntities
+namespace EV.Application.CustomEntities
 {
     public class GetUserProfileById
     {
@@ -32,5 +32,7 @@ namespace EV.Domain.CustomEntities
         public string? RoleName { get; set; }
 
         public string? Status { get; set; }
+
+        public decimal? Wallet {  get; set; }
     }
 }
