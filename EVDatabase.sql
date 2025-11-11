@@ -495,8 +495,4 @@ select * from Auctions
 
 select * from AuctionBids 
 
-<<<<<<< HEAD
 select * from AuctionParticipants 
-=======
-select * from AuctionParticipants 
->>>>>>> 369dbef88d39700d58319bb76c2cdb98f8e69654
