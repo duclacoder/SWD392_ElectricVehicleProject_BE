@@ -59,6 +59,9 @@ namespace EV.Infrastructure
         private IAuctionParticipantRepository _auctionParticipantRepository;
         public IAuctionParticipantRepository auctionParticipantRepository => _auctionParticipantRepository ??= new AuctionParticipantRepository(_context);
 
+        private IDashboardRepository _dashboardRepository;
+        public IDashboardRepository dashboardRepository => _dashboardRepository ??= new DashboardRepository(_context);
+
         public IGenericRepository<T> GetGenericRepository<T>() where T : class
         {
             return new GenericRepository<T>(_context);

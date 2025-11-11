@@ -50,6 +50,8 @@ namespace EV.Infrastructure.Configuration
             services.AddScoped<IAuctionParticipantService, AuctionParticipantService>();
             services.AddScoped<IAuctionParticipantRepository, AuctionParticipantRepository>();
             services.AddScoped<IAuctionBidRepository, AuctionBidRepository>();
+            services.AddScoped<IDashboardRepository, DashboardRepository>();
+            services.AddScoped<IDashboardService, DashboardService>();
 
             //Service injection
             services.AddScoped<IUserService, UserService>();
